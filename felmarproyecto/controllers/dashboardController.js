@@ -150,7 +150,7 @@ exports.mostrarDashboard = async (req, res) => {
             const cotizacionesEstadoData = cotizacionesPorEstado.map(c => c.get('total'));
 
             // Definir estados posibles de solicitudes y mapear los datos
-            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'cancelada'];
+            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'rechazada'];
             const solicitudesEstadoLabels = estadosSolicitudes;
             const solicitudesEstadoData = estadosSolicitudes.map(estado => {
                 const found = solicitudesPorEstado.find(s => s.estado === estado);
@@ -421,7 +421,7 @@ const dashboardController = {
             const cotizacionesEstadoData = cotizacionesPorEstado.map(c => c.get('total'));
 
             // Definir estados posibles de solicitudes y mapear los datos
-            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'cancelada'];
+            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'rechazada'];
             const solicitudesEstadoLabels = estadosSolicitudes;
             const solicitudesEstadoData = estadosSolicitudes.map(estado => {
                 const found = solicitudesPorEstado.find(s => s.estado === estado);
@@ -543,7 +543,7 @@ const dashboardController = {
             });
             
             // Definir estados posibles de solicitudes
-            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'cancelada'];
+            const estadosSolicitudes = ['pendiente', 'en_proceso', 'completada', 'rechazada'];
             const solicitudesEstadoLabels = estadosSolicitudes;
             const solicitudesEstadoData = estadosSolicitudes.map(estado => {
                 const found = solicitudesPorEstado.find(s => s.estado === estado);

@@ -126,7 +126,7 @@ const {
           req.flash('error', 'No tienes permiso para descargar este certificado');
           return res.redirect('/admin/certificados');
         }
-        const rutaArchivo = path.join(__dirname, '..', 'public', certificado.rutaPdf);
+        const rutaArchivo = path.join(__dirname, '..', 'public', certificado.ruta_pdf);
         if (!fs.existsSync(rutaArchivo)) {
           req.flash('error', 'Archivo PDF no encontrado');
           return res.redirect('/admin/certificados');
@@ -221,7 +221,7 @@ const {
           cliente_id: cliente.rut, 
           visita_retiro_id: visita_retiro_id || null, 
           observaciones, 
-          rutaPdf, 
+          ruta_pdf: rutaPdf, 
           fecha_emision: fechaEmisionFinal 
         });
         
@@ -284,10 +284,10 @@ const {
           req.flash('error', 'Certificado no encontrado');
           return res.redirect('/admin/certificados');
         }
-        let rutaPdf = certificado.rutaPdf;
+        let rutaPdf = certificado.ruta_pdf;
         if (req.file) {
           // Eliminar PDF anterior
-          const rutaAnterior = path.join(__dirname, '..', 'public', certificado.rutaPdf);
+          const rutaAnterior = path.join(__dirname, '..', 'public', certificado.ruta_pdf);
           if (fs.existsSync(rutaAnterior)) fs.unlinkSync(rutaAnterior);
           rutaPdf = `/uploads/certificados/${req.file.filename}`;
         }
@@ -295,7 +295,7 @@ const {
         const updateData = {
           visita_retiro_id: typeof visita_retiro_id !== 'undefined' ? visita_retiro_id : certificado.visita_retiro_id,
           observaciones: typeof observaciones !== 'undefined' ? observaciones : certificado.observaciones,
-          rutaPdf
+          ruta_pdf
         };
         if (fechaEmision) {
           // Forzar hora a mediodía para evitar desfase de zona horaria
@@ -321,7 +321,7 @@ const {
           return res.redirect('/admin/certificados');
         }
         // Eliminar PDF
-        const rutaArchivo = path.join(__dirname, '..', 'public', certificado.rutaPdf);
+        const rutaArchivo = path.join(__dirname, '..', 'public', certificado.ruta_pdf);
         if (fs.existsSync(rutaArchivo)) fs.unlinkSync(rutaArchivo);
         await certificado.destroy();
         req.flash('success', 'Certificado eliminado exitosamente.');
@@ -483,7 +483,7 @@ const {
           cliente_id: visita.clienteId,
           visita_retiro_id: visita.id, // Usar el id correcto
           observaciones: obs,
-          rutaPdf,
+          ruta_pdf: rutaPdf,
           fecha_emision: fechaEmisionFinal
         });
 
@@ -569,7 +569,7 @@ const {
                 titulo: `Certificado #${cert.id}`,
                 fecha: moment(cert.fecha_emision).format('DD/MM/YYYY'),
                 descripcion: cert.observaciones || 'Sin observaciones',
-                rutaPdf: cert.rutaPdf,
+                ruta_pdf: cert.ruta_pdf,
                 visita_retiro_id: cert.visita_retiro_id
             })));
 

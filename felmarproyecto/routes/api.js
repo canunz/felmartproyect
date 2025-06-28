@@ -200,13 +200,13 @@ router.get('/visitas/estadisticas', auth.isAuthenticatedApi, async (req, res) =>
     try {
         const whereCliente = req.session.usuario.rol === 'cliente' ? { clienteId: req.session.usuario.clienteId } : {};
         
-        const [totalVisitas, visitasPendientes, visitasConfirmadas, visitasEvaluacion, visitasRetiro, visitasCanceladas] = await Promise.all([
+        const [totalVisitas, visitasPendientes, visitasConfirmadas, visitasEvaluacion, visitasRetiro, visitasRechazadas] = await Promise.all([
             VisitaRetiro.count({ where: whereCliente }),
             VisitaRetiro.count({ where: { ...whereCliente, estado: 'pendiente' } }),
             VisitaRetiro.count({ where: { ...whereCliente, estado: 'confirmada' } }),
             VisitaRetiro.count({ where: { ...whereCliente, estado: 'evaluacion' } }),
             VisitaRetiro.count({ where: { ...whereCliente, estado: 'retiro' } }),
-            VisitaRetiro.count({ where: { ...whereCliente, estado: 'cancelada' } })
+            VisitaRetiro.count({ where: { ...whereCliente, estado: 'rechazada' } })
         ]);
 
         res.json({
@@ -217,7 +217,7 @@ router.get('/visitas/estadisticas', auth.isAuthenticatedApi, async (req, res) =>
                 confirmadas: visitasConfirmadas,
                 evaluacion: visitasEvaluacion,
                 retiro: visitasRetiro,
-                canceladas: visitasCanceladas
+                rechazadas: visitasRechazadas
             }
         });
     } catch (error) {

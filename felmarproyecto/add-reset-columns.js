@@ -29,7 +29,7 @@ async function addColumns() {
     // Actualizar enum estado
     await sequelize.query(`
       ALTER TABLE visitas_retiro
-      MODIFY COLUMN estado ENUM('pendiente', 'programada', 'en_proceso', 'completada', 'cancelada') DEFAULT 'pendiente';
+      MODIFY COLUMN estado ENUM('pendiente', 'programada', 'en_proceso', 'completada', 'rechazada') DEFAULT 'pendiente';
     `);
 
     // Actualizar valores por defecto

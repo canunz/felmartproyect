@@ -94,7 +94,7 @@ function getEstadoColor(estado) {
     'pendiente': '#ffe066',
     'programada': '#b5ead7',
     'completada': '#caffbf',
-    'cancelada': '#ffadad',
+    'rechazada': '#ffadad',
     'cotizada': '#a8dadc'
   };
   return colores[estado.toLowerCase()] || '#e2e3e5';

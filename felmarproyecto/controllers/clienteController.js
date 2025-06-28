@@ -684,7 +684,7 @@ const clienteController = {
       visita.respuestaCliente = 'rechazada';
       visita.motivoRechazo = motivo;
       visita.fechaRespuestaCliente = new Date();
-      visita.estado = 'cancelada';
+      visita.estado = 'rechazada';
 
       await visita.save();
 
@@ -822,7 +822,7 @@ const clienteController = {
         pendientes: solicitudes.filter(s => s.estado.toLowerCase() === 'pendiente').length,
         confirmadas: solicitudes.filter(s => s.estado.toLowerCase() === 'en_proceso').length,
         completadas: solicitudes.filter(s => s.estado.toLowerCase() === 'completada').length,
-        canceladas: solicitudes.filter(s => s.estado.toLowerCase() === 'cancelada').length
+        rechazadas: solicitudes.filter(s => s.estado.toLowerCase() === 'rechazada').length
       };
 
       res.render('clientes/solicitudes', {
