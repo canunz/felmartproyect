@@ -1,0 +1,29 @@
+body {
+    background: #f4f6f8 !important;
+}
+
+.main-header {
+    background: #fff !important;
+    width: 100vw;
+    margin: 0;
+    padding: 0 1.2rem;
+    border-radius: 0;
+    border-bottom: 4px solid #009688;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    height: 56px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    z-index: 1002;
+}
+
+/* Para que el contenido no quede debajo del header fijo */
+.content-wrapper, main, .main-content {
+    margin-top: 56px !important;
+}

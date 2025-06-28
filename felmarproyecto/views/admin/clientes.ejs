@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes | Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00616e;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #00616e;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #00616e;
+            --purple-color: #6f42c1;
+            --orange-color: #fd7e14;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light-bg); line-height: 1.5; font-size: 14px; }
+        .header-nav { padding: 0.35rem 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-link, .nav-link i { font-size: 0.82rem !important; }
+        .user-btn { font-size: 0.82rem !important; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notification-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: var(--light-bg); border-radius: 12px 12px 0 0; position: sticky; top: 0; z-index: 1; }
+        .notification-title { font-weight: 600; color: var(--nav-primary-color); margin: 0; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .notification-item { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f3f4; transition: all 0.2s ease; cursor: pointer; }
+        .notification-item:hover { background: var(--light-bg); }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-item.unread { background: rgba(0, 97, 110, 0.02); border-left: 3px solid var(--nav-primary-color); }
+        .notification-text { font-size: 0.85rem; font-weight: 600; color: var(--nav-primary-color); margin: 0 0 0.25rem 0; }
+        .notification-desc { font-size: 0.75rem; color: var(--nav-secondary-color); margin: 0 0 0.5rem 0; line-height: 1.4; }
+        .notification-time { font-size: 0.7rem; color: var(--nav-secondary-color); font-style: italic; }
+        .content-wrapper {
+            padding: 0.5rem 0.5rem;
+            max-width: 1100px;
+            margin: 26px auto;
+            padding-top: 40px !important;
+        }
+        .page-header {
+            background: #fff;
+            border-radius: 14px;
+            padding: 0.7rem 1.2rem;
+            margin-bottom: 0.7rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .page-title { font-size: 1.1rem; font-weight: 700; color: var(--nav-primary-color); margin-bottom: 0.2rem; }
+        .breadcrumb { background: none; padding: 0; margin: 0; font-size: 0.8rem; }
+        .breadcrumb-item { color: var(--nav-secondary-color); }
+        .breadcrumb-item.active { color: var(--nav-secondary-color); opacity: 0.7; }
+        .breadcrumb-item a { color: var(--nav-primary-color); text-decoration: none; transition: all 0.2s ease; }
+        .breadcrumb-item a:hover { color: var(--nav-primary-dark); }
+        .btn-primary { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); border: none; padding: 0.75rem 1.5rem; border-radius: var(--border-radius); font-weight: 600; font-size: 0.875rem; transition: all 0.2s ease; box-shadow: var(--shadow); }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+        .btn-success { background: linear-gradient(135deg, #00616e, #00616e); border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .stats-row { margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; text-align: center; transition: all 0.3s ease; height: 100%; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .stat-number { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1; }
+        .stat-label { font-size: 0.95rem; color: #6c757d; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card.total .stat-number { color: #3498db; }
+        .stat-card.pendientes .stat-number { color: #f39c12; }
+        .stat-card.aceptadas .stat-number { color: #00616e; }
+        .stat-card.rechazadas .stat-number { color: #e74c3c; }
+        .filter-section { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem; border: 1px solid #e9ecef; }
+        .data-table-container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; overflow: hidden; }
+        .table-header { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; padding: 1.5rem 2rem; }
+        .table-title { font-size: 1.25rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.75rem; }
+        .table-responsive { max-height: 500px; overflow-y: auto; }
+        .table {
+            table-layout: auto;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+        }
+        .table thead th, .table tbody td {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: initial;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.93rem;
+            max-width: unset;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            color: var(--nav-primary-color);
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            border-top: none;
+            border-bottom: 2px solid #e0e3e7;
+        }
+        .table tbody tr {
+            transition: background 0.2s;
+        }
+        .table tbody tr:hover {
+            background: #f3f6f8;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table tbody td strong {
+            font-weight: 600;
+        }
+        .table tbody td:last-child {
+            text-align: center;
+        }
+        .btn-group .btn {
+            padding: 0.22rem 0.5rem;
+            margin: 0 0.05rem;
+            border-radius: 7px;
+            font-size: 0.85rem;
+            min-width: 32px;
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-info {
+            background: #00616e;
+            color: #fff;
+            border: none;
+        }
+        .btn-info:hover {
+            background: #00616e;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .card {
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 0.7rem;
+        }
+        .card-body {
+            padding: 0.7rem;
+        }
+        .page-header {
+            background: #fff;
+            border-radius: 14px;
+            padding: 0.7rem 1.2rem;
+            margin-bottom: 0.7rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .page-title {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.2rem;
+        }
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.92rem;
+        }
+        .breadcrumb-item {
+            color: var(--nav-secondary-color);
+        }
+        .breadcrumb-item.active {
+            color: var(--nav-secondary-color);
+            opacity: 0.7;
+        }
+        .breadcrumb-item a {
+            color: var(--nav-primary-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .breadcrumb-item a:hover {
+            color: var(--nav-primary-dark);
+        }
+        @media (max-width: 900px) {
+            .page-header { flex-direction: column; gap: 1rem; text-align: center; padding: 1rem; }
+            .page-title { font-size: 1.1rem; }
+            .card-body { padding: 0.7rem; }
+            .table thead th, .table tbody td { padding: 0.4rem 0.3rem; font-size: 0.85rem; }
+        }
+        .btn-pdf { 
+            border: 1px solid var(--success-color); 
+            color: var(--success-color); 
+            background: transparent; 
+            padding: 0.375rem 0.75rem; 
+            margin: 0 0.125rem; 
+            border-radius: 8px; 
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-pdf:hover { background: var(--success-color); color: white; border-color: var(--success-color); }
+        body {
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-admin {
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 70px;
+            border-radius: 0;
+        }
+        .navbar-admin .logo-section {
+            display: flex;
+            align-items: center;
+            margin-left: 32px;
+        }
+        .navbar-admin .logo-section img {
+            height: 40px;
+            width: auto;
+            margin-right: 12px;
+        }
+        .navbar-admin .logo-section .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00616e;
+        }
+        .navbar-admin .admin-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            flex: 1;
+            justify-content: center;
+        }
+        .navbar-admin .admin-menu a {
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .navbar-admin .admin-menu a.active, .navbar-admin .admin-menu a:hover {
+            background: #e9f7fa;
+            color: #00616e;
+        }
+        .navbar-admin .user-section {
+            margin-right: 32px;
+            position: relative;
+        }
+        .navbar-admin .user-btn {
+            background: #00616e;
+            border: none;
+            border-radius: 24px;
+            padding: 8px 24px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+        .navbar-admin .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px;
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            min-width: 180px;
+            z-index: 100;
+            flex-direction: column;
+            padding: 8px 0;
+        }
+        .navbar-admin .user-dropdown.show {
+            display: flex;
+        }
+        .table thead th, .table tbody td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0.4rem 0.3rem;
+            font-size: 0.82rem;
+            max-width: 160px;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu d-none d-md-flex" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" id="adminDropdownBtn" type="button" style="background:#00616e;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" id="adminDropdownMenu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <!-- Opciones de navegación solo en móvil -->
+                    <div class="d-block d-md-none">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+                        <a href="/admin/clientes" class="dropdown-item"><i class="fas fa-building"></i> Clientes</a>
+                        <a href="/admin/solicitud" class="dropdown-item"><i class="fas fa-tasks"></i> Solicitudes</a>
+                        <a href="/admin/Cotizaciones" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones</a>
+                        <a href="/admin/Certificados" class="dropdown-item"><i class="fas fa-file-alt"></i> Certificados</a>
+                        <a href="/admin/visitas" class="dropdown-item"><i class="fas fa-calendar-check"></i> Visitas</a>
+                        <a href="/admin/residuos" class="dropdown-item"><i class="fas fa-chart-bar"></i> Residuos y precios</a>
+                        <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    </div>
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Soporte para múltiples dropdowns admin
+            document.querySelectorAll('.admin-dropdown-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Encuentra el menú más cercano
+                    const menu = btn.parentElement.querySelector('.admin-dropdown-menu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            });
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            });
+        });
+    </script>
+    <!-- HEADER DE NAVEGACIÓN FIN -->
+
+    <!-- Toast de notificación -->
+    <div class="toast align-items-center text-bg-primary border-0" id="notificationToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 90px; right: 30px; min-width: 300px; z-index: 9999; display: none;">
+        <div class="toast-header bg-info text-white">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong class="me-auto">Notificación</strong>
+            <button type="button" class="btn-close btn-close-white ms-2 mb-1" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+        <div class="toast-body"></div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Gestión de Clientes</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Clientes</li>
+                    </ol>
+                </nav>
+            </div>
+            <button class="btn btn-primary" onclick="mostrarModalCrear()">
+                <i class="fas fa-plus me-2"></i>Nuevo Cliente
+            </button>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>RUT</th>
+                                <th>EMPRESA</th>
+                                <th>EMAIL</th>
+                                <th>TELÉFONO</th>
+                                <th>CONTACTO</th>
+                                <th>COMUNA</th>
+                                <th>REGIÓN</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <!-- Los datos se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para Crear/Editar Cliente -->
+    <div class="modal fade" id="clienteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center gap-2" id="modalTitle">
+                        <i id="modalTitleIcon" class="fas fa-plus-circle"></i><span>Nuevo Cliente</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="clienteForm" class="needs-validation" novalidate>
+                        <input type="hidden" id="clienteId">
+                        <input type="hidden" id="rutOriginal">
+                        <input type="hidden" id="comunaOriginal">
+                        <input type="hidden" id="regionOriginal">
+                        <div class="row g-4">
+                            <!-- Datos del Usuario -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary d-flex align-items-center gap-2">
+                                    <i class="fas fa-user"></i>Datos de Usuario
+                                </h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-envelope"></i>Email Corporativo
+                                </label>
+                                <input type="email" class="form-control" id="email" required placeholder="contacto@empresa.cl">
+                                <div class="invalid-feedback">Ingrese un email válido</div>
+                            </div>
+                            <div class="col-md-6" id="passwordFieldContainer">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-lock"></i>Contraseña
+                                </label>
+                                <input type="password" class="form-control" id="password" required placeholder="Contraseña para el usuario">
+                                <div class="invalid-feedback">Ingrese una contraseña</div>
+                            </div>
+                            <!-- Datos del Cliente -->
+                            <div class="col-12">
+                                <h6 class="mb-3 text-primary d-flex align-items-center gap-2">
+                                    <i class="fas fa-building"></i>Datos de la Empresa
+                                </h6>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-id-card"></i>RUT Empresa
+                                </label>
+                                <input type="text" class="form-control" id="rut" required placeholder="76.123.456-7">
+                                <div class="invalid-feedback">Ingrese un RUT válido</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-building"></i>Nombre Empresa
+                                </label>
+                                <input type="text" class="form-control" id="nombre_empresa" required placeholder="Razón social completa">
+                                <div class="invalid-feedback">Ingrese el nombre de la empresa</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-phone"></i>Teléfono
+                                </label>
+                                <input type="tel" class="form-control" id="telefono" required placeholder="+56 9 1234 5678">
+                                <div class="invalid-feedback">Ingrese un teléfono válido</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-user-tie"></i>Contacto Principal
+                                </label>
+                                <input type="text" class="form-control" id="contacto_principal" required placeholder="Nombre completo del contacto">
+                                <div class="invalid-feedback">Ingrese el nombre del contacto</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-map-marker-alt"></i>Dirección
+                                </label>
+                                <input type="text" class="form-control" id="direccion" required placeholder="Dirección completa con número">
+                                <div class="invalid-feedback">Ingrese la dirección</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-map"></i>Región
+                                    <button type="button" id="toggleRegionComunaBtn" class="btn btn-link p-0 ms-2" tabindex="-1" title="Habilitar edición de región y comuna" style="vertical-align: middle; text-decoration: none; color: #00818f; font-size: 1.1rem;">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </label>
+                                <select class="form-select" id="region" required disabled>
+                                    <option value="">Seleccione una región</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione una región</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-map"></i>Comuna
+                                </label>
+                                <select class="form-select" id="comuna" required disabled>
+                                    <option value="">Seleccione una comuna</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione una comuna</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-road"></i>Costo operativo KM
+                                </label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="costo_operativo_km" placeholder="Ej: 1000.00">
+                                <div class="invalid-feedback">Ingrese el costo operativo por KM</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-flex align-items-center gap-2">
+                                    <i class="fas fa-coins"></i>Costo operativo Otros
+                                </label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="costo_operativo_otros" placeholder="Ej: 500.00">
+                                <div class="invalid-feedback">Ingrese el costo operativo otros</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarCliente()">
+                        <i class="fas fa-save me-2"></i>Guardar Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let clienteModal;
+        let notificationToast;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            clienteModal = new bootstrap.Modal(document.getElementById('clienteModal'));
+            notificationToast = new bootstrap.Toast(document.getElementById('notificationToast'));
+            cargarClientes();
+            cargarRegiones();
+        });
+
+        // Cargar clientes
+        async function cargarClientes() {
+            try {
+                const response = await fetch('/api/clientes');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('clientesTableBody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.clientes.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-building fa-3x mb-3" style="opacity: 0.3;"></i>
+                                        <h5>No hay clientes registrados</h5>
+                                        <p class="text-muted">Comienza agregando tu primer cliente</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        data.clientes.forEach(cliente => {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td><strong>${cliente.rut}</strong></td>
+                                    <td><strong>${cliente.nombre_empresa}</strong></td>
+                                    <td>${cliente.Usuario ? cliente.Usuario.email : 'No disponible'}</td>
+                                    <td>${cliente.telefono}</td>
+                                    <td>${cliente.contacto_principal}</td>
+                                    <td>${cliente.Comuna ? cliente.Comuna.nombre : 'No disponible'}</td>
+                                    <td>${cliente.Comuna && cliente.Comuna.Region ? cliente.Comuna.Region.nombre : 'No disponible'}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-info btn-sm" onclick="editarCliente('${cliente.rut}')" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.rut}')" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                } else {
+                    mostrarNotificacion(data.message || 'Error al cargar los clientes', 'danger');
+                }
+            } catch (error) {
+                console.error('Error al cargar clientes:', error);
+                mostrarNotificacion('Error al cargar los clientes', 'danger');
+                
+                // Mostrar estado de error en la tabla
+                const tbody = document.getElementById('clientesTableBody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger" style="opacity: 0.5;"></i>
+                                <h5>Error al cargar los datos</h5>
+                                <p class="text-muted">Por favor, intenta recargar la página</p>
+                                <button class="btn btn-primary btn-sm" onclick="cargarClientes()">
+                                    <i class="fas fa-refresh me-1"></i>Reintentar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Mostrar modal para crear
+        function mostrarModalCrear() {
+            document.getElementById('modalTitle').innerHTML = '<i id="modalTitleIcon" class="fas fa-plus-circle"></i> Nuevo Cliente';
+            document.getElementById('clienteForm').reset();
+            document.getElementById('clienteForm').classList.remove('was-validated');
+            document.getElementById('clienteId').value = '';
+            document.getElementById('rutOriginal').value = '';
+            document.getElementById('comunaOriginal').value = '';
+            document.getElementById('regionOriginal').value = '';
+            // Mostrar campo contraseña
+            document.getElementById('passwordFieldContainer').style.display = '';
+            document.getElementById('password').required = true;
+            document.getElementById('costo_operativo_km').value = '';
+            document.getElementById('costo_operativo_otros').value = '';
+            clienteModal.show();
+        }
+
+        // Editar cliente
+        async function editarCliente(rut) {
+            try {
+                const response = await fetch(`/api/clientes/${rut}`);
+                const data = await response.json();
+                if (data.success) {
+                    const cliente = data.cliente;
+                    console.log('Cliente recibido para editar:', cliente);
+                    if (!cliente.region_id) {
+                        console.warn('El cliente no tiene region_id:', cliente);
+                    }
+                    if (!cliente.comuna_id) {
+                        console.warn('El cliente no tiene comuna_id:', cliente);
+                    }
+                    document.getElementById('modalTitle').innerHTML = '<i id="modalTitleIcon" class="fas fa-edit"></i> Editar Cliente';
+                    document.getElementById('clienteId').value = cliente.rut;
+                    document.getElementById('rutOriginal').value = cliente.rut;
+                    document.getElementById('comunaOriginal').value = cliente.comuna_id || '';
+                    let regionId = '';
+                    if (cliente.region_id) {
+                        regionId = cliente.region_id;
+                    } else if (cliente.Comuna && cliente.Comuna.Region && cliente.Comuna.Region.id) {
+                        regionId = cliente.Comuna.Region.id;
+                    }
+                    document.getElementById('regionOriginal').value = regionId || '';
+                    document.getElementById('rut').value = cliente.rut;
+                    document.getElementById('nombre_empresa').value = cliente.nombre_empresa;
+                    document.getElementById('email').value = cliente.Usuario ? cliente.Usuario.email : '';
+                    document.getElementById('telefono').value = cliente.telefono;
+                    document.getElementById('contacto_principal').value = cliente.contacto_principal;
+                    document.getElementById('direccion').value = cliente.direccion;
+                    document.getElementById('costo_operativo_km').value = cliente.costo_operativo_km || '';
+                    document.getElementById('costo_operativo_otros').value = cliente.costo_operativo_otros || '';
+                    // 1. Determinar la región del cliente
+                    let regionIdStr = String(regionId);
+                    let regionFound = false;
+                    for (let opt of document.getElementById('region').options) {
+                        if (opt.value === regionIdStr) {
+                            document.getElementById('region').value = regionIdStr;
+                            regionFound = true;
+                            break;
+                        }
+                    }
+                    if (!regionFound) {
+                        console.warn('No se encontró la región en el select:', regionIdStr);
+                    }
+                    // 2. Cargar comunas de esa región y seleccionar la del cliente (robusto)
+                    await cargarComunasPorRegion(regionIdStr);
+                    const comunaSelect = document.getElementById('comuna');
+                    const comunaIdStr = String(cliente.comuna_id);
+                    let comunaFound = false;
+                    for (let opt of comunaSelect.options) {
+                        if (opt.value === comunaIdStr) {
+                            comunaSelect.value = comunaIdStr;
+                            comunaFound = true;
+                            break;
+                        }
+                    }
+                    if (!comunaFound) {
+                        console.warn('No se encontró la comuna en el select:', comunaIdStr);
+                    }
+                    // Deshabilitar región y comuna por defecto
+                    document.getElementById('region').disabled = true;
+                    document.getElementById('comuna').disabled = true;
+                    // Mostrar el botón de ojito
+                    document.getElementById('toggleRegionComunaBtn').style.display = '';
+                    // Ocultar campo contraseña y quitar required
+                    document.getElementById('passwordFieldContainer').style.display = 'none';
+                    document.getElementById('password').required = false;
+                    clienteModal.show();
+                } else {
+                    mostrarNotificacion(data.message || 'Error al cargar los datos del cliente', 'danger');
+                }
+            } catch (error) {
+                console.error('Error al cargar cliente:', error);
+                mostrarNotificacion('Error al cargar los datos del cliente', 'danger');
+            }
+        }
+
+        // Guardar cliente
+        async function guardarCliente() {
+            const form = document.getElementById('clienteForm');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+            const rutOriginal = document.getElementById('rutOriginal').value;
+            const clienteId = rutOriginal || document.getElementById('clienteId').value;
+            // Si los campos están deshabilitados, usar los valores originales
+            let comunaValue = document.getElementById('comuna').disabled ? document.getElementById('comunaOriginal').value : document.getElementById('comuna').value;
+            let regionValue = document.getElementById('region').disabled ? document.getElementById('regionOriginal').value : document.getElementById('region').value;
+            const cliente = {
+                rut: document.getElementById('rut').value,
+                nombreEmpresa: document.getElementById('nombre_empresa').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value,
+                contactoPrincipal: document.getElementById('contacto_principal').value,
+                direccion: document.getElementById('direccion').value,
+                comuna_id: comunaValue,
+                region_id: regionValue,
+                costo_operativo_km: document.getElementById('costo_operativo_km').value,
+                costo_operativo_otros: document.getElementById('costo_operativo_otros').value
+            };
+            // Solo agregar contraseña si el campo está visible
+            if (document.getElementById('passwordFieldContainer').style.display !== 'none') {
+                cliente.password = document.getElementById('password').value;
+            }
+            try {
+                const url = clienteId ? `/api/clientes/${clienteId}` : '/api/clientes';
+                const method = clienteId ? 'PUT' : 'POST';
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    clienteModal.hide();
+                    await cargarClientes();
+                    mostrarNotificacion(data.message || 'Cliente guardado exitosamente', 'success');
+                } else {
+                    // Mensaje específico para email duplicado o RUT
+                    if (data.message && data.message.includes('correo electrónico')) {
+                        mostrarNotificacion('El email ya está registrado. Usa otro correo.', 'danger');
+                    } else if (data.message && data.message.includes('RUT')) {
+                        mostrarNotificacion('El RUT ya está registrado o es inválido.', 'danger');
+                    } else {
+                        mostrarNotificacion(data.message || 'Error al guardar el cliente', 'danger');
+                    }
+                }
+            } catch (error) {
+                console.error('Error al guardar cliente:', error);
+                mostrarNotificacion('Error al guardar el cliente', 'danger');
+            }
+        }
+
+        // Eliminar cliente
+        async function eliminarCliente(rut) {
+            if (!rut) {
+                mostrarNotificacion('Error: RUT no válido', 'danger');
+                return;
+            }
+            if (confirm('¿Está seguro de que desea eliminar este cliente?\n\nEsta acción no se puede deshacer.')) {
+                try {
+                    const response = await fetch(`/api/clientes/${rut}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        cargarClientes();
+                        mostrarNotificacion(data.message || 'Cliente eliminado correctamente', 'success');
+                    } else {
+                        mostrarNotificacion(data.message || 'Error al eliminar el cliente', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar cliente:', error);
+                    mostrarNotificacion('Error al eliminar el cliente', 'danger');
+                }
+            }
+        }
+
+        // Mostrar notificación
+        function mostrarNotificacion(mensaje, tipo) {
+            const toast = document.getElementById('notificationToast');
+            const toastBody = toast.querySelector('.toast-body');
+            const toastHeader = toast.querySelector('.toast-header');
+            
+            toastBody.textContent = mensaje;
+            
+            // Limpiar clases anteriores
+            toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+            toastHeader.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+            
+            // Agregar clase según el tipo
+            if (tipo === 'success') {
+                toastHeader.classList.add('bg-success');
+                toastHeader.style.color = 'white';
+            } else if (tipo === 'danger') {
+                toastHeader.classList.add('bg-danger');
+                toastHeader.style.color = 'white';
+            } else if (tipo === 'warning') {
+                toastHeader.classList.add('bg-warning');
+                toastHeader.style.color = 'black';
+            } else {
+                toastHeader.classList.add('bg-info');
+                toastHeader.style.color = 'white';
+            }
+            
+            const bsToast = bootstrap.Toast.getInstance(toast);
+            if (bsToast) {
+                bsToast.show();
+            } else {
+                const newToast = new bootstrap.Toast(toast);
+                newToast.show();
+            }
+        }
+
+        // Formatear RUT automáticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const rutInput = document.getElementById('rut');
+            if (rutInput) {
+                rutInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9kK]/g, '');
+                    if (value.length === 0) {
+                        e.target.value = '';
+                        return;
+                    }
+                    // Separar número y dígito verificador
+                    let numero = value.slice(0, -1);
+                    let dv = value.slice(-1);
+                    // Agrupar de derecha a izquierda en bloques de 3
+                    let numeroFormateado = '';
+                    while (numero.length > 3) {
+                        numeroFormateado = '.' + numero.slice(-3) + numeroFormateado;
+                        numero = numero.slice(0, -3);
+                    }
+                    numeroFormateado = numero + numeroFormateado;
+                    // Unir con guión
+                    e.target.value = numeroFormateado + '-' + dv;
+                });
+            }
+        });
+
+        // Cargar regiones
+        async function cargarRegiones() {
+            try {
+                const select = document.getElementById('region');
+                select.innerHTML = '<option value="">Seleccione una región</option>';
+                const response = await fetch('/api/regiones');
+                if (!response.ok) throw new Error('No se pudo obtener la lista de regiones');
+                const data = await response.json();
+                if (data.success && Array.isArray(data.regiones)) {
+                    data.regiones.forEach(region => {
+                        const option = document.createElement('option');
+                        option.value = region.id;
+                        option.textContent = region.nombre;
+                        select.appendChild(option);
+                    });
+                } else {
+                    mostrarNotificacion('No se encontraron regiones disponibles', 'danger');
+                }
+            } catch (error) {
+                console.error('Error al cargar regiones:', error);
+                mostrarNotificacion('Error al cargar las regiones', 'danger');
+            }
+        }
+
+        // Cargar comunas según región
+        async function cargarComunasPorRegion(regionId) {
+            const select = document.getElementById('comuna');
+            select.innerHTML = '<option value="">Seleccione una comuna</option>';
+            select.disabled = true;
+            if (!regionId) return;
+            try {
+                const response = await fetch(`/api/regiones/${regionId}/comunas`);
+                if (!response.ok) {
+                    throw new Error('No se pudo obtener la lista de comunas');
+                }
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    throw new Error('Respuesta inesperada del servidor al cargar comunas');
+                }
+                if (data.success) {
+                    data.comunas.forEach(comuna => {
+                        const option = document.createElement('option');
+                        option.value = comuna.id;
+                        option.textContent = comuna.nombre;
+                        select.appendChild(option);
+                    });
+                    select.disabled = false;
+                } else {
+                    mostrarNotificacion(data.message || 'No se encontraron comunas para la región seleccionada', 'danger');
+                }
+            } catch (error) {
+                console.error('Error al cargar comunas:', error);
+                mostrarNotificacion(error.message || 'Error al cargar las comunas', 'danger');
+            }
+        }
+
+        // Evento para cargar comunas al cambiar región
+        document.getElementById('region').addEventListener('change', function() {
+            cargarComunasPorRegion(this.value);
+        });
+
+        // Lógica para el botón de ojito
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleRegionComunaBtn');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const region = document.getElementById('region');
+                    const comuna = document.getElementById('comuna');
+                    region.disabled = !region.disabled;
+                    comuna.disabled = !comuna.disabled;
+                    // Cambiar icono del botón
+                    const icon = toggleBtn.querySelector('i');
+                    if (!region.disabled) {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                        toggleBtn.title = 'Deshabilitar edición de región y comuna';
+                    } else {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                        toggleBtn.title = 'Habilitar edición de región y comuna';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

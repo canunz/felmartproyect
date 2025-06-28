@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Felmart Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00818f;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #00616e;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --border-radius: 10px;
+            --shadow: 0 1px 6px rgba(0,0,0,0.05);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        /* NAVBAR COMPACTO */
+        .header-nav { 
+            background: #fff; 
+            border-bottom: 1px solid #e0e3e7; 
+            width: 100%;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 1002; 
+            height: 70px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 1px 4px rgba(60,60,60,0.04);
+        }
+        
+        .nav-container { 
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 58px;
+            padding: 0 12px;
+        }
+        
+        .logo-section { 
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-img { 
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            object-fit: cover;
+            margin-right: 7px;
+        }
+        
+        .logo-text { 
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #00616e;
+        }
+        
+        nav { 
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-menu { 
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            height: 100%;
+        }
+        
+        .nav-item { 
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .nav-link { 
+            color: #5a646e;
+            font-weight: 500;
+            font-size: 0.89rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px 0 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            height: 100%;
+        }
+        
+        .nav-link:hover, .nav-link.active { 
+            color: var(--nav-primary-color); 
+            background: rgba(0, 97, 110, 0.05); 
+        }
+        
+        .nav-link i { 
+            font-size: 1em;
+        }
+        
+        .user-dropdown { 
+            display: flex;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
+        
+        .user-btn { 
+            background: #009688;
+            color: white;
+            border: none;
+            padding: 0.32rem 0.8rem;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.92rem;
+            margin-top: 0;
+            box-shadow: 0 1px 4px rgba(0,150,136,0.07);
+        }
+        
+        .user-btn:hover { 
+            background: var(--nav-primary-dark); 
+        }
+        
+        .dropdown-menu { 
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            min-width: 170px;
+            padding: 0.3rem;
+            margin-top: 0.3rem;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s;
+        }
+        
+        .dropdown-menu.show { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0); 
+        }
+        
+        .dropdown-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 0.5rem 0.7rem; 
+            color: var(--nav-primary-color); 
+            text-decoration: none; 
+            transition: var(--nav-transition); 
+            font-size: 13px; 
+            border-radius: 7px; 
+            margin: 0.15rem 0; 
+            font-weight: 500; 
+        }
+        
+        .dropdown-item:hover { 
+            background: rgba(0, 97, 110, 0.07); 
+            color: var(--nav-primary-color); 
+            transform: translateX(3px); 
+        }
+        
+        .dropdown-item.text-danger { 
+            color: var(--danger-color) !important; 
+        }
+        
+        .dropdown-item.text-danger:hover { 
+            background: rgba(220, 53, 69, 0.1); 
+            color: var(--danger-color) !important; 
+        }
+        
+        .dropdown-item i { 
+            width: 18px; 
+            text-align: center; 
+        }
+
+        /* CONTENIDO PRINCIPAL COMPACTO */
+        .content-wrapper {
+            padding: 0 !important;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-top: 70px !important;
+        }
+        
+        .page-header { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 1rem 1.2rem; 
+            margin-bottom: 1rem; 
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05); 
+            border: 1px solid #e2e8f0; 
+        }
+        
+        .page-title { 
+            font-size: 1.15rem; 
+            font-weight: 700; 
+            color: var(--nav-primary-color); 
+            margin-bottom: 0.2rem; 
+        }
+        
+        .breadcrumb { 
+            background: none; 
+            padding: 0; 
+            margin: 0; 
+            font-size: 0.95rem; 
+        }
+        
+        .breadcrumb-item { 
+            color: var(--nav-secondary-color); 
+        }
+        
+        .breadcrumb-item.active { 
+            color: var(--nav-secondary-color); 
+            opacity: 0.7; 
+        }
+        
+        .breadcrumb-item a { 
+            color: var(--nav-primary-color); 
+            text-decoration: none; 
+            transition: all 0.2s ease; 
+        }
+        
+        .breadcrumb-item a:hover { 
+            color: var(--nav-primary-dark); 
+        }
+        
+        .back-button { 
+            background: var(--nav-primary-color); 
+            color: white; 
+            padding: 0.35rem 1rem; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.3rem; 
+            transition: var(--nav-transition); 
+            margin-bottom: 0.5rem; 
+            box-shadow: 0 1px 4px rgba(0, 97, 110, 0.08); 
+            font-size: 0.88rem; 
+            border: none; 
+        }
+        
+        .back-button:hover { 
+            background: var(--nav-primary-light); 
+            color: white; 
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 8px rgba(0, 97, 110, 0.12); 
+        }
+        
+        .profile-card { 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05); 
+            border: none; 
+            margin-bottom: 1rem; 
+            overflow: hidden; 
+        }
+        
+        .profile-card .card-header { 
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); 
+            color: white; 
+            padding: 0.7rem 1rem; 
+            border: none; 
+            font-size: 0.98rem; 
+            font-weight: 600; 
+        }
+        
+        .profile-card .card-title { 
+            font-size: 1rem; 
+            font-weight: 600; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .profile-card .card-title i { 
+            margin-right: 0.4rem; 
+            font-size: 1rem; 
+        }
+        
+        .profile-card .card-body { 
+            padding: 1rem 1.2rem; 
+        }
+        
+        .profile-image-section { 
+            text-align: center; 
+            padding: 1rem; 
+            background: linear-gradient(135deg, rgba(0, 97, 110, 0.04), rgba(0, 129, 143, 0.04)); 
+        }
+        
+        .profile-image-container { 
+            position: relative; 
+            display: inline-block; 
+            margin-bottom: 0.7rem; 
+        }
+        
+        .avatar-circle { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-size: 2rem; 
+            border: 3px solid white; 
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05); 
+        }
+        
+        .camera-btn { 
+            position: absolute; 
+            bottom: 4px; 
+            right: 4px; 
+            width: 22px; 
+            height: 22px; 
+            border-radius: 50%; 
+            background: var(--nav-primary-color); 
+            color: white; 
+            border: 1.5px solid white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: var(--nav-transition); 
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05); 
+            font-size: 0.7rem;
+        }
+        
+        .camera-btn:hover { 
+            background: var(--nav-primary-dark); 
+            transform: scale(1.08); 
+        }
+        
+        .profile-name { 
+            font-size: 1.05rem; 
+            font-weight: 700; 
+            color: var(--nav-primary-color); 
+            margin-bottom: 0.2rem; 
+        }
+        
+        .profile-info { 
+            color: var(--nav-secondary-color); 
+            margin-bottom: 0.1rem; 
+            font-size: 0.85rem;
+        }
+        
+        .profile-info i { 
+            width: 16px; 
+            text-align: center; 
+            margin-right: 0.3rem; 
+            color: var(--nav-primary-color); 
+        }
+        
+        .form-control, .form-select { 
+            border: 1.5px solid #e9ecef; 
+            border-radius: 8px; 
+            padding: 7px 12px; 
+            font-size: 0.97rem; 
+            transition: var(--nav-transition); 
+            background: white; 
+        }
+        
+        .form-control:focus, .form-select:focus { 
+            border-color: var(--nav-primary-color); 
+            box-shadow: 0 0 0 0.1rem rgba(0, 97, 110, 0.08); 
+        }
+        
+        .form-label { 
+            font-weight: 600; 
+            color: var(--nav-primary-color); 
+            margin-bottom: 0.3rem; 
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 7px 18px; 
+            font-weight: 600; 
+            transition: var(--nav-transition); 
+            font-size: 0.97rem;
+        }
+        
+        .btn-primary:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 8px rgba(0, 97, 110, 0.10); 
+        }
+        
+        .btn-secondary { 
+            background: var(--nav-secondary-color); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 7px 18px; 
+            font-weight: 600; 
+            transition: var(--nav-transition); 
+            font-size: 0.97rem;
+        }
+        
+        .btn-danger { 
+            background: linear-gradient(135deg, var(--danger-color), #e55a5a); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 7px 18px; 
+            font-weight: 600; 
+            transition: var(--nav-transition); 
+            font-size: 0.97rem;
+        }
+        
+        .btn-danger:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.10); 
+        }
+        
+        .success-message { 
+            position: fixed; 
+            top: 70px; 
+            right: 16px; 
+            background: linear-gradient(135deg, var(--success-color), #20c997); 
+            color: white; 
+            padding: 0.7rem 1.1rem; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.10); 
+            z-index: 1050; 
+            display: none; 
+            font-size: 0.95rem;
+            animation: slideInRight 0.5s ease-out; 
+        }
+        
+        .success-message.show { 
+            display: block; 
+        }
+        
+        .password-strength {
+            height: 3px;
+            border-radius: 2px;
+            margin-top: 6px;
+            background: #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .password-strength.weak {
+            background: linear-gradient(to right, #dc3545 30%, #e9ecef 30%);
+        }
+        
+        .password-strength.medium {
+            background: linear-gradient(to right, #ffc107 60%, #e9ecef 60%);
+        }
+        
+        .password-strength.strong {
+            background: linear-gradient(to right, #28a745 100%, #e9ecef 100%);
+        }
+        
+        @keyframes slideInRight { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
+        
+        .spinner { 
+            display: inline-block; 
+            width: 13px; 
+            height: 13px; 
+            border: 2px solid #ffffff; 
+            border-radius: 50%; 
+            border-top-color: transparent; 
+            animation: spin 1s ease-in-out infinite; 
+        }
+        
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-out;
+        }
+
+        .fade-in-up.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 900px) {
+            .nav-container { padding: 0 6px; }
+            .content-wrapper { padding: 0.5rem; padding-top: 60px !important; }
+            .profile-card .card-body { padding: 0.7rem; }
+            .page-header { padding: 0.7rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .content-wrapper { padding: 0.5rem; padding-top: 60px !important; }
+            .profile-card .card-body { padding: 0.7rem; }
+            .page-header { text-align: center; padding: 0.7rem; }
+            .page-title { font-size: 1.1rem; }
+        }
+        .logo-section span, .logo-text {
+            font-size: 1.35rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px;
+        }
+        .nav-link, .nav-link i {
+            font-size: 0.82rem !important;
+        }
+        .user-btn {
+            font-size: 0.82rem !important;
+            padding: 0.32rem 0.8rem !important;
+            border-radius: 1rem !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message">
+        <i class="fas fa-check-circle me-2"></i>
+        <span>¡Perfil actualizado correctamente!</span>
+    </div>
+
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" type="button" style="background:#009688;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Soporte para múltiples dropdowns admin
+            document.querySelectorAll('.admin-dropdown-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Encuentra el menú más cercano
+                    const menu = btn.parentElement.querySelector('.admin-dropdown-menu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            });
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            });
+        });
+    </script>
+    <!-- HEADER DE NAVEGACIÓN FIN -->
+
+    <!-- CONTENIDO DEL PERFIL -->
+    <div class="content-wrapper">
+        <!-- Page Header -->
+        <div class="page-header fade-in-up">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dashboard">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+                </ol>
+            </nav>
+            <h2 class="page-title">Editar Perfil de Administrador</h2>
+        </div>
+
+        <div class="row">
+            <!-- Profile Image and Basic Info -->
+            <div class="col-lg-4 mb-4">
+                <div class="profile-card fade-in-up stagger-1">
+                    <div class="profile-image-section">
+                        <div class="profile-image-container">
+                            <div class="avatar-circle">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <button type="button" class="camera-btn" data-bs-toggle="modal" data-bs-target="#imagenPerfilModal">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        
+                        <h3 class="profile-name">Administrador del Sistema</h3>
+                        
+                        <div class="profile-info">
+                            <i class="fas fa-shield-alt"></i>
+                            Administrador Principal
+                        </div>
+                        
+                        <div class="profile-info">
+                            <i class="fas fa-envelope"></i>
+                            admin@felmart.com
+                        </div>
+                        
+                        <div class="profile-info">
+                            <i class="fas fa-phone"></i>
+                            +56 2 2999 0000
+                        </div>
+                        
+                        <div class="profile-info">
+                            <i class="fas fa-calendar"></i>
+                            Último acceso: Hoy
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Form -->
+            <div class="col-lg-8">
+                <div class="profile-card fade-in-up stagger-2">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-edit"></i>
+                            Actualizar Información del Administrador
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="profileForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">
+                                        <i class="fas fa-user me-2"></i>
+                                        Nombre Completo
+                                    </label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                                        value="Administrador Principal" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope me-2"></i>
+                                        Correo Electrónico
+                                    </label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                        value="admin@felmart.com" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">
+                                        <i class="fas fa-phone me-2"></i>
+                                        Teléfono
+                                    </label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                        value="+56 2 2999 0000">
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="cargo" class="form-label">
+                                        <i class="fas fa-briefcase me-2"></i>
+                                        Cargo
+                                    </label>
+                                    <select class="form-select" id="cargo" name="cargo">
+                                        <option value="admin_principal" selected>Administrador Principal</option>
+                                        <option value="admin_sistema">Administrador de Sistema</option>
+                                        <option value="admin_general">Administrador General</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="departamento" class="form-label">
+                                        <i class="fas fa-building me-2"></i>
+                                        Departamento
+                                    </label>
+                                    <select class="form-select" id="departamento" name="departamento">
+                                        <option value="">Seleccionar departamento</option>
+                                        <option value="sistemas" selected>Sistemas</option>
+                                        <option value="operaciones">Operaciones</option>
+                                        <option value="administracion">Administración</option>
+                                        <option value="comercial">Comercial</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="ubicacion" class="form-label">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        Ubicación
+                                    </label>
+                                    <select class="form-select" id="ubicacion" name="ubicacion">
+                                        <option value="">Seleccionar ubicación</option>
+                                        <option value="santiago" selected>Santiago - Oficina Central</option>
+                                        <option value="concepcion">Concepción</option>
+                                        <option value="puerto_montt">Puerto Montt</option>
+                                        <option value="temuco">Temuco</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="biografia" class="form-label">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Información Adicional
+                                </label>
+                                <textarea class="form-control" id="biografia" name="biografia" rows="3" 
+                                    placeholder="Información adicional sobre el administrador...">Administrador principal del sistema Felmart con amplia experiencia en gestión de residuos y tecnología.</textarea>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg" id="updateBtn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Guardar Cambios
+                                </button>
+                                <button type="reset" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Restablecer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Change Password Section -->
+                <div class="profile-card fade-in-up stagger-3">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-key"></i>
+                            Cambiar Contraseña de Administrador
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="passwordForm">
+                            <div class="mb-3">
+                                <label for="password_actual" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>
+                                    Contraseña Actual
+                                </label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password_actual" name="password_actual" required>
+                                    <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 h-100" onclick="togglePassword('password_actual')" style="border-radius: 0 12px 12px 0;">
+                                        <i class="fas fa-eye" id="password_actual_icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password_nuevo" class="form-label">
+                                    <i class="fas fa-key me-2"></i>
+                                    Nueva Contraseña
+                                </label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password_nuevo" name="password_nuevo" required>
+                                    <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 h-100" onclick="togglePassword('password_nuevo')" style="border-radius: 0 12px 12px 0;">
+                                        <i class="fas fa-eye" id="password_nuevo_icon"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength" id="passwordStrength"></div>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números.
+                                </small>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password_confirmar" class="form-label">
+                                    <i class="fas fa-check-double me-2"></i>
+                                    Confirmar Nueva Contraseña
+                                </label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password_confirmar" name="password_confirmar" required>
+                                    <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 h-100" onclick="togglePassword('password_confirmar')" style="border-radius: 0 12px 12px 0;">
+                                        <i class="fas fa-eye" id="password_confirmar_icon"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="mt-2"></div>
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Importante:</strong> Al cambiar tu contraseña de administrador, se cerrará tu sesión en todos los dispositivos por seguridad.
+                            </div>
+                            
+                            <button type="submit" class="btn btn-danger btn-lg" id="passwordBtn">
+                                <i class="fas fa-key me-2"></i>
+                                Cambiar Contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para subir imagen de perfil -->
+    <div class="modal fade" id="imagenPerfilModal" tabindex="-1" aria-labelledby="imagenPerfilModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imagenPerfilModalLabel">
+                        <i class="fas fa-camera me-2"></i>
+                        Cambiar Imagen de Perfil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="imageForm">
+                        <div class="mb-3">
+                            <label for="imagenPerfil" class="form-label">
+                                <i class="fas fa-upload me-2"></i>
+                                Selecciona una Imagen
+                            </label>
+                            <input type="file" class="form-control" id="imagenPerfil" name="imagenPerfil" accept="image/*" required>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                La imagen debe ser en formato JPG, PNG o GIF y tener un tamaño máximo de 2MB.
+                            </div>
+                        </div>
+                        
+                        <!-- Preview de la imagen -->
+                        <div id="imagePreview" class="text-center mb-3" style="display: none;">
+                            <img id="previewImg" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" alt="Vista previa">
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>
+                                Subir Imagen
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('profileForm');
+            const updateBtn = document.getElementById('updateBtn');
+            const successMessage = document.getElementById('successMessage');
+
+            // Animaciones de entrada
+            setTimeout(() => {
+                const animatedElements = document.querySelectorAll('.fade-in-up');
+                animatedElements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.classList.add('loaded');
+                    }, index * 100);
+                });
+            }, 100);
+
+            // Función para mostrar mensaje de éxito
+            function showSuccessMessage() {
+                successMessage.classList.add('show');
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 4000);
+            }
+
+            // Manejar envío del formulario
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Cambiar botón a estado de carga
+                const originalContent = updateBtn.innerHTML;
+                updateBtn.innerHTML = '<span class="spinner me-2"></span>Guardando...';
+                updateBtn.disabled = true;
+
+                // Simular guardado
+                setTimeout(() => {
+                    // Mostrar mensaje de éxito
+                    showSuccessMessage();
+                    
+                    // Restaurar botón
+                    updateBtn.innerHTML = originalContent;
+                    updateBtn.disabled = false;
+                    
+                    console.log('✅ Perfil de administrador actualizado correctamente');
+                    
+                }, 1200);
+            });
+
+            // Manejar formulario de contraseña
+            const passwordForm = document.getElementById('passwordForm');
+            const passwordBtn = document.getElementById('passwordBtn');
+            
+            if (passwordForm && passwordBtn) {
+                passwordForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    const newPassword = document.getElementById('password_nuevo').value;
+                    const confirmPassword = document.getElementById('password_confirmar').value;
+                    
+                    if (newPassword !== confirmPassword) {
+                        alert('Las contraseñas no coinciden.');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 8) {
+                        alert('La contraseña debe tener al menos 8 caracteres.');
+                        return;
+                    }
+                    
+                    // Cambiar botón a estado de carga
+                    const originalContent = passwordBtn.innerHTML;
+                    passwordBtn.innerHTML = '<span class="spinner me-2"></span>Cambiando...';
+                    passwordBtn.disabled = true;
+
+                    // Simular cambio de contraseña
+                    setTimeout(() => {
+                        alert('¡Contraseña cambiada correctamente! Se cerrará tu sesión por seguridad.');
+                        
+                        // Restaurar botón
+                        passwordBtn.innerHTML = originalContent;
+                        passwordBtn.disabled = false;
+                        
+                        // Limpiar formulario
+                        passwordForm.reset();
+                        
+                        console.log('✅ Contraseña de administrador cambiada correctamente');
+                        
+                    }, 1500);
+                });
+            }
+
+            // Toggle password visibility
+            window.togglePassword = function(fieldId) {
+                const field = document.getElementById(fieldId);
+                const icon = document.getElementById(fieldId + '_icon');
+                
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    field.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            };
+
+            // Password strength checker
+            const passwordInput = document.getElementById('password_nuevo');
+            const strengthBar = document.getElementById('passwordStrength');
+            
+            if (passwordInput && strengthBar) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    let strength = 0;
+                    
+                    // Check password strength
+                    if (password.length >= 8) strength++;
+                    if (/[a-z]/.test(password)) strength++;
+                    if (/[A-Z]/.test(password)) strength++;
+                    if (/[0-9]/.test(password)) strength++;
+                    if (/[^A-Za-z0-9]/.test(password)) strength++;
+                    
+                    // Update strength bar
+                    strengthBar.className = 'password-strength';
+                    if (strength < 3) {
+                        strengthBar.classList.add('weak');
+                    } else if (strength < 5) {
+                        strengthBar.classList.add('medium');
+                    } else {
+                        strengthBar.classList.add('strong');
+                    }
+                });
+            }
+
+            // Password confirmation checker
+            const confirmInput = document.getElementById('password_confirmar');
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirmInput && matchDiv && passwordInput) {
+                function checkPasswordMatch() {
+                    const password = passwordInput.value;
+                    const confirm = confirmInput.value;
+                    
+                    if (confirm === '') {
+                        matchDiv.innerHTML = '';
+                        return;
+                    }
+                    
+                    if (password === confirm) {
+                        matchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check me-1"></i>Las contraseñas coinciden</small>';
+                    } else {
+                        matchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times me-1"></i>Las contraseñas no coinciden</small>';
+                    }
+                }
+                
+                passwordInput.addEventListener('input', checkPasswordMatch);
+                confirmInput.addEventListener('input', checkPasswordMatch);
+            }
+
+            // Image preview
+            const imageInput = document.getElementById('imagenPerfil');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (imageInput && imagePreview && previewImg) {
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.style.display = 'none';
+                    }
+                });
+            }
+
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                const email = document.getElementById('email').value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!emailRegex.test(email)) {
+                    e.preventDefault();
+                    alert('Por favor, ingresa un email válido.');
+                    return;
+                }
+            });
+
+            // Formatear teléfono
+            const telefonoInput = document.getElementById('telefono');
+            if (telefonoInput) {
+                telefonoInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9+]/g, '');
+                    if (value.startsWith('56') && value.length > 2) {
+                        value = '+56 ' + value.slice(2);
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Manejar formulario de imagen
+            const imageForm = document.getElementById('imageForm');
+            if (imageForm) {
+                imageForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const fileInput = document.getElementById('imagenPerfil');
+                    const file = fileInput.files[0];
+                    
+                    if (!file) {
+                        alert('Por favor selecciona una imagen');
+                        return;
+                    }
+                    
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('La imagen debe ser menor a 2MB');
+                        return;
+                    }
+                    
+                    // Simular subida de imagen
+                    const submitBtn = imageForm.querySelector('button[type="submit"]');
+                    const originalContent = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span class="spinner me-2"></span>Subiendo...';
+                    submitBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        alert('¡Imagen de perfil actualizada correctamente!');
+                        submitBtn.innerHTML = originalContent;
+                        submitBtn.disabled = false;
+                        
+                        // Cerrar modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('imagenPerfilModal'));
+                        modal.hide();
+                        
+                        // Limpiar form
+                        imageForm.reset();
+                        imagePreview.style.display = 'none';
+                    }, 1500);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

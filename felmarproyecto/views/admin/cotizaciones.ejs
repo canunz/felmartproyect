@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Cotizaciones | Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00818f;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --purple-color: #6f42c1;
+            --orange-color: #fd7e14;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light-bg); line-height: 1.6; }
+        .header-nav { background: var(--nav-white); box-shadow: var(--nav-shadow); padding: 0.35rem 0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; margin: 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-section { display: flex; align-items: center; text-decoration: none; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; font-size: 0.82rem !important; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; margin-right: 2px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); font-size: 0.82rem !important; }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notification-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: var(--light-bg); border-radius: 12px 12px 0 0; position: sticky; top: 0; z-index: 1; }
+        .notification-title { font-weight: 600; color: var(--nav-primary-color); margin: 0; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .notification-item { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f3f4; transition: all 0.2s ease; cursor: pointer; }
+        .notification-item:hover { background: var(--light-bg); }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-item.unread { background: rgba(0, 97, 110, 0.02); border-left: 3px solid var(--nav-primary-color); }
+        .notification-text { font-size: 0.85rem; font-weight: 600; color: var(--nav-primary-color); margin: 0 0 0.25rem 0; }
+        .notification-desc { font-size: 0.75rem; color: var(--nav-secondary-color); margin: 0 0 0.5rem 0; line-height: 1.4; }
+        .notification-time { font-size: 0.7rem; color: var(--nav-secondary-color); font-style: italic; }
+        .content-wrapper { padding: 2rem 1rem 2rem 32px; max-width: 1200px; margin: 0 auto; padding-top:96px !important; }
+        .page-header { background: var(--nav-white); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); border: 1px solid #e2e8f0; }
+        .page-title { font-size: 2rem; font-weight: 700; color: var(--nav-primary-color); margin-bottom: 0.5rem; }
+        .breadcrumb { background: none; padding: 0; margin: 0; font-size: 0.875rem; }
+        .breadcrumb-item { color: var(--nav-secondary-color); }
+        .breadcrumb-item.active { color: var(--nav-secondary-color); opacity: 0.7; }
+        .breadcrumb-item a { color: var(--nav-primary-color); text-decoration: none; transition: all 0.2s ease; }
+        .breadcrumb-item a:hover { color: var(--nav-primary-dark); }
+        .btn-primary { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); border: none; padding: 0.75rem 1.5rem; border-radius: var(--border-radius); font-weight: 600; font-size: 0.875rem; transition: all 0.2s ease; box-shadow: var(--shadow); }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+        .btn-success { background: linear-gradient(135deg, #28a745, #20c997); border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        @media (max-width: 768px) {
+            .header-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .header-actions .btn {
+                width: 100%;
+                font-size: 1.08em;
+                justify-content: center;
+            }
+        }
+        .stats-row { margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; text-align: center; transition: all 0.3s ease; height: 100%; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .stat-number { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1; }
+        .stat-label { font-size: 0.95rem; color: #6c757d; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card.total .stat-number { color: #3498db; }
+        .stat-card.pendientes .stat-number { color: #f39c12; }
+        .stat-card.aceptadas .stat-number { color: #27ae60; }
+        .stat-card.rechazadas .stat-number { color: #e74c3c; }
+        .filter-section { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem; border: 1px solid #e9ecef; }
+        .data-table-container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; overflow: hidden; }
+        .table-header { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; padding: 1.5rem 2rem; }
+        .table-title { font-size: 1.25rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.75rem; }
+        .table-responsive { max-height: 600px; overflow-y: auto; }
+        .table { margin: 0; }
+        .table thead th { background: #f8f9fa; border: none; color: var(--nav-primary-color); font-weight: 600; padding: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; }
+        .table tbody td { padding: 1rem; border-color: #f1f3f4; vertical-align: middle; }
+        .table tbody tr { transition: all 0.2s ease; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .badge {
+            padding: 0.32em 1.1em !important;
+            font-weight: 600;
+            border-radius: 12px !important;
+            font-size: 0.97em !important;
+            letter-spacing: 0.01em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border: none;
+            display: inline-block;
+            min-width: 74px !important;
+            text-align: center;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+            text-transform: uppercase;
+        }
+        .badge.bg-warning { background: #fff9c4 !important; color: #665c00 !important; }
+        .badge.bg-success { background: #b2f2bb !important; color: #218838 !important; }
+        .badge.bg-danger { background: #ffb3b3 !important; color: #b71c1c !important; }
+        .badge.bg-secondary { background: #eceff1 !important; color: #37474f !important; }
+        .badge.bg-info { background: #b3e5fc !important; color: #0277bd !important; }
+        .badge.bg-primary { background: #b3c6ff !important; color: #003366 !important; }
+        .badge:hover {
+            filter: brightness(0.97) drop-shadow(0 2px 8px rgba(0,0,0,0.10));
+            transform: translateY(-2px) scale(1.04);
+        }
+        .btn, .btn-group .btn {
+            border-radius: 10px !important;
+            font-weight: 500;
+            padding: 0.38em 0.7em !important;
+            font-size: 1.05em !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border: none;
+        }
+        .btn-outline-primary {
+            background: #e3f2fd;
+            color: #00616e;
+            border: none;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background: #b3e5fc;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,97,110,0.10);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .btn-outline-primary i {
+            color: #00616e;
+            font-size: 1.1em;
+        }
+        .btn-outline-primary:hover i, .btn-outline-primary:focus i {
+            color: #fff;
+        }
+        .btn-outline-success {
+            background: #b2f2bb;
+            color: #218838;
+            border: none;
+        }
+        .btn-outline-success:hover, .btn-outline-success:focus {
+            background: #43a047;
+            color: #fff;
+        }
+        .btn-outline-danger {
+            background: #ffb3b3;
+            color: #b71c1c;
+            border: none;
+        }
+        .btn-outline-danger:hover, .btn-outline-danger:focus {
+            background: #b71c1c;
+            color: #fff;
+        }
+        .btn-pdf {
+            background: #fff9c4;
+            color: #665c00;
+            border: none;
+        }
+        .btn-pdf:hover, .btn-pdf:focus {
+            background: #ffe082;
+            color: #fff;
+        }
+        .form-control, .form-select { border: 1px solid #dee2e6; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.95rem; transition: all 0.3s ease; }
+        .form-control:focus, .form-select:focus { border-color: var(--nav-primary-color); box-shadow: 0 0 0 0.2rem rgba(0, 97, 110, 0.25); }
+        .loading { text-align: center; padding: 3rem; color: #6c757d; }
+        .loading i { font-size: 2rem; margin-bottom: 1rem; animation: spin 1s linear infinite; }
+        .readonly { background-color: #f8f9fa !important; cursor: not-allowed; }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Toast Notifications */
+        .toast-container { position: fixed; top: 80px; right: 20px; z-index: 9999; }
+        .toast { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .content-wrapper { padding: 1rem; }
+            .page-header { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+            .page-title { font-size: 1.5rem; }
+            .table thead th, .table tbody td { padding: 1rem; font-size: 0.8rem; }
+            .notification-dropdown { width: 280px; right: -50px; }
+        }
+        .btn-pdf { 
+            border: 1px solid var(--success-color); 
+            color: var(--success-color); 
+            background: transparent; 
+            padding: 0.375rem 0.75rem; 
+            margin: 0 0.125rem; 
+            border-radius: 8px; 
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-pdf:hover { background: var(--success-color); color: white; border-color: var(--success-color); }
+        body {
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu d-none d-md-flex" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown">
+                <button class="user-btn admin-dropdown-btn" id="adminDropdownBtn" type="button">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" id="adminDropdownMenu">
+                    <!-- Opciones de navegación solo en móvil -->
+                    <div class="d-block d-md-none">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+                        <a href="/admin/clientes" class="dropdown-item"><i class="fas fa-building"></i> Clientes</a>
+                        <a href="/admin/solicitud" class="dropdown-item"><i class="fas fa-tasks"></i> Solicitudes</a>
+                        <a href="/admin/Cotizaciones" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones</a>
+                        <a href="/admin/Certificados" class="dropdown-item"><i class="fas fa-file-alt"></i> Certificados</a>
+                        <a href="/admin/visitas" class="dropdown-item"><i class="fas fa-calendar-check"></i> Visitas</a>
+                        <a href="/admin/residuos" class="dropdown-item"><i class="fas fa-chart-bar"></i> Residuos y precios</a>
+                        <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    </div>
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.admin-dropdown-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Cierra otros menús abiertos
+                    document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                        if (menu !== btn.nextElementSibling) menu.classList.remove('show');
+                    });
+                    // Abre/cierra el menú de este botón
+                    const menu = btn.parentElement.querySelector('.admin-dropdown-menu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            });
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            });
+        });
+    </script>
+    <!-- HEADER DE NAVEGACIÓN FIN -->
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="content-wrapper">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Gestión de Cotizaciones</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Cotizaciones</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="cargarCotizaciones()" id="btnRefresh">
+                    <i class="fas fa-sync-alt me-1"></i>Actualizar
+                </button>
+                <button class="btn btn-success" onclick="exportarCotizaciones()">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
+                <button class="btn btn-success" onclick="abrirModalNuevaCotizacion()">
+                    <i class="fas fa-plus me-1"></i>Nueva Cotización
+                </button>
+            </div>
+        </div>
+
+        <div class="row stats-row g-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card total">
+                    <div class="stat-number" id="totalCotizaciones">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card pendientes">
+                    <div class="stat-number" id="pendientesCotizaciones">0</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card aceptadas">
+                    <div class="stat-number" id="aceptadasCotizaciones">0</div>
+                    <div class="stat-label">Aceptadas</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card rechazadas">
+                    <div class="stat-number" id="rechazadasCotizaciones">0</div>
+                    <div class="stat-label">Rechazadas</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Filtrar por Estado:</label>
+                    <select class="form-select" id="filtroEstado">
+                        <option value="todos">Todos los estados</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="aceptada">Aceptadas</option>
+                        <option value="rechazada">Rechazadas</option>
+                        <option value="vencida">Vencidas</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Buscar:</label>
+                    <input type="text" class="form-control" id="busquedaCotizacion" placeholder="Buscar por número de cotización, cliente...">
+                </div>
+            </div>
+        </div>
+
+        <div class="data-table-container">
+            <div class="table-header">
+                <h5 class="table-title">
+                    <i class="fas fa-file-invoice me-2"></i>Lista de Cotizaciones
+                    <span class="badge bg-light text-dark ms-2" id="nuevasCotizacionesBadge" style="display: none;">0</span>
+                </h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover" id="tablaCotizaciones">
+                    <thead>
+                        <tr>
+                            <th>N° Cotización</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Observaciones</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Modal Nueva Cotización -->
+        <div class="modal fade" id="nuevaCotizacionModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Nueva Cotización</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formNuevaCotizacion">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-user me-2"></i>Información del Cliente</h6>
+                                    <div class="p-3 bg-light rounded">
+                                        <div class="mb-2">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="clienteNombre" name="nombre" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">RUT</label>
+                                            <input type="text" class="form-control" id="clienteRut" name="rut" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Correo</label>
+                                            <input type="email" class="form-control" id="clienteCorreo" name="correo" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Teléfono</label>
+                                            <input type="text" class="form-control" id="clienteTelefono" name="telefono" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Empresa</label>
+                                            <input type="text" class="form-control" id="clienteEmpresa" name="nombreEmpresa">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">RUT Empresa</label>
+                                            <input type="text" class="form-control" id="nuevo_rutEmpresa">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-map-marker-alt me-2"></i>Dirección de Retiro</h6>
+                                    <div class="p-3 bg-light rounded">
+                                        <div class="mb-2">
+                                            <label class="form-label">Dirección</label>
+                                            <input type="text" class="form-control" id="clienteDireccion" name="direccion" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Región</label>
+                                            <select class="form-select" id="clienteRegion" name="region_id" required>
+                                                <option value="">Seleccione una región</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Comuna</label>
+                                            <select class="form-select" id="clienteComuna" name="comuna_id" required disabled>
+                                                <option value="">Seleccione una comuna</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h6><i class="fas fa-list me-2"></i>Detalle de Residuos</h6>
+                                <div class="row align-items-end g-2 mb-2" id="formAgregarResiduoNuevo">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Tipo de residuo</label>
+                                        <select class="form-select" id="nuevo_residuoId">
+                                            <option value="">-- Seleccione un tipo --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Unidad</label>
+                                        <input type="text" class="form-control" id="nuevo_unidad" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Precio unitario</label>
+                                        <input type="text" class="form-control" id="nuevo_precioUnitario" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Moneda</label>
+                                        <input type="text" class="form-control" id="nuevo_moneda" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Cantidad</label>
+                                        <input type="number" class="form-control" id="nuevo_cantidad" min="0.1" step="0.1" disabled>
+                                    </div>
+                                    <div class="col-md-12 mt-2">
+                                        <button type="button" class="btn btn-primary" id="btnAgregarResiduoNuevo">
+                                            <i class="fas fa-plus"></i> Agregar a la lista
+                                    </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaResiduosNuevo">
+                                        <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Unidad</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unitario</th>
+                                                <th>Moneda</th>
+                                                <th>Subtotal</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuerpoResiduosNuevo"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4 row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label class="form-label">Observaciones</label>
+                                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-light rounded">
+                                        <p class="mb-1"><strong>Subtotal Residuos:</strong> $<span id="subtotalResiduosNuevo">0</span></p>
+                                        <p class="mb-1"><strong>IVA (19%):</strong> $<span id="ivaNuevo">0</span></p>
+                                        <hr>
+                                        <p class="mb-0 fs-5"><strong>Total:</strong> $<span id="totalNuevo">0</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="inputsResiduosHidden"></div>
+                            <input type="hidden" name="subtotal" id="inputSubtotal">
+                            <input type="hidden" name="iva" id="inputIva">
+                            <input type="hidden" name="total" id="inputTotal">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="guardarNuevaCotizacion()">
+                            <i class="fas fa-save me-1"></i>Guardar Cotización
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.admin-dropdown-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Cierra otros menús abiertos
+                    document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                        if (menu !== btn.nextElementSibling) menu.classList.remove('show');
+                    });
+                    // Abre/cierra el menú de este botón
+                    const menu = btn.parentElement.querySelector('.admin-dropdown-menu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            });
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            });
+        });
+    </script>
+    <script>
+// Declarar valorUF_actual al inicio del script
+let valorUF_actual = null;
+// Variables globales
+let cotizaciones = [];
+let cotizacionActual = null;
+let residuosEditables = [];
+let residuosNuevos = [];
+
+
+// Guardar residuos disponibles globalmente para acceso en la tabla
+let residuosDisponiblesGlobal = [];
+
+// Funciones principales
+async function cargarCotizaciones() {
+    try {
+        mostrarCargando(true);
+        const response = await fetch('/cotizaciones/api/listar', { 
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            cotizaciones = data.cotizaciones;
+            console.log('Cotizaciones cargadas:', cotizaciones); // Para debug
+            mostrarCotizaciones(cotizaciones);
+            actualizarContadores();
+            mostrarToast('Cotizaciones cargadas correctamente', 'success');
+        } else {
+            mostrarToast('Error al cargar las cotizaciones: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error completo:', error);
+        mostrarToast('Error de conexión al cargar las cotizaciones: ' + error.message, 'error');
+    } finally {
+        mostrarCargando(false);
+    }
+}
+
+function mostrarCargando(mostrar) {
+    const tbody = document.querySelector('#tablaCotizaciones tbody');
+    if (!tbody) return;
+    
+    if (mostrar) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p class="mt-2 mb-0">Cargando cotizaciones...</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+function mostrarCotizaciones(lista) {
+    const tbody = document.querySelector('#tablaCotizaciones tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    if (lista.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="fas fa-inbox text-muted"></i>
+                    <p class="mt-2 mb-0 text-muted">No hay cotizaciones disponibles</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    lista.forEach(cotizacion => {
+        // Obtener detalles JSON
+        let detalles = {};
+        if (cotizacion.detalles) {
+            try {
+                detalles = typeof cotizacion.detalles === 'string' ? JSON.parse(cotizacion.detalles) : cotizacion.detalles;
+            } catch (e) { detalles = {}; }
+        }
+        let clienteNombre = 'Cliente sin nombre';
+        if (detalles?.datosContacto?.nombre) {
+            clienteNombre = detalles.datosContacto.nombre;
+        } else if (cotizacion.nombre) {
+            clienteNombre = cotizacion.nombre;
+        }
+        const fecha = cotizacion.fecha ? new Date(cotizacion.fecha).toLocaleDateString('es-CL') : '';
+        const estadoBadge = getEstadoBadge(cotizacion.estado);
+        const total = cotizacion.total ? `${parseInt(cotizacion.total).toLocaleString('es-CL')}` : 'N/A';
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${cotizacion.numeroCotizacion || 'N/A'}</strong></td>
+                <td>${fecha}</td>
+                <td>${clienteNombre}</td>
+                <td><strong>${total}</strong></td>
+                <td>${estadoBadge}</td>
+                <td>${cotizacion.observaciones ? cotizacion.observaciones.substring(0, 50) + '...' : 'Sin observaciones'}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary btn-ver" data-id="${cotizacion.numeroCotizacion}" title="Ver Detalles" onclick="verDetalle('${cotizacion.numeroCotizacion}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-warning btn-editar" data-id="${cotizacion.numeroCotizacion}" title="Editar" onclick="modificarCotizacion('${cotizacion.numeroCotizacion}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="/cotizaciones/${cotizacion.numeroCotizacion}/descargar-pdf" class="btn btn-pdf" title="Descargar PDF" target="_blank">
+                            <i class="fas fa-file-pdf"></i>
+                        </a>
+                        <button class="btn btn-outline-danger btn-eliminar" data-id="${cotizacion.numeroCotizacion}" title="Eliminar" onclick="eliminarCotizacion('${cotizacion.numeroCotizacion}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function getClienteNombre(cotizacion) {
+    // Solo desde detalles JSON
+    if (cotizacion.detalles) {
+        try {
+            let detalles = typeof cotizacion.detalles === 'string' ? JSON.parse(cotizacion.detalles) : cotizacion.detalles;
+            if (detalles.datosContacto && detalles.datosContacto.nombre) {
+                return detalles.datosContacto.nombre;
+            }
+        } catch (e) {}
+    }
+    return 'Cliente sin nombre';
+}
+
+function getEstadoBadge(estado) {
+    const badges = {
+        'pendiente': '<span class="badge bg-warning">Pendiente</span>',
+        'aceptada': '<span class="badge bg-success">Aceptada</span>',
+        'rechazada': '<span class="badge bg-danger">Rechazada</span>',
+        'vencida': '<span class="badge bg-secondary">Vencida</span>'
+    };
+    return badges[estado] || '<span class="badge bg-secondary">Desconocido</span>';
+}
+
+function actualizarContadores() {
+    const total = cotizaciones.length;
+    const pendientes = cotizaciones.filter(c => c.estado === 'pendiente').length;
+    const aceptadas = cotizaciones.filter(c => c.estado === 'aceptada').length;
+    const rechazadas = cotizaciones.filter(c => c.estado === 'rechazada').length;
+    
+    document.getElementById('totalCotizaciones').textContent = total;
+    document.getElementById('pendientesCotizaciones').textContent = pendientes;
+    document.getElementById('aceptadasCotizaciones').textContent = aceptadas;
+    document.getElementById('rechazadasCotizaciones').textContent = rechazadas;
+}
+
+// Función para ver detalle (solo lectura)
+async function verDetalle(id) {
+    try {
+        const response = await fetch(`/cotizaciones/api/${id}`, { 
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include' 
+        });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        if (data.success && data.cotizacion) {
+            mostrarDetalleModal(data.cotizacion, data.region, data.comuna, data.residuos);
+        } else {
+            mostrarToast('Error al cargar el detalle: ' + (data.message || 'Cotización no encontrada'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al cargar el detalle: ' + error.message, 'error');
+    }
+}
+
+function mostrarDetalleModal(cotizacion, region = null, comuna = null, residuosAsociados = null) {
+    let detalles = {}, cliente = {};
+    // Manejar diferentes formatos de datos como en el código original
+    if (cotizacion.detallesJson) {
+        try {
+            detalles = JSON.parse(cotizacion.detallesJson);
+            cliente = detalles.datosContacto || detalles.cliente || {};
+        } catch (e) {}
+    } else if (cotizacion.detalles_json) {
+        try {
+            detalles = typeof cotizacion.detalles_json === 'string' ? JSON.parse(cotizacion.detalles_json) : cotizacion.detalles_json;
+            cliente = detalles.datosContacto || detalles.cliente || {};
+        } catch (e) {}
+    } else if (cotizacion.detalles) {
+        detalles = cotizacion.detalles;
+        cliente = detalles.datosContacto || detalles.cliente || {};
+    }
+    // Usar los residuos que llegan como parámetro si existen
+    const residuos = Array.isArray(residuosAsociados) && residuosAsociados.length > 0 ? residuosAsociados : (detalles.residuos || []);
+    const fecha = cotizacion.fechaCotizacion ? new Date(cotizacion.fechaCotizacion).toLocaleDateString('es-CL') : (cotizacion.fecha ? new Date(cotizacion.fecha).toLocaleDateString('es-CL') : '');
+    // Mostrar valor UF si hay residuos en UF
+    let valorUF = null;
+    residuos.forEach(r => { if (r.moneda === 'UF' && r.valorUF) valorUF = r.valorUF; });
+    // Modal HTML
+    const modalContent = `
+        <div class="modal fade" id="detalleModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white;">
+                        <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i>Detalle de Cotización ${cotizacion.numeroCotizacion || cotizacion.numero_cotizacion || ''}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-user me-2"></i>Información del Cliente</h6>
+                                <div class="p-3 bg-light rounded">
+                                    <p><strong>Nombre:</strong> ${cliente.nombre || cotizacion.nombre || 'N/A'}</p>
+                                    <p><strong>RUT:</strong> ${cliente.rut || cotizacion.rut || 'N/A'}</p>
+                                    <p><strong>Email:</strong> ${cliente.correo || cotizacion.correo || 'N/A'}</p>
+                                    <p><strong>Teléfono:</strong> ${cliente.telefono || cotizacion.telefono || 'N/A'}</p>
+                                    <p><strong>Empresa:</strong> ${cliente.empresa || cotizacion.nombreEmpresa || 'N/A'}</p>
+                                    <p><strong>Dirección:</strong> ${cliente.direccion || cotizacion.direccion || detalles.direccion || 'N/A'}</p>
+                                    <p><strong>Región:</strong> ${region || cotizacion.region || cotizacion.region_id || 'N/A'}</p>
+                                    <p><strong>Comuna:</strong> ${comuna || cotizacion.comuna || cotizacion.comuna_id || 'N/A'}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-info-circle me-2"></i>Información de la Cotización</h6>
+                                <div class="p-3 bg-light rounded">
+                                    <p><strong>Número:</strong> ${cotizacion.numeroCotizacion || cotizacion.numero_cotizacion || ''}</p>
+                                    <p><strong>Fecha:</strong> ${fecha}</p>
+                                    <p><strong>Estado:</strong> ${cotizacion.estado || 'N/A'}</p>
+                                    <p><strong>Subtotal:</strong> $${parseInt(cotizacion.subtotal || 0).toLocaleString('es-CL')}</p>
+                                    <p><strong>IVA (19%):</strong> $${parseInt(cotizacion.iva || 0).toLocaleString('es-CL')}</p>
+                                    <p><strong>Total:</strong> $${parseInt(cotizacion.total || 0).toLocaleString('es-CL')}</p>
+                                    <p><strong>Observaciones:</strong> ${cotizacion.observaciones || 'Sin observaciones'}</p>
+                                    ${valorUF ? `<p><strong>Valor UF usado:</strong> $${parseFloat(valorUF).toLocaleString('es-CL')}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h6><i class="fas fa-list me-2"></i>Detalle de Residuos</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>DESCRIPCIÓN</th>
+                                            <th>CANTIDAD</th>
+                                            <th>UNIDAD</th>
+                                            <th>PRECIO UNITARIO</th>
+                                            <th>SUBTOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${residuos.map(r => `
+                                            <tr>
+                                                <td>${r.descripcion}</td>
+                                                <td>${r.cantidad}</td>
+                                                <td>${r.unidad || ''}</td>
+                                                <td>$${parseInt(r.precio_unitario || r.precioUnitario).toLocaleString('es-CL')}</td>
+                                                <td>$${parseInt(r.subtotal).toLocaleString('es-CL')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-warning" onclick="bootstrap.Modal.getInstance(document.getElementById('detalleModal')).hide(); modificarCotizacion('${cotizacion.numeroCotizacion || cotizacion.numero_cotizacion || ''}')">
+                            <i class="fas fa-edit me-1"></i>Modificar
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="descargarPDFCotizacion('${cotizacion.id || cotizacion.numeroCotizacion || cotizacion.numero_cotizacion}')">
+                            <i class="fas fa-file-pdf me-1"></i>Descargar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    // Remover modal existente si existe
+    const existingModal = document.getElementById('detalleModal');
+    if (existingModal) existingModal.remove();
+    // Agregar nuevo modal
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('detalleModal'));
+    modal.show();
+}
+
+// Función principal para modificar cotización
+async function modificarCotizacion(id) {
+    try {
+        // Traer datos de la cotización y residuos asociados
+        const response = await fetch(`/cotizaciones/api/${id}`, { 
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include' 
+        });
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        if (data.success && data.cotizacion) {
+            cotizacionActual = { ...data.cotizacion };
+            // Usar los residuos asociados del backend
+            residuosEditables = Array.isArray(data.residuos) ? data.residuos.map(r => ({ ...r })) : [];
+            // Guardar info de cliente para posible envío
+            cotizacionActual.cliente = data.cotizacion.cliente_id || null;
+            cotizacionActual.region = data.region || '';
+            cotizacionActual.comuna = data.comuna || '';
+            mostrarModalModificar(data.cotizacion, data.region, data.comuna, residuosEditables);
+        } else {
+            mostrarToast('Error al cargar la cotización: ' + (data.message || 'Cotización no encontrada'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al cargar la cotización: ' + error.message, 'error');
+    }
+}
+
+async function mostrarModalModificar(cotizacion, region = null, comuna = null, residuosAsociados = null) {
+    // Cargar residuos disponibles para el select
+    let residuosDisponibles = [];
+    try {
+        const res = await fetch('/api/precios-residuos');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.residuos)) {
+            residuosDisponibles = data.residuos;
+            residuosDisponiblesGlobal = residuosDisponibles;
+        }
+    } catch (e) {}
+    residuosEditables = Array.isArray(residuosAsociados) ? residuosAsociados.map(r => ({ ...r })) : [];
+    // Eliminar modal anterior si existe
+    const modalExistente = document.getElementById('modificarModal');
+    if (modalExistente) modalExistente.remove();
+    // Obtener datos del cliente
+    let detalles = {}, cliente = {};
+    if (cotizacion.detallesJson) {
+        try {
+            detalles = JSON.parse(cotizacion.detallesJson);
+            cliente = detalles.datosContacto || detalles.cliente || {};
+        } catch (e) {}
+    } else if (cotizacion.detalles_json) {
+        try {
+            detalles = typeof cotizacion.detalles_json === 'string' ? JSON.parse(cotizacion.detalles_json) : cotizacion.detalles_json;
+            cliente = detalles.datosContacto || detalles.cliente || {};
+        } catch (e) {}
+    } else if (cotizacion.detalles) {
+        detalles = cotizacion.detalles;
+        cliente = detalles.datosContacto || detalles.cliente || {};
+    }
+    // Obtener valores actuales de costo operativo y descuento (monto)
+    const costoOperativo = detalles.costoOperativo || 0;
+    const descuento = detalles.descuento || 0;
+    // Modal HTML
+    const modalContent = `
+        <div class="modal fade" id="modificarModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Modificar Cotización</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formModificarCotizacion">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-user me-2"></i>Información del Cliente</h6>
+                                    <div class="p-3 bg-light rounded">
+                                        <div class="mb-2">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="mod_nombre" value="${cliente.nombre || cotizacion.nombre || ''}" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">RUT</label>
+                                            <input type="text" class="form-control" id="mod_rut" value="${cliente.rut || cotizacion.rut || ''}" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Correo</label>
+                                            <input type="email" class="form-control" id="mod_correo" value="${cliente.correo || cotizacion.correo || ''}" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Teléfono</label>
+                                            <input type="text" class="form-control" id="mod_telefono" value="${cliente.telefono || cotizacion.telefono || ''}" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Empresa</label>
+                                            <input type="text" class="form-control" id="mod_nombreEmpresa" value="${cliente.empresa || cotizacion.nombreEmpresa || ''}">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">RUT Empresa</label>
+                                            <input type="text" class="form-control" id="mod_rutEmpresa" value="${cliente.rutEmpresa || cotizacion.rutEmpresa || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-map-marker-alt me-2"></i>Dirección de Retiro</h6>
+                                    <div class="p-3 bg-light rounded">
+                                        <div class="mb-2">
+                                            <label class="form-label">Dirección</label>
+                                            <input type="text" class="form-control" id="mod_direccion" value="${cliente.direccion || cotizacion.direccion || detalles.direccion || ''}" required>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Región</label>
+                                            <input type="text" class="form-control" id="mod_region" value="${region || cotizacion.region || cotizacion.region_id || ''}" readonly>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label">Comuna</label>
+                                            <input type="text" class="form-control" id="mod_comuna" value="${comuna || cotizacion.comuna || cotizacion.comuna_id || ''}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Costo Operativo ($)</label>
+                                    <input type="number" class="form-control" id="costoOperativo" value="${costoOperativo}" min="0" step="100">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Descuento ($)</label>
+                                    <input type="number" class="form-control" id="descuento" value="${descuento}" min="0" step="100">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h6><i class="fas fa-list me-2"></i>Detalle de Residuos</h6>
+                                <div class="row align-items-end g-2 mb-2" id="formAgregarResiduoEditar">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Tipo de residuo</label>
+                                        <select class="form-select" id="editar_residuoId">
+                                            <option value="">-- Seleccione un tipo --</option>
+                                            ${residuosDisponibles.map(residuo => `
+                                                <option value="${residuo.id}" data-unidad="${residuo.unidad}" data-precio="${residuo.precio}" data-moneda="${residuo.moneda}" data-descripcion="${residuo.descripcion}">${residuo.descripcion}</option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Unidad</label>
+                                        <input type="text" class="form-control" id="editar_unidad" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Precio unitario</label>
+                                        <input type="text" class="form-control" id="editar_precioUnitario" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Moneda</label>
+                                        <input type="text" class="form-control" id="editar_moneda" readonly>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Cantidad</label>
+                                        <input type="number" class="form-control" id="editar_cantidad" min="0.1" step="0.1" disabled>
+                                    </div>
+                                    <div class="col-md-12 mt-2">
+                                        <button type="button" class="btn btn-primary" id="btnAgregarResiduoEditar">
+                                            <i class="fas fa-plus"></i> Agregar a la lista
+                                    </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaResiduosEditar">
+                                        <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Unidad</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unitario</th>
+                                                <th>Moneda</th>
+                                                <th>Subtotal</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuerpoResiduosEditar"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4 row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label class="form-label">Observaciones</label>
+                                        <textarea class="form-control" id="observacionesModificar" rows="3">${cotizacion.observaciones || ''}</textarea>
+                                    </div>
+                                    <div id="valorUFInfo" class="alert alert-info" style="display:none; font-size:0.95em;"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-light rounded">
+                                        <p class="mb-1"><strong>Subtotal Residuos:</strong> $<span id="subtotalResiduosModificar">0</span></p>
+                                        <p class="mb-1"><strong>Costo Operativo:</strong> $<span id="costoOperativoResumen">0</span></p>
+                                        <p class="mb-1"><strong>Descuento:</strong> $<span id="descuentoResumen">0</span></p>
+                                        <p class="mb-1"><strong>IVA (19%):</strong> $<span id="resumenIvaModificar">0</span></p>
+                                        <hr>
+                                        <p class="mb-0 fs-5"><strong>Total:</strong> $<span id="nuevoTotalModificar">0</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btnGuardarModificacion"><i class="fas fa-save me-1"></i>Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+
+    // --- LÓGICA PARA AGREGAR/EDITAR RESIDUOS EN EDICIÓN ---
+    function renderTablaResiduosEditar() {
+        const cuerpo = document.getElementById('cuerpoResiduosEditar');
+        cuerpo.innerHTML = '';
+        if (residuosEditables.length === 0) {
+            cuerpo.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No hay residuos agregados</td></tr>`;
+            return;
+        }
+        residuosEditables.forEach((r, i) => {
+            cuerpo.innerHTML += `
+                <tr>
+                    <td><strong>${r.descripcion || '-'}</strong></td>
+                    <td>${r.unidad || '-'}</td>
+                    <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? r.cantidad.toLocaleString('es-CL') : (r.cantidad || '-')}</td>
+                    <td>${formatearMonedaEditar(parseFloat(r.precio_unitario || r.precioUnitario))}</td>
+                    <td>${r.moneda || '-'}</td>
+                    <td><strong>${formatearMonedaEditar(parseFloat(r.subtotal))}</strong></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoEditar(${i})"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `;
+        });
+    }
+    window.renderTablaResiduosEditar = renderTablaResiduosEditar;
+    window.eliminarResiduoEditar = function(i) {
+        residuosEditables.splice(i, 1);
+        renderTablaResiduosEditar();
+    recalcularTotalesModificar();
+    };
+    // ---
+    // Asignar eventos después de insertar el modal
+    setTimeout(() => {
+        const selectResiduo = document.getElementById('editar_residuoId');
+        const btnAgregar = document.getElementById('btnAgregarResiduoEditar');
+        const inputCantidad = document.getElementById('editar_cantidad');
+        if (selectResiduo) {
+            selectResiduo.addEventListener('change', function() {
+                const option = this.options[this.selectedIndex];
+                if (option.value) {
+                    const precio = parseFloat(option.dataset.precio);
+                    const moneda = option.dataset.moneda;
+                    document.getElementById('editar_unidad').value = option.dataset.unidad || '';
+                    document.getElementById('editar_precioUnitario').value = (moneda === 'UF' && !isNaN(precio)) ? `${precio} UF` : (isNaN(precio) ? '' : formatearPrecioEditar(precio, moneda));
+                    document.getElementById('editar_moneda').value = moneda || '';
+                    inputCantidad.disabled = false;
+                    // Si es UF y valorUF_actual no está listo, deshabilitar botón
+                    if (moneda === 'UF' && (!valorUF_actual || isNaN(valorUF_actual))) {
+                        btnAgregar.disabled = true;
+                        mostrarToast('Esperando valor UF actualizado...', 'info');
+                    } else {
+                        btnAgregar.disabled = false;
+                    }
+                } else {
+                    document.getElementById('editar_unidad').value = '';
+                    document.getElementById('editar_precioUnitario').value = '';
+                    document.getElementById('editar_moneda').value = '';
+                    inputCantidad.value = '';
+                    inputCantidad.disabled = true;
+                    btnAgregar.disabled = false;
+                }
+            });
+        }
+        if (btnAgregar) {
+            btnAgregar.addEventListener('click', function() {
+                const select = document.getElementById('editar_residuoId');
+                const option = select.options[select.selectedIndex];
+                const cantidad = parseFloat(document.getElementById('editar_cantidad').value);
+                const precioUnitario = parseFloat(option.dataset.precio);
+                const moneda = option.dataset.moneda;
+                if (!option.value || !cantidad || cantidad <= 0 || isNaN(precioUnitario) || !moneda) {
+                    mostrarToast('Seleccione un residuo válido, cantidad y precio válidos', 'warning');
+                    return;
+                }
+                if (moneda === 'UF' && (!valorUF_actual || isNaN(valorUF_actual))) {
+                    mostrarToast('No se puede agregar residuo en UF sin valor UF actualizado', 'warning');
+                    return;
+                }
+                let subtotal;
+                if (moneda === 'UF') {
+                    subtotal = cantidad * precioUnitario * valorUF_actual;
+                } else {
+                    subtotal = cantidad * precioUnitario;
+                }
+                residuosEditables.push({
+                    residuoId: option.value,
+                    descripcion: option.dataset.descripcion,
+                    unidad: option.dataset.unidad,
+                    cantidad: cantidad,
+                    precioUnitario: precioUnitario,
+                    moneda: moneda,
+                    subtotal: subtotal
+                });
+                renderTablaResiduosEditar();
+                recalcularTotalesModificar();
+                // Limpiar formulario
+                select.value = '';
+                document.getElementById('editar_unidad').value = '';
+                document.getElementById('editar_precioUnitario').value = '';
+                document.getElementById('editar_moneda').value = '';
+                document.getElementById('editar_cantidad').value = '';
+                document.getElementById('editar_cantidad').disabled = true;
+                btnAgregar.disabled = false;
+            });
+        }
+    }, 100); // Espera a que el modal esté en el DOM
+    // ---
+    // Render inicial
+    renderTablaResiduosEditar();
+    recalcularTotalesModificar();
+    // Botón guardar cambios
+    const btnGuardar = document.getElementById('btnGuardarModificacion');
+    if (btnGuardar) {
+        btnGuardar.onclick = function() {
+        guardarModificaciones(cotizacion.numeroCotizacion || cotizacion.numero_cotizacion || cotizacion.id);
+    };
+    }
+    // Eventos para recalcular totales al cambiar costo operativo o descuento
+    document.getElementById('costoOperativo').addEventListener('input', recalcularTotalesModificar);
+    document.getElementById('descuento').addEventListener('input', recalcularTotalesModificar);
+    // Obtener valor UF dinámicamente
+    fetch('/api/cmf/uf/valor')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.data && data.data.valor) {
+                valorUF_actual = parseFloat(data.data.valor);
+                if (residuosEditables.some(r => getResiduoById(r.residuoId)?.moneda === 'UF')) {
+                    const info = document.getElementById('valorUFInfo');
+                    if (info) {
+                        info.style.display = 'block';
+                        info.innerHTML = `<i class='fas fa-info-circle'></i> Valor UF usado: <b>$${parseInt(valorUF_actual).toLocaleString('es-CL')}</b> (actualizado)`;
+                    }
+                }
+                recalcularTotalesModificar();
+            }
+        })
+        .catch(() => {
+            mostrarToast('No se pudo obtener el valor actualizado de la UF', 'error');
+        });
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('modificarModal'));
+    modal.show();
+    // Hacer globales las funciones necesarias
+    window.abrirModalResiduo = abrirModalResiduo;
+    window.recalcularTotalesModificar = recalcularTotalesModificar;
+    window.getResiduoById = getResiduoById;
+}
+
+function getResiduoById(id) {
+    return residuosDisponiblesGlobal.find(r => r.id == id);
+}
+
+function actualizarTablaResiduos() {
+    const cuerpoResiduos = document.getElementById('cuerpoResiduosModificar');
+    cuerpoResiduos.innerHTML = '';
+    residuosEditables.forEach((r, index) => {
+        const residuo = getResiduoById(r.precio_residuo_id || r.residuoId) || {};
+        const cantidad = r.cantidad || 1;
+        const precioUnitario = parseFloat(residuo.precio) || 0;
+        const unidad = residuo.unidad || '';
+        const moneda = residuo.moneda || 'CLP';
+        const subtotal = moneda === 'UF' ? (precioUnitario * valorUF_actual * cantidad) : (precioUnitario * cantidad);
+        residuosEditables[index].precioUnitario = precioUnitario;
+        residuosEditables[index].unidad = unidad;
+        residuosEditables[index].moneda = moneda;
+        residuosEditables[index].subtotal = subtotal;
+        // Render fila
+        const fila = `
+            <tr data-index="${index}">
+                <td>
+                    <select class="form-select" disabled>
+                        <option>${residuo.descripcion || ''}</option>
+                    </select>
+                </td>
+                <td><input type="number" class="form-control" value="${cantidad}" min="0.1" step="0.1" readonly style="cursor:pointer; background:#f8f9fa;" onclick="abrirModalResiduo(${index})"></td>
+                <td><input type="text" class="form-control" value="${unidad}" readonly></td>
+                <td><input type="text" class="form-control" value="${parseFloat(precioUnitario).toLocaleString('es-CL')}" readonly></td>
+                <td><input type="text" class="form-control" value="${moneda}" readonly></td>
+                <td><span class="fw-bold">$<span id="subtotalModificar_${index}">${parseInt(subtotal || 0).toLocaleString('es-CL')}</span></span></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduo(${index})"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+        cuerpoResiduos.insertAdjacentHTML('beforeend', fila);
+    });
+}
+
+function cambiarResiduoSeleccionado(index, residuoId) {
+    residuosEditables[index].residuoId = parseInt(residuoId);
+    actualizarTablaResiduos();
+    recalcularTotalesModificar();
+}
+
+function actualizarResiduo(index, campo, valor) {
+    if (!residuosEditables[index]) return;
+    residuosEditables[index][campo] = valor;
+    actualizarTablaResiduos();
+    recalcularTotalesModificar();
+}
+
+// Actualizo la función de recalcularTotalesModificar para usar la lógica correcta
+function recalcularTotalesModificar() {
+    let subtotalResiduos = 0;
+    residuosEditables.forEach((residuo, idx) => {
+        let precioUnitario = parseFloat(residuo.precioUnitario) || 0;
+        let cantidad = parseFloat(residuo.cantidad) || 0;
+        let valorUF = null;
+        if (residuo.moneda === 'UF') {
+            valorUF = valorUF_actual;
+            precioUnitario = valorUF * (parseFloat(residuo.precio) || precioUnitario);
+        }
+        const subtotal = precioUnitario * cantidad;
+        residuosEditables[idx].precioUnitario = precioUnitario;
+        residuosEditables[idx].subtotal = subtotal;
+        residuosEditables[idx].valorUF = residuo.moneda === 'UF' ? valorUF : null;
+        // Actualizar el DOM del subtotal
+        const subtotalElement = document.getElementById(`subtotalModificar_${idx}`);
+        if (subtotalElement) {
+            subtotalElement.textContent = parseInt(subtotal).toLocaleString('es-CL');
+        }
+        subtotalResiduos += subtotal;
+    });
+    const costoOperativo = parseFloat(document.getElementById('costoOperativo')?.value) || 0;
+    const descuento = parseFloat(document.getElementById('descuento')?.value) || 0;
+    const subtotalFinal = subtotalResiduos + costoOperativo - descuento;
+    const iva = subtotalFinal * 0.19;
+    const total = subtotalFinal + iva;
+    // Actualizar elementos del DOM
+    const elementos = {
+        'subtotalResiduosModificar': subtotalResiduos,
+        'costoOperativoResumen': costoOperativo,
+        'descuentoResumen': descuento,
+        'resumenIvaModificar': iva,
+        'nuevoTotalModificar': total
+    };
+    Object.keys(elementos).forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.textContent = parseInt(elementos[id]).toLocaleString('es-CL');
+        }
+    });
+}
+
+// Actualizo la función eliminarResiduo para que funcione igual que en la creación
+function eliminarResiduo(index) {
+    if (residuosEditables.length <= 1) {
+        mostrarToast('Debe mantener al menos un residuo en la cotización', 'warning');
+        return;
+    }
+    if (confirm('¿Está seguro de eliminar este residuo?')) {
+        residuosEditables.splice(index, 1);
+        actualizarTablaResiduos();
+        recalcularTotalesModificar();
+    }
+}
+
+// Función para guardar todas las modificaciones
+async function guardarModificaciones(id) {
+    let estado = 'pendiente'; // valor por defecto
+    const estadoInput = document.getElementById('estadoCotizacion');
+    if (estadoInput) {
+        estado = estadoInput.value;
+    } else if (cotizacionActual && cotizacionActual.estado) {
+        estado = cotizacionActual.estado;
+    }
+    try {
+        const costoOperativo = parseFloat(document.getElementById('costoOperativo').value) || 0;
+        const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+        const observaciones = document.getElementById('observacionesModificar').value;
+        const enviarCorreo = document.getElementById('enviarCorreo')?.checked;
+        // Solo enviar los campos requeridos por el backend para cada residuo
+        const residuosParaEnviar = residuosEditables.map(r => ({
+            precio_residuo_id: r.precio_residuo_id || r.residuoId,
+            descripcion: r.descripcion,
+            cantidad: Number(r.cantidad),
+            precioUnitario: Number(r.precioUnitario),
+            moneda: r.moneda
+        }));
+        // Datos a enviar
+        const datosActualizados = {
+            estado: estado,
+            detalles: JSON.stringify({
+                residuos: residuosParaEnviar,
+                costoOperativo: costoOperativo,
+                descuento: descuento,
+                ...cotizacionActual.detalles
+            }),
+            observaciones: observaciones,
+            enviarCorreo: enviarCorreo
+        };
+        // Intentar primero con la ruta de estado (que probablemente ya existe)
+        let response;
+        try {
+            response = await fetch(`/cotizaciones/api/${id}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(datosActualizados)
+            });
+        } catch (error) {
+            // Si no existe esa ruta, intentar con una ruta genérica
+            response = await fetch(`/cotizaciones/api/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(datosActualizados)
+            });
+        }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.success) {
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modificarModal'));
+            modal.hide();
+            // Recargar cotizaciones
+            await cargarCotizaciones();
+            // Mostrar mensaje de éxito
+            let mensaje = 'Cotización actualizada correctamente';
+            if (enviarCorreo && data.correoEnviado) {
+                mensaje += ' y enviada por correo al cliente';
+            } else if (enviarCorreo && !data.correoEnviado) {
+                mensaje += ', pero hubo un error al enviar el correo';
+            }
+            mostrarToast(mensaje, 'success');
+        } else {
+            mostrarToast('Error al actualizar cotización: ' + (data.message || 'Error desconocido'), 'error');
+        }
+    } catch (error) {
+        if (error.message.includes('JSON') || error.message.includes('Unexpected token')) {
+            mostrarToast('Error de comunicación con el servidor. Verifica que la ruta API existe.', 'error');
+        } else {
+            mostrarToast('Error de conexión al actualizar la cotización: ' + error.message, 'error');
+        }
+        console.error('Error completo:', error);
+    }
+}
+
+// Función para simular envío de correo
+function enviarCorreoCliente(cotizacion) {
+    console.log('Enviando correo a:', cotizacion.detalles?.datosContacto?.correo || 'email no disponible');
+    console.log('Cotización:', cotizacion);
+    // Aquí implementarías la lógica real de envío de correo
+}
+
+// Función para eliminar cotización
+async function eliminarCotizacion(id) {
+    if (!confirm('¿Está seguro de que desea eliminar esta cotización? Esta acción no se puede deshacer.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/cotizaciones/api/${id}`, { 
+            method: 'DELETE',
+            credentials: 'include' 
+        });
+        const data = await response.json();
+        if (data.success) {
+            mostrarToast('Cotización eliminada correctamente', 'success');
+            await cargarCotizaciones();
+        } else {
+            mostrarToast('Error al eliminar cotización: ' + data.message, 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al eliminar la cotización', 'error');
+    }
+}
+
+// Funciones de filtrado y búsqueda
+function filtrarCotizaciones() {
+    const filtro = document.getElementById('filtroEstado')?.value;
+    const busqueda = document.getElementById('busquedaCotizacion')?.value?.toLowerCase();
+    let cotizacionesFiltradas = [...cotizaciones];
+    // Filtrar por estado
+    if (filtro && filtro !== 'todos') {
+        cotizacionesFiltradas = cotizacionesFiltradas.filter(c => c.estado === filtro);
+    }
+    // Filtrar por búsqueda
+    if (busqueda) {
+        cotizacionesFiltradas = cotizacionesFiltradas.filter(c => {
+            let detalles = {};
+            if (c.detalles) {
+                try {
+                    detalles = typeof c.detalles === 'string' ? JSON.parse(c.detalles) : c.detalles;
+                } catch (e) { detalles = {}; }
+            }
+            const clienteNombre = detalles?.datosContacto?.nombre || '';
+            return (
+                (c.numeroCotizacion && c.numeroCotizacion.toLowerCase().includes(busqueda)) ||
+                clienteNombre.toLowerCase().includes(busqueda) ||
+                (c.observaciones && c.observaciones.toLowerCase().includes(busqueda))
+            );
+        });
+    }
+    mostrarCotizaciones(cotizacionesFiltradas);
+}
+
+// Función para exportar cotizaciones
+function exportarCotizaciones() {
+    if (cotizaciones.length === 0) {
+        mostrarToast('No hay cotizaciones para exportar', 'warning');
+        return;
+    }
+    
+    const headers = ['Número', 'Fecha', 'Cliente', 'Estado', 'Total', 'Observaciones'];
+    const csvContent = [headers.join(',')];
+    
+    cotizaciones.forEach(cotizacion => {
+        const fila = [
+            cotizacion.numeroCotizacion || '',
+            new Date(cotizacion.fechaCotizacion).toLocaleDateString('es-CL'),
+            getClienteNombre(cotizacion).replace(/,/g, ';'),
+            cotizacion.estado || '',
+            cotizacion.total || 0,
+            (cotizacion.observaciones || '').replace(/,/g, ';')
+        ];
+        csvContent.push(fila.join(','));
+    });
+    
+    // Crear y descargar archivo
+    const blob = new Blob([csvContent.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cotizaciones_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    mostrarToast('Archivo exportado correctamente', 'success');
+}
+
+// Sistema de notificaciones toast
+function mostrarToast(mensaje, tipo = 'info') {
+    const toastContainer = document.getElementById('toastContainer');
+    
+    const iconos = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+    };
+    
+    const colores = {
+        success: 'text-success',
+        error: 'text-danger',
+        warning: 'text-warning',
+        info: 'text-info'
+    };
+    
+    const toastId = 'toast-' + Date.now();
+    
+    const toastHTML = `
+        <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+            <div class="toast-header">
+                <i class="${iconos[tipo]} ${colores[tipo]} me-2"></i>
+                <strong class="me-auto">Felmart</strong>
+                <small>ahora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                ${mensaje}
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement);
+    
+    toast.show();
+    
+    // Remover toast después de que se oculte
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar cotizaciones al inicio
+    cargarCotizaciones();
+    
+    // Configurar filtros
+    document.getElementById('filtroEstado')?.addEventListener('change', filtrarCotizaciones);
+    document.getElementById('busquedaCotizacion')?.addEventListener('input', filtrarCotizaciones);
+    
+    // Configurar botón de actualizar
+    document.getElementById('btnRefresh')?.addEventListener('click', cargarCotizaciones);
+    
+    // Configurar dropdowns
+    const dropdownBtn = document.getElementById('adminDropdownBtn');
+    const dropdownMenu = document.getElementById('adminDropdownMenu');
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    if (dropdownBtn && dropdownMenu) {
+        dropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+            if (notificationDropdown) notificationDropdown.classList.remove('show');
+        });
+    }
+
+    if (notificationBell && notificationDropdown) {
+        notificationBell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('show');
+            if (dropdownMenu) dropdownMenu.classList.remove('show');
+            
+            // Marcar notificaciones como leídas
+            if (notificationDropdown.classList.contains('show')) {
+                document.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                });
+                const badge = document.getElementById('notificationBadge');
+                if (badge) badge.style.display = 'none';
+            }
+        });
+    }
+    
+    // Cerrar dropdowns al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (dropdownBtn && dropdownMenu && !dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+        if (notificationBell && notificationDropdown && !notificationBell.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.classList.remove('show');
+        }
+    });
+});
+
+function abrirModalNuevaCotizacion() {
+    residuosNuevos = [];
+    renderTablaResiduosNuevo();
+    recalcularTotalesNuevo();
+    document.getElementById('formNuevaCotizacion').reset();
+    cargarRegionesNuevo();
+    cargarResiduosDisponiblesNuevo();
+    const comunaSelect = document.getElementById('clienteComuna');
+    if (comunaSelect) {
+        comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+        comunaSelect.disabled = true;
+    }
+    limpiarFormularioResiduoNuevo();
+    const modal = new bootstrap.Modal(document.getElementById('nuevaCotizacionModal'));
+    modal.show();
+}
+
+function renderTablaResiduosNuevo() {
+    const cuerpo = document.getElementById('cuerpoResiduosNuevo');
+    cuerpo.innerHTML = '';
+    residuosNuevos.forEach((r, i) => {
+        // Mostrar el subtotal en CLP solo para el usuario
+        let subtotalCLP = r.moneda === 'UF' && valorUF_actual ? r.precioUnitario * valorUF_actual * r.cantidad : r.precioUnitario * r.cantidad;
+        cuerpo.innerHTML += `
+            <tr>
+                <td><strong>${r.descripcion || '-'}</strong></td>
+                <td>${r.unidad || '-'}</td>
+                <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? r.cantidad.toLocaleString('es-CL') : '-'}</td>
+                <td>${formatearPrecioNuevo(r.precioUnitario, r.moneda)}</td>
+                <td>${r.moneda || '-'}</td>
+                <td><strong>${formatearMonedaNuevo(subtotalCLP)}</strong></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+    });
+}
+
+function recalcularTotalesNuevo() {
+    // El subtotal, iva y total solo se calculan para mostrar al usuario
+    let subtotal = 0;
+    residuosNuevos.forEach(r => {
+        if (r.moneda === 'UF' && valorUF_actual) {
+            subtotal += r.precioUnitario * valorUF_actual * r.cantidad;
+        } else {
+            subtotal += r.precioUnitario * r.cantidad;
+        }
+    });
+    const iva = subtotal * 0.19;
+    const total = subtotal + iva;
+    document.getElementById('subtotalResiduosNuevo').textContent = parseInt(subtotal).toLocaleString('es-CL');
+    document.getElementById('ivaNuevo').textContent = parseInt(iva).toLocaleString('es-CL');
+    document.getElementById('totalNuevo').textContent = parseInt(total).toLocaleString('es-CL');
+}
+
+// Cargar regiones y comunas dinámicamente
+async function cargarRegionesNuevo() {
+    const select = document.getElementById('clienteRegion');
+    if (select) {
+        select.innerHTML = '<option value="">Seleccione una región</option>';
+    }
+    try {
+        const response = await fetch('/api/regiones');
+        const data = await response.json();
+        if (data.success && Array.isArray(data.regiones)) {
+            if (select) {
+                data.regiones.forEach(region => {
+                    const option = document.createElement('option');
+                    option.value = region.id;
+                    option.textContent = region.nombre;
+                    select.appendChild(option);
+                });
+            }
+        }
+    } catch (error) {
+        mostrarToast('Error al cargar regiones', 'error');
+    }
+}
+
+const regionSelect = document.getElementById('clienteRegion');
+if (regionSelect) {
+    regionSelect.addEventListener('change', async function() {
+        const regionId = this.value;
+        const comunaSelect = document.getElementById('clienteComuna');
+        if (comunaSelect) {
+            comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+            comunaSelect.disabled = true;
+        }
+        if (!regionId) return;
+        try {
+            const response = await fetch(`/api/regiones/${regionId}/comunas`);
+            const data = await response.json();
+            if (data.success && Array.isArray(data.comunas) && data.comunas.length > 0) {
+                if (comunaSelect) {
+                    data.comunas.forEach(comuna => {
+                        const option = document.createElement('option');
+                        option.value = comuna.id;
+                        option.textContent = comuna.nombre;
+                        comunaSelect.appendChild(option);
+                    });
+                    comunaSelect.disabled = false;
+                }
+            } else {
+                if (comunaSelect) comunaSelect.disabled = true;
+            }
+        } catch (error) {
+            mostrarToast('Error al cargar comunas', 'error');
+        }
+    });
+}
+
+// Guardar nueva cotización
+async function guardarNuevaCotizacion() {
+    // Validar campos obligatorios
+    const nombre = document.getElementById('clienteNombre').value.trim();
+    const rut = document.getElementById('clienteRut').value.trim();
+    const correo = document.getElementById('clienteCorreo').value.trim();
+    const telefono = document.getElementById('clienteTelefono').value.trim();
+    const direccion = document.getElementById('clienteDireccion').value.trim();
+    const region_id = document.getElementById('clienteRegion').value;
+    const comuna_id = document.getElementById('clienteComuna').value;
+    const nombreEmpresa = document.getElementById('clienteEmpresa').value.trim();
+    const rutEmpresa = document.getElementById('nuevo_rutEmpresa').value.trim();
+    const observaciones = document.getElementById('observaciones').value.trim();
+
+    if (!nombre || !rut || !correo || !telefono || !direccion || !region_id || !comuna_id) {
+        mostrarToast('Por favor complete todos los campos obligatorios', 'warning');
+        return;
+    }
+    if (residuosNuevos.length === 0) {
+        mostrarToast('Debe agregar al menos un residuo', 'warning');
+        return;
+    }
+
+    // Calcular totales
+    const subtotal = residuosNuevos.reduce((sum, r) => sum + (parseFloat(r.subtotal) || 0), 0);
+    const iva = subtotal * 0.19;
+    const total = subtotal + iva;
+
+    // Preparar datos
+    const datos = {
+        nombre,
+        rut,
+        correo,
+        telefono,
+        direccion,
+        region_id,
+        comuna_id,
+        nombreEmpresa,
+        rutEmpresa,
+        observaciones,
+        residuosCotizados: JSON.stringify(residuosNuevos),
+        total
+    };
+
+    try {
+        const response = await fetch('/cotizaciones/api/crear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(datos)
+        });
+        const data = await response.json();
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('nuevaCotizacionModal')).hide();
+            await cargarCotizaciones();
+            mostrarToast('Cotización creada correctamente', 'success');
+        } else {
+            mostrarToast('Error al crear cotización: ' + (data.message || 'Error desconocido'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al crear la cotización: ' + error.message, 'error');
+    }
+}
+
+function descargarPDFCotizacion(id) {
+    if (!id) {
+        alert('No se pudo obtener el ID de la cotización.');
+        return;
+    }
+    window.open(`/cotizaciones/${id}/descargar-pdf`, '_blank');
+}
+
+// Modal secundario para agregar/editar residuo
+let modalResiduoIndex = null; // null = agregar, >=0 = editar
+
+function abrirModalResiduo(index = null) {
+    modalResiduoIndex = index;
+    let residuoId = null;
+    let cantidad = 1;
+    if (index !== null && residuosEditables[index]) {
+        residuoId = residuosEditables[index].precio_residuo_id || residuosEditables[index].residuoId;
+        cantidad = residuosEditables[index].cantidad;
+    } else if (residuosDisponiblesGlobal.length > 0) {
+        residuoId = residuosDisponiblesGlobal[0].id;
+    }
+    // Eliminar modal anterior si existe
+    const modalExistente = document.getElementById('modalAgregarEditarResiduo');
+    if (modalExistente) modalExistente.remove();
+    // Modal HTML
+    const modalContent = `
+    <div class="modal fade" id="modalAgregarEditarResiduo" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">${index === null ? 'Agregar Residuo' : 'Editar Cantidad'}</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formModalResiduo">
+              <div class="mb-3">
+                <label class="form-label">Residuo</label>
+                <select class="form-select" id="selectResiduoModal" ${index !== null ? 'disabled' : ''}>
+                  ${residuosDisponiblesGlobal.map(res => `<option value="${res.id}" ${res.id == residuoId ? 'selected' : ''}>${res.descripcion}</option>`).join('')}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Cantidad</label>
+                <input type="number" class="form-control" id="inputCantidadModal" value="${cantidad}" min="0.1" step="0.1" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Unidad</label>
+                <input type="text" class="form-control" id="inputUnidadModal" value="" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Precio Unitario</label>
+                <input type="text" class="form-control" id="inputPrecioModal" value="" readonly>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Moneda</label>
+                <input type="text" class="form-control" id="inputMonedaModal" value="" readonly>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btnGuardarResiduoModal">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+    // Setear valores de unidad, precio, moneda
+    function actualizarCamposModal() {
+        const residuo = getResiduoById(document.getElementById('selectResiduoModal').value);
+        document.getElementById('inputUnidadModal').value = residuo ? residuo.unidad : '';
+        document.getElementById('inputPrecioModal').value = residuo ? parseFloat(residuo.precio).toLocaleString('es-CL') : '';
+        document.getElementById('inputMonedaModal').value = residuo ? residuo.moneda : '';
+    }
+    document.getElementById('selectResiduoModal').addEventListener('change', actualizarCamposModal);
+    actualizarCamposModal();
+    // Guardar
+    document.getElementById('btnGuardarResiduoModal').onclick = function() {
+        const residuoId = parseInt(document.getElementById('selectResiduoModal').value);
+        const cantidad = parseFloat(document.getElementById('inputCantidadModal').value);
+        const residuo = getResiduoById(residuoId);
+        if (!residuo || !cantidad || cantidad <= 0) {
+            mostrarToast('Seleccione un residuo y una cantidad válida', 'warning');
+            return;
+        }
+        if (modalResiduoIndex === null) {
+            // Agregar
+            residuosEditables.push({
+                residuoId: residuo.id,
+                precio_residuo_id: residuo.id,
+                descripcion: residuo.descripcion,
+                cantidad: cantidad,
+                precioUnitario: residuo.precio,
+                unidad: residuo.unidad,
+                moneda: residuo.moneda,
+                subtotal: 0
+            });
+        } else {
+            // Editar cantidad
+            residuosEditables[modalResiduoIndex].cantidad = cantidad;
+        }
+        actualizarTablaResiduos();
+        recalcularTotalesModificar();
+        bootstrap.Modal.getInstance(document.getElementById('modalAgregarEditarResiduo')).hide();
+    };
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('modalAgregarEditarResiduo'));
+    modal.show();
+}
+
+// Modifico la tabla para que al hacer clic en cantidad se abra el modal de edición
+function actualizarTablaResiduos() {
+    const cuerpoResiduos = document.getElementById('cuerpoResiduosModificar');
+    cuerpoResiduos.innerHTML = '';
+    residuosEditables.forEach((r, index) => {
+        const residuo = getResiduoById(r.precio_residuo_id || r.residuoId) || {};
+        const cantidad = r.cantidad || 1;
+        const precioUnitario = parseFloat(residuo.precio) || 0;
+        const unidad = residuo.unidad || '';
+        const moneda = residuo.moneda || 'CLP';
+        const subtotal = moneda === 'UF' ? (precioUnitario * valorUF_actual * cantidad) : (precioUnitario * cantidad);
+        residuosEditables[index].precioUnitario = precioUnitario;
+        residuosEditables[index].unidad = unidad;
+        residuosEditables[index].moneda = moneda;
+        residuosEditables[index].subtotal = subtotal;
+        // Render fila
+        const fila = `
+            <tr data-index="${index}">
+                <td>
+                    <select class="form-select" disabled>
+                        <option>${residuo.descripcion || ''}</option>
+                    </select>
+                </td>
+                <td><input type="number" class="form-control" value="${cantidad}" min="0.1" step="0.1" readonly style="cursor:pointer; background:#f8f9fa;" onclick="abrirModalResiduo(${index})"></td>
+                <td><input type="text" class="form-control" value="${unidad}" readonly></td>
+                <td><input type="text" class="form-control" value="${parseFloat(precioUnitario).toLocaleString('es-CL')}" readonly></td>
+                <td><input type="text" class="form-control" value="${moneda}" readonly></td>
+                <td><span class="fw-bold">$<span id="subtotalModificar_${index}">${parseInt(subtotal || 0).toLocaleString('es-CL')}</span></span></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduo(${index})"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+        cuerpoResiduos.insertAdjacentHTML('beforeend', fila);
+    });
+}
+
+// Modifico el botón agregar residuo para abrir el modal
+// ... en mostrarModalModificar ...
+const btnAgregarResiduoModificar = document.getElementById('btnAgregarResiduoModificar');
+if (btnAgregarResiduoModificar) {
+    btnAgregarResiduoModificar.onclick = function() {
+    abrirModalResiduo();
+};
+}
+// ... existing code ...
+
+// --- NUEVA LÓGICA PARA AGREGAR RESIDUOS EN NUEVA COTIZACIÓN ---
+let residuosDisponiblesNuevo = [];
+// Elimina cualquier valor fijo de UF (como VALOR_UF = 37000)
+
+
+async function cargarResiduosDisponiblesNuevo() {
+    try {
+        const res = await fetch('/api/precios-residuos');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.residuos)) {
+            residuosDisponiblesNuevo = data.residuos;
+            const select = document.getElementById('nuevo_residuoId');
+            select.innerHTML = '<option value="">-- Seleccione un tipo --</option>';
+            residuosDisponiblesNuevo.forEach(residuo => {
+                const option = document.createElement('option');
+                option.value = residuo.id;
+                option.dataset.unidad = residuo.unidad;
+                option.dataset.precio = residuo.precio;
+                option.dataset.moneda = residuo.moneda;
+                option.dataset.descripcion = residuo.descripcion;
+                option.textContent = residuo.descripcion;
+                select.appendChild(option);
+            });
+        }
+    } catch (e) {
+        mostrarToast('Error al cargar residuos disponibles', 'error');
+    }
+}
+
+function formatearPrecioNuevo(valor, moneda) {
+    if (typeof valor !== 'number' || isNaN(valor)) return '-';
+    if (moneda === 'UF') {
+        return `${valor.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} UF`;
+    } else {
+        return new Intl.NumberFormat('es-CL', {
+            style: 'currency',
+            currency: 'CLP',
+            minimumFractionDigits: 0
+        }).format(valor);
+    }
+}
+
+function formatearMonedaNuevo(valor) {
+    if (typeof valor !== 'number' || isNaN(valor)) return '-';
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    }).format(valor);
+}
+
+function renderTablaResiduosNuevo() {
+    const cuerpo = document.getElementById('cuerpoResiduosNuevo');
+    cuerpo.innerHTML = '';
+    if (residuosNuevos.length === 0) {
+        cuerpo.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No hay residuos agregados</td></tr>`;
+        return;
+    }
+    residuosNuevos.forEach((r, i) => {
+        // Mostrar el subtotal en CLP solo para el usuario
+        let subtotalCLP = r.moneda === 'UF' && valorUF_actual ? r.precioUnitario * valorUF_actual * r.cantidad : r.precioUnitario * r.cantidad;
+        cuerpo.innerHTML += `
+            <tr>
+                <td><strong>${r.descripcion || '-'}</strong></td>
+                <td>${r.unidad || '-'}</td>
+                <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? r.cantidad.toLocaleString('es-CL') : '-'}</td>
+                <td>${formatearPrecioNuevo(r.precioUnitario, r.moneda)}</td>
+                <td>${r.moneda || '-'}</td>
+                <td><strong>${formatearMonedaNuevo(subtotalCLP)}</strong></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+    });
+}
+
+function recalcularTotalesNuevo() {
+    // El subtotal, iva y total solo se calculan para mostrar al usuario
+    let subtotal = 0;
+    residuosNuevos.forEach(r => {
+        if (r.moneda === 'UF' && valorUF_actual) {
+            subtotal += r.precioUnitario * valorUF_actual * r.cantidad;
+        } else {
+            subtotal += r.precioUnitario * r.cantidad;
+        }
+    });
+    const iva = subtotal * 0.19;
+    const total = subtotal + iva;
+    document.getElementById('subtotalResiduosNuevo').textContent = parseInt(subtotal).toLocaleString('es-CL');
+    document.getElementById('ivaNuevo').textContent = parseInt(iva).toLocaleString('es-CL');
+    document.getElementById('totalNuevo').textContent = parseInt(total).toLocaleString('es-CL');
+}
+
+function eliminarResiduoNuevo(i) {
+    residuosNuevos.splice(i, 1);
+    renderTablaResiduosNuevo();
+    recalcularTotalesNuevo();
+}
+
+function limpiarFormularioResiduoNuevo() {
+    document.getElementById('nuevo_residuoId').value = '';
+    document.getElementById('nuevo_unidad').value = '';
+    document.getElementById('nuevo_precioUnitario').value = '';
+    document.getElementById('nuevo_moneda').value = '';
+    document.getElementById('nuevo_cantidad').value = '';
+    document.getElementById('nuevo_cantidad').disabled = true;
+}
+
+document.getElementById('nuevo_residuoId').addEventListener('change', function() {
+    const option = this.options[this.selectedIndex];
+    if (option.value) {
+        const precio = parseFloat(option.dataset.precio);
+        const moneda = option.dataset.moneda;
+        document.getElementById('nuevo_unidad').value = option.dataset.unidad || '';
+        document.getElementById('nuevo_precioUnitario').value = (moneda === 'UF' && !isNaN(precio)) ? `${precio} UF` : (isNaN(precio) ? '' : formatearPrecioNuevo(precio, moneda));
+        document.getElementById('nuevo_moneda').value = moneda || '';
+        document.getElementById('nuevo_cantidad').disabled = false;
+    } else {
+        limpiarFormularioResiduoNuevo();
+    }
+});
+
+document.getElementById('btnAgregarResiduoNuevo').addEventListener('click', function() {
+    const select = document.getElementById('nuevo_residuoId');
+    const option = select.options[select.selectedIndex];
+    const cantidad = parseFloat(document.getElementById('nuevo_cantidad').value);
+    const precioUnitario = parseFloat(option.dataset.precio);
+    const moneda = option.dataset.moneda;
+    if (!option.value || !cantidad || cantidad <= 0 || isNaN(precioUnitario) || !moneda) {
+        mostrarToast('Seleccione un residuo válido, cantidad y precio válidos', 'warning');
+        return;
+    }
+    // NO calcular subtotal ni convertir a CLP aquí, solo mostrarlo en la tabla
+    residuosNuevos.push({
+        residuoId: option.value,
+        descripcion: option.dataset.descripcion,
+        unidad: option.dataset.unidad,
+        cantidad: cantidad,
+        precioUnitario: precioUnitario, // Puede ser UF o CLP
+        moneda: moneda // 'UF' o 'CLP'
+        // NO incluir subtotal aquí
+    });
+    renderTablaResiduosNuevo();
+    recalcularTotalesNuevo();
+    limpiarFormularioResiduoNuevo();
+});
+
+function abrirModalNuevaCotizacion() {
+    residuosNuevos = [];
+    renderTablaResiduosNuevo();
+    recalcularTotalesNuevo();
+    document.getElementById('formNuevaCotizacion').reset();
+    cargarRegionesNuevo();
+    cargarResiduosDisponiblesNuevo();
+    document.getElementById('clienteComuna').innerHTML = '<option value="">Seleccione una comuna</option>';
+    document.getElementById('clienteComuna').disabled = true;
+    limpiarFormularioResiduoNuevo();
+    const modal = new bootstrap.Modal(document.getElementById('nuevaCotizacionModal'));
+    modal.show();
+}
+// --- FIN NUEVA LÓGICA PARA AGREGAR RESIDUOS EN NUEVA COTIZACIÓN ---
+
+// Función global para formatear moneda en edición
+function formatearMonedaEditar(valor) {
+    if (typeof valor !== 'number' || isNaN(valor)) return '-';
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    }).format(valor);
+}
+    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formNuevaCotizacion');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+    }
+});
+</script>
+</body>
+</html>

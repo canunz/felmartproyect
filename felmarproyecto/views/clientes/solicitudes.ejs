@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Solicitudes de Retiro - Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00616e;
+            --primary-dark: #004d57;
+            --primary-light: #00818f;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .user-dropdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 250px;
+            margin-top: 0.5rem;
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 97, 110, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+
+        /* MAIN CONTENT */
+        .main-container {
+            padding: 40px 0 32px 0;
+            background: var(--light-bg);
+            min-height: calc(100vh - 80px);
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 0;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 3rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stats-card.warning::before {
+            background: linear-gradient(90deg, var(--warning-color), #ffcd3c);
+        }
+
+        .stats-card.info::before {
+            background: linear-gradient(90deg, var(--info-color), #20c997);
+        }
+
+        .stats-card.success::before {
+            background: linear-gradient(90deg, var(--success-color), #34ce57);
+        }
+
+        .stats-card.danger::before {
+            background: linear-gradient(90deg, var(--danger-color), #e55a5a);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .card-icon.warning {
+            background: linear-gradient(135deg, var(--warning-color), #ffcd3c);
+        }
+
+        .card-icon.info {
+            background: linear-gradient(135deg, var(--info-color), #20c997);
+        }
+
+        .card-icon.success {
+            background: linear-gradient(135deg, var(--success-color), #34ce57);
+        }
+
+        .card-icon.danger {
+            background: linear-gradient(135deg, var(--danger-color), #e55a5a);
+        }
+
+        .card-info h6 {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-info h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .card-info h2.warning { color: var(--warning-color); }
+        .card-info h2.info { color: var(--info-color); }
+        .card-info h2.success { color: var(--success-color); }
+        .card-info h2.danger { color: var(--danger-color); }
+
+        /* TABLE SECTION */
+        .table-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .table-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-refresh {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-new-request {
+            background: white;
+            color: var(--primary-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-new-request:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            color: var(--primary-color);
+        }
+
+        /* MODERN TABLE */
+        .table-container {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .table-modern {
+            width: 100%;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-modern thead th {
+            background: #f8f9fa;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border-bottom: 3px solid var(--primary-color);
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .table-modern tbody td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+            vertical-align: middle;
+        }
+
+        .table-modern tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table-modern tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.1);
+        }
+
+        /* STATUS BADGES MODERNOS */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .status-badge.pendiente {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-badge.confirmada {
+            background: linear-gradient(135deg, #d1ecf1, #a8dadc);
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .status-badge.completada {
+            background: linear-gradient(135deg, #d4edda, #95d5b2);
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .status-badge.cancelada {
+            background: linear-gradient(135deg, #f8d7da, #ffb3ba);
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        /* SOLICITUD NUMBER STYLING */
+        .solicitud-number {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .solicitud-number:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* ACTION BUTTONS */
+        .btn-action {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.3);
+        }
+
+        .btn-action:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 97, 110, 0.4);
+        }
+
+        /* ALERT BAR */
+        .alert-bar {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 1px solid #ffc107;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .alert-bar i {
+            color: #856404;
+            font-size: 1.5rem;
+        }
+
+        .alert-bar-text {
+            flex: 1;
+            color: #856404;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* MODAL MEJORADO */
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-bottom: none;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            opacity: 1;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        /* DETAIL SECTIONS */
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        /* INFO GRID */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .info-text {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(0, 97, 110, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h5 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* ANIMATIONS */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .table-actions {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover;">
+                Felmart
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/clientes/solicitudes">
+                            <i class="fas fa-file-alt me-2"></i>Mis Solicitudes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/cotizaciones">
+                            <i class="fas fa-calculator me-2"></i>Cotizaciones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/calendario">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/certificados">
+                            <i class="fas fa-certificate me-2"></i>Certificados
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="btn user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>
+                        Cliente
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <small style="color: rgba(255,255,255,0.8);">Bienvenido</small><br>
+                                    <strong style="color: white;">Cliente</strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/miperfil">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/cambiar-password">
+                                <i class="fas fa-key me-2 text-warning"></i>
+                                Cambiar Contraseña
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/ayuda-soporte">
+                                <i class="fas fa-question-circle me-2 text-info"></i>
+                                Ayuda y Soporte
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/">
+                                <i class="fas fa-home me-2 text-secondary"></i>
+                                Volver al Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- Alert Container -->
+            <div id="alertBarContainer"></div>
+
+            <!-- Page Header -->
+            <div class="page-header fade-in-up">
+                <h1 class="page-title">
+                    <i class="fas fa-recycle"></i>
+                    Mis Solicitudes de Retiro
+                </h1>
+                <p class="page-subtitle">Gestione y monitoree todas sus solicitudes de retiro de residuos</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stats-card warning fade-in-up stagger-1">
+                    <div class="card-content">
+                        <div class="card-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-info">
+                            <h6>Pendientes</h6>
+                            <h2 class="warning" id="pendientesCount"><%= typeof stats !== 'undefined' ? stats.pendientes : 0 %></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card info fade-in-up stagger-2">
+                    <div class="card-content">
+                        <div class="card-icon info">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="card-info">
+                            <h6>Confirmadas</h6>
+                            <h2 class="info" id="confirmadasCount"><%= typeof stats !== 'undefined' ? stats.confirmadas : 0 %></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card success fade-in-up stagger-3">
+                    <div class="card-content">
+                        <div class="card-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="card-info">
+                            <h6>Completadas</h6>
+                            <h2 class="success" id="completadasCount"><%= typeof stats !== 'undefined' ? stats.completadas : 0 %></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card danger fade-in-up stagger-4">
+                    <div class="card-content">
+                        <div class="card-icon danger">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="card-info">
+                            <h6>Canceladas</h6>
+                            <h2 class="danger" id="canceladasCount"><%= typeof stats !== 'undefined' ? stats.canceladas : 0 %></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="table-section fade-in-up">
+                <div class="table-header">
+                    <h5 class="table-title">
+                        <i class="fas fa-list"></i>
+                        Lista de Solicitudes
+                    </h5>
+                    <div class="table-actions">
+                        <button class="btn-refresh" onclick="cargarSolicitudes()">
+                            <i class="fas fa-sync-alt"></i>
+                            Actualizar
+                        </button>
+                        <button onclick="mostrarModalCrear()" class="btn-new-request">
+                            <i class="fas fa-plus-circle"></i>
+                            Nueva Solicitud
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>NÚMERO</th>
+                                    <th>FECHA</th>
+                                    <th>TIPO</th>
+                                    <th>URGENCIA</th>
+                                    <th>DESCRIPCIÓN</th>
+                                    <th>ESTADO</th>
+                                    <th>ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="solicitudesTableBody">
+                                <!-- El contenido se cargará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalles -->
+    <div class="modal fade" id="detallesModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Detalles de la Solicitud
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="detallesSolicitud"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div class="modal fade" id="editarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>
+                        Editar Solicitud
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarSolicitudForm">
+                        <input type="hidden" id="solicitudId">
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Solicitud</label>
+                            <select class="form-select" id="tipoSolicitud" required>
+                                <option value="retiro">Retiro</option>
+                                <option value="evaluacion">Evaluación</option>
+                                <option value="cotizacion">Cotización</option>
+                                <option value="visitas">Visitas</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Urgencia</label>
+                            <select class="form-select" id="urgencia" required>
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarEdicion()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Creación -->
+    <div class="modal fade" id="crearModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Nueva Solicitud
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="crearSolicitudForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Solicitud</label>
+                            <select class="form-select" id="nuevoTipoSolicitud" required>
+                                <option value="retiro">Retiro</option>
+                                <option value="evaluacion">Evaluación</option>
+                                <option value="cotizacion">Cotización</option>
+                                <option value="visitas">Visitas</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Urgencia</label>
+                            <select class="form-select" id="nuevaUrgencia" required>
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control" id="nuevaDescripcion" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="crearSolicitud()">Crear Solicitud</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let detallesModal;
+        let editarModal;
+        let crearModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            detallesModal = new bootstrap.Modal(document.getElementById('detallesModal'));
+            editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
+            crearModal = new bootstrap.Modal(document.getElementById('crearModal'));
+            cargarSolicitudes();
+        });
+
+        function mostrarModalCrear() {
+            document.getElementById('crearSolicitudForm').reset();
+            crearModal.show();
+        }
+
+        async function crearSolicitud() {
+            const datos = {
+                tipo_solicitud: document.getElementById('nuevoTipoSolicitud').value,
+                urgencia: document.getElementById('nuevaUrgencia').value,
+                descripcion: document.getElementById('nuevaDescripcion').value
+            };
+
+            try {
+                const response = await fetch('/api/solicitudes/crear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al crear solicitud');
+                }
+
+                crearModal.hide();
+                showAlertBar('Solicitud creada correctamente', 'fa-check-circle', '#28a745');
+                cargarSolicitudes();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlertBar('Error al crear la solicitud', 'fa-exclamation-circle', '#dc3545');
+            }
+        }
+
+        async function cargarSolicitudes() {
+            try {
+                const response = await fetch('/api/solicitudes/listar');
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar solicitudes');
+                }
+
+                const solicitudes = data.data;
+                const tbody = document.getElementById('solicitudesTableBody');
+                
+                if (solicitudes.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <h5>No hay solicitudes registradas</h5>
+                                    <p class="text-muted">Comienza creando tu primera solicitud</p>
+                                    <button onclick="mostrarModalCrear()" class="btn btn-primary mt-3">
+                                        <i class="fas fa-plus-circle me-2"></i>Nueva Solicitud
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = solicitudes.map(solicitud => {
+                                            let statusClass = '';
+                                            let statusIcon = '';
+                                            const estado = solicitud.estado.toLowerCase();
+                    
+                                            if (estado === 'pendiente') {
+                        statusClass = 'status-badge pendiente';
+                                                statusIcon = 'fas fa-clock';
+                    } else if (estado === 'en_proceso') {
+                        statusClass = 'status-badge confirmada';
+                        statusIcon = 'fas fa-cog';
+                                            } else if (estado === 'completada') {
+                        statusClass = 'status-badge completada';
+                                                statusIcon = 'fas fa-check-double';
+                                            }
+
+                    return `
+                                        <tr>
+                            <td><strong>#${solicitud.id}</strong></td>
+                            <td>${new Date(solicitud.created_at).toLocaleDateString('es-ES')}</td>
+                                            <td>
+                                <span class="badge bg-primary">
+                                    ${solicitud.tipo_solicitud.toUpperCase()}
+                                                </span>
+                                            </td>
+                            <td>
+                                <span class="badge ${solicitud.urgencia === 'alta' ? 'bg-danger' : 
+                                                solicitud.urgencia === 'media' ? 'bg-warning' : 'bg-info'}">
+                                    ${solicitud.urgencia.toUpperCase()}
+                                </span>
+                            </td>
+                            <td>${solicitud.descripcion ? solicitud.descripcion.substring(0, 50) + (solicitud.descripcion.length > 50 ? '...' : '') : 'Sin descripción'}</td>
+                            <td>
+                                <span class="${statusClass}">
+                                    <i class="${statusIcon} me-1"></i>
+                                    ${solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-info btn-sm" onclick="verDetalles(${solicitud.id})">
+                                                    <i class="fas fa-eye"></i>
+                                    </button>
+                                    ${estado === 'pendiente' ? `
+                                        <button class="btn btn-warning btn-sm" onclick="editarSolicitud(${solicitud.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                            </td>
+                                        </tr>
+                    `;
+                }).join('');
+
+                // Actualizar contadores
+                actualizarContadores(solicitudes);
+            } catch (error) {
+                console.error('Error:', error);
+                showAlertBar('Error al cargar las solicitudes', 'fa-exclamation-circle', '#dc3545');
+            }
+        }
+
+        function actualizarContadores(solicitudes) {
+            const contadores = {
+                pendientes: 0,
+                en_proceso: 0,
+                completadas: 0,
+                canceladas: 0
+            };
+
+            solicitudes.forEach(solicitud => {
+                const estado = solicitud.estado.toLowerCase();
+                if (contadores.hasOwnProperty(estado)) {
+                    contadores[estado]++;
+                }
+            });
+
+            document.getElementById('pendientesCount').textContent = contadores.pendientes;
+            document.getElementById('confirmadasCount').textContent = contadores.en_proceso;
+            document.getElementById('completadasCount').textContent = contadores.completadas;
+            document.getElementById('canceladasCount').textContent = contadores.canceladas;
+        }
+
+        async function verDetalles(id) {
+            try {
+                const response = await fetch(`/api/solicitudes/${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar detalles');
+                }
+
+                const solicitud = data.solicitud;
+                document.getElementById('detallesSolicitud').innerHTML = `
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-hashtag"></i>
+                    </div>
+                            <div class="info-text">
+                                <div class="info-label">Número</div>
+                                <div class="info-value">#${solicitud.id}</div>
+                </div>
+            </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar"></i>
+        </div>
+                            <div class="info-text">
+                                <div class="info-label">Fecha</div>
+                                <div class="info-value">${new Date(solicitud.created_at).toLocaleDateString('es-ES')}</div>
+    </div>
+                </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-tag"></i>
+                </div>
+                            <div class="info-text">
+                                <div class="info-label">Tipo</div>
+                                <div class="info-value">${solicitud.tipo_solicitud.toUpperCase()}</div>
+            </div>
+        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+    </div>
+                            <div class="info-text">
+                                <div class="info-label">Urgencia</div>
+                                <div class="info-value">${solicitud.urgencia.toUpperCase()}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="info-text">
+                                <div class="info-label">Estado</div>
+                                <div class="info-value">${solicitud.estado.toUpperCase()}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="mb-3">Descripción</h6>
+                        <p>${solicitud.descripcion || 'Sin descripción'}</p>
+                    </div>
+                `;
+
+                detallesModal.show();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlertBar('Error al cargar los detalles', 'fa-exclamation-circle', '#dc3545');
+            }
+        }
+
+        async function editarSolicitud(id) {
+            try {
+                const response = await fetch(`/api/solicitudes/${id}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar solicitud');
+                }
+
+                const solicitud = data.solicitud;
+                document.getElementById('solicitudId').value = solicitud.id;
+                document.getElementById('tipoSolicitud').value = solicitud.tipo_solicitud;
+                document.getElementById('urgencia').value = solicitud.urgencia;
+                document.getElementById('descripcion').value = solicitud.descripcion;
+
+                editarModal.show();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlertBar('Error al cargar la solicitud', 'fa-exclamation-circle', '#dc3545');
+            }
+        }
+
+        async function guardarEdicion() {
+            const id = document.getElementById('solicitudId').value;
+            const datos = {
+                tipo_solicitud: document.getElementById('tipoSolicitud').value,
+                urgencia: document.getElementById('urgencia').value,
+                descripcion: document.getElementById('descripcion').value
+            };
+
+            try {
+                const response = await fetch(`/api/solicitudes/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al actualizar solicitud');
+                }
+
+                editarModal.hide();
+                showAlertBar('Solicitud actualizada correctamente', 'fa-check-circle', '#28a745');
+                cargarSolicitudes();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlertBar('Error al actualizar la solicitud', 'fa-exclamation-circle', '#dc3545');
+            }
+        }
+
+        function showAlertBar(message, icon, color) {
+            const alertBar = document.createElement('div');
+            alertBar.className = 'alert-bar fade-in-up';
+            alertBar.innerHTML = `
+                <i class="fas ${icon}"></i>
+                    <span class="alert-bar-text">${message}</span>
+            `;
+            alertBar.style.background = `linear-gradient(135deg, ${color}22, ${color}11)`;
+            alertBar.style.borderColor = color;
+            alertBar.style.color = color;
+
+            const container = document.getElementById('alertBarContainer');
+            container.innerHTML = '';
+            container.appendChild(alertBar);
+
+                        setTimeout(() => {
+                            alertBar.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

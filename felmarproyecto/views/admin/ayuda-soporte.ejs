@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda y Soporte | Panel Administrativo - Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00818f;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --purple-color: #6f42c1;
+            --orange-color: #fd7e14;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Header Navigation */
+        .header-nav { padding: 0.35rem 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-link, .nav-link i { font-size: 0.82rem !important; }
+        .user-btn { font-size: 0.82rem !important; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .help-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .help-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .help-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--nav-primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .help-subtitle {
+            font-size: 1.1rem;
+            color: var(--nav-secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Help Sections */
+        .help-section {
+            background: var(--nav-white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--nav-transition);
+        }
+
+        .help-section:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--nav-primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            font-size: 1.8rem;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .help-card {
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border-left: 4px solid var(--nav-primary-color);
+            transition: var(--nav-transition);
+        }
+
+        .help-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .card-description {
+            color: var(--nav-secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .card-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-steps li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            background: var(--nav-primary-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+        }
+
+        /* FAQ Section */
+        .faq-item {
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: var(--nav-white);
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--nav-primary-color);
+            transition: var(--nav-transition);
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .faq-answer {
+            padding: 1.5rem;
+            color: var(--nav-secondary-color);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .help-title {
+                font-size: 2rem;
+            }
+            
+            .help-section {
+                padding: 1.5rem;
+            }
+            
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" type="button" style="background:#009688;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="margin-top: 60px;">
+            <div class="help-container">
+                <!-- Header -->
+                <div class="help-header">
+                    <h1 class="help-title">Centro de Ayuda y Soporte</h1>
+                    <p class="help-subtitle">
+                        Encuentra toda la información necesaria para gestionar eficientemente el sistema administrativo de Felmart
+                    </p>
+                </div>
+
+                <!-- Quick Start Guide -->
+                <div class="help-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-rocket"></i>
+                        Guía de Inicio Rápido
+                    </h2>
+                    <div class="help-grid">
+                        <div class="help-card">
+                            <h3 class="card-title">1. Gestión de Clientes</h3>
+                            <p class="card-description">Aprende a gestionar los clientes del sistema</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">1</span>Accede a "Clientes" en el menú</li>
+                                <li><span class="step-number">2</span>Revisa la lista de clientes registrados</li>
+                                <li><span class="step-number">3</span>Agrega nuevos clientes con el botón "+"</li>
+                                <li><span class="step-number">4</span>Edita información existente</li>
+                                <li><span class="step-number">5</span>Gestiona el estado de los clientes</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="help-card">
+                            <h3 class="card-title">2. Solicitudes de Retiro</h3>
+                            <p class="card-description">Maneja las solicitudes de retiro de residuos</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">1</span>Ve a "Solicitudes" en el menú</li>
+                                <li><span class="step-number">2</span>Revisa solicitudes pendientes</li>
+                                <li><span class="step-number">3</span>Asigna fechas de retiro</li>
+                                <li><span class="step-number">4</span>Actualiza estados</li>
+                                <li><span class="step-number">5</span>Genera reportes</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="help-card">
+                            <h3 class="card-title">3. Cotizaciones</h3>
+                            <p class="card-description">Gestiona las cotizaciones del sistema</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">1</span>Accede a "Cotizaciones"</li>
+                                <li><span class="step-number">2</span>Revisa cotizaciones nuevas</li>
+                                <li><span class="step-number">3</span>Calcula precios</li>
+                                <li><span class="step-number">4</span>Envía cotizaciones</li>
+                                <li><span class="step-number">5</span>Seguimiento de estados</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Features -->
+                <div class="help-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-cogs"></i>
+                        Funcionalidades del Sistema
+                    </h2>
+                    <div class="help-grid">
+                        <div class="help-card">
+                            <h3 class="card-title">Gestión de Visitas</h3>
+                            <p class="card-description">Programa y gestiona visitas de evaluación y retiro</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">✓</span>Programar visitas</li>
+                                <li><span class="step-number">✓</span>Confirmar horarios</li>
+                                <li><span class="step-number">✓</span>Gestionar estados</li>
+                                <li><span class="step-number">✓</span>Notificaciones automáticas</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="help-card">
+                            <h3 class="card-title">Certificados</h3>
+                            <p class="card-description">Genera y gestiona certificados de disposición</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">✓</span>Crear certificados</li>
+                                <li><span class="step-number">✓</span>Subir archivos PDF</li>
+                                <li><span class="step-number">✓</span>Asignar a clientes</li>
+                                <li><span class="step-number">✓</span>Descargar documentos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="help-card">
+                            <h3 class="card-title">Gestión de Residuos</h3>
+                            <p class="card-description">Administra tipos y precios de residuos</p>
+                            <ul class="card-steps">
+                                <li><span class="step-number">✓</span>Agregar tipos de residuo</li>
+                                <li><span class="step-number">✓</span>Actualizar precios</li>
+                                <li><span class="step-number">✓</span>Gestionar categorías</li>
+                                <li><span class="step-number">✓</span>Configurar unidades</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="help-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-question-circle"></i>
+                        Preguntas Frecuentes
+                    </h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo puedo agregar un nuevo cliente?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            Para agregar un nuevo cliente, ve a la sección "Clientes" y haz clic en el botón "+" o "Agregar Cliente". Completa todos los campos requeridos incluyendo RUT, nombre de empresa, contacto y dirección. El sistema creará automáticamente un usuario asociado.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo gestiono las solicitudes de retiro?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            En la sección "Solicitudes" puedes ver todas las solicitudes de retiro. Puedes cambiar el estado, asignar fechas de retiro, agregar observaciones y generar reportes. Las solicitudes se pueden marcar como pendientes, en proceso, completadas o canceladas.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo genero una cotización?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            Ve a "Cotizaciones" y selecciona "Nueva Cotización". Completa los datos del cliente, selecciona los tipos de residuo y cantidades. El sistema calculará automáticamente el precio total. Puedes enviar la cotización por email directamente desde el sistema.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo programo una visita?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            En la sección "Visitas" puedes programar nuevas visitas seleccionando el cliente, tipo de visita (evaluación o retiro), fecha y hora. El sistema enviará notificaciones automáticas al cliente y podrás hacer seguimiento del estado de la visita.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo genero certificados de disposición?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            Ve a "Certificados" y selecciona "Nuevo Certificado". Asigna el cliente, sube el archivo PDF del certificado y completa la información requerida. Los certificados quedarán disponibles para descarga por parte del cliente.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            ¿Cómo actualizo precios de residuos?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer" style="display: none;">
+                            En "Residuos" puedes ver todos los tipos de residuo registrados. Haz clic en "Editar" para modificar precios, unidades o información. Los cambios se aplicarán automáticamente a las nuevas cotizaciones.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="contact-section">
+                    <h2 class="contact-title">¿Necesitas Ayuda Adicional?</h2>
+                    <p>Nuestro equipo de soporte está disponible para ayudarte con cualquier consulta o problema técnico.</p>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email de Soporte</strong><br>
+                                <small>soporte@felmart.cl</small>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Teléfono</strong><br>
+                                <small>+56 9 1234 5678</small>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Horario de Atención</strong><br>
+                                <small>Lun-Vie: 8:00 - 18:00</small>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Oficina Principal</strong><br>
+                                <small>Puerto Montt, Chile</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Toggle FAQ answers
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            
+            if (answer.style.display === 'none') {
+                answer.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

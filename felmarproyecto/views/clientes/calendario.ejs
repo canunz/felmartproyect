@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Calendario - Felmart</title>
+    <link rel="icon" type="image/x-icon" href="/img/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00616e;
+            --primary-dark: #004d57;
+            --primary-light: #00818f;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .user-dropdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 250px;
+            margin-top: 0.5rem;
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 97, 110, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 2rem 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-content p {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-card.success::before {
+            background: linear-gradient(90deg, var(--success-color), #34ce57);
+        }
+
+        .stat-card.warning::before {
+            background: linear-gradient(90deg, var(--warning-color), #ffcd3c);
+        }
+
+        .stat-card.info::before {
+            background: linear-gradient(90deg, var(--info-color), #20c997);
+        }
+
+        .stat-card.primary::before {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, var(--success-color), #34ce57);
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, var(--warning-color), #ffcd3c);
+        }
+
+        .stat-icon.info {
+            background: linear-gradient(135deg, var(--info-color), #20c997);
+        }
+
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .stat-info h3.success {
+            color: var(--success-color);
+        }
+
+        .stat-info h3.warning {
+            color: var(--warning-color);
+        }
+
+        .stat-info h3.info {
+            color: var(--info-color);
+        }
+
+        .stat-info h3.primary {
+            color: var(--primary-color);
+        }
+
+        .stat-info p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Calendar Section */
+        .calendar-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .month-year {
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .calendar-body {
+            padding: 0;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* ESTILO PARA LOS DÍAS DE LA SEMANA - LETRAS BLANCAS */
+        .calendar-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: white !important;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+
+        .calendar-table td {
+            width: 14.28%;
+            height: 100px;
+            vertical-align: top;
+            border: 1px solid #f1f3f4;
+            padding: 0.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-table td:hover {
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .calendar-table td.other-month {
+            background: #fafafa;
+            color: #ccc;
+        }
+
+        .calendar-table td.today {
+            background: linear-gradient(135deg, rgba(0, 97, 110, 0.1), rgba(0, 129, 143, 0.05));
+            border: 2px solid var(--primary-color);
+        }
+
+        .date-number {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin: 1px;
+            display: inline-block;
+        }
+
+        .event-dot.confirmada {
+            background: var(--success-color);
+        }
+
+        .event-dot.pendiente {
+            background: var(--warning-color);
+        }
+
+        .event-dot.cancelada {
+            background: var(--danger-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Upcoming Events */
+        .upcoming-events {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .upcoming-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upcoming-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upcoming-count {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .upcoming-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f3f4;
+            transition: var(--transition);
+        }
+
+        .event-item:hover {
+            background: #f8f9fa;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .event-status {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .event-status.confirmada {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .event-status.pendiente {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .event-status.cancelada {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .event-details {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .event-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .event-detail i {
+            width: 14px;
+            text-align: center;
+        }
+
+        .event-actions {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm-custom {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-view:hover {
+            background: #bbdefb;
+        }
+
+        .btn-cancel {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .btn-cancel:hover {
+            background: #ffcdd2;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: rgba(0, 97, 110, 0.15);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h5 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem 0;
+            }
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            .stat-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .calendar-table td {
+                height: 60px;
+                padding: 0.25rem;
+            }
+            .date-number {
+                font-size: 0.8rem;
+            }
+            .event-dot {
+                width: 4px;
+                height: 4px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stagger-1 {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover;">
+                Felmart
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/clientes/solicitudes"><i class="fas fa-file-alt me-2"></i>Mis Solicitudes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/clientes/cotizaciones"><i class="fas fa-calculator me-2"></i>Cotizaciones</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/clientes/calendario"><i class="fas fa-calendar-alt me-2"></i>Calendario</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/clientes/certificados"><i class="fas fa-certificate me-2"></i>Certificados</a></li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>
+                        <% if (typeof user !== 'undefined' && user) { %>
+                            <%= user.nombreEmpresa || user.nombre || 'Cliente' %>
+                        <% } else { %>
+                            Cliente
+                        <% } %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2"><i class="fas fa-user-circle"></i></div>
+                                <div>
+                                    <small class="text-muted">Bienvenido</small><br>
+                                    <strong><%= (typeof user !== 'undefined' && user) ? (user.nombre || 'Cliente') : 'Cliente' %></strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/clientes/perfil/miperfil"><i class="fas fa-user me-2 text-primary"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="/clientes/perfil/cambiar-password"><i class="fas fa-key me-2 text-warning"></i> Cambiar Contraseña</a></li>
+                        <li><a class="dropdown-item" href="/clientes/ayuda-soporte"><i class="fas fa-question-circle me-2 text-info"></i> Ayuda y Soporte</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2 text-secondary"></i> Volver al Inicio</a></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid main-container px-4">
+        <div class="page-header fade-in-up">
+            <div class="header-content">
+                <h1>Mi Calendario</h1>
+                <p>Gestiona tus visitas técnicas programadas</p>
+            </div>
+        </div>
+        <div class="stats-grid fade-in-up stagger-1">
+            <div class="stat-card success">
+                <div class="stat-content">
+                    <div class="stat-icon success"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-info">
+                        <h3 class="success" id="confirmadasCount">-</h3>
+                        <p>Confirmadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-content">
+                    <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <h3 class="warning" id="pendientesCount">-</h3>
+                        <p>Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-content">
+                    <div class="stat-icon danger"><i class="fas fa-times-circle"></i></div>
+                    <div class="stat-info">
+                        <h3 class="danger" id="rechazadasCount">-</h3>
+                        <p>Rechazadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card primary">
+                <div class="stat-content">
+                    <div class="stat-icon primary"><i class="fas fa-calendar"></i></div>
+                    <div class="stat-info">
+                        <h3 class="primary" id="totalVisitasCount">-</h3>
+                        <p>Total Visitas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-grid fade-in-up stagger-2" id="mainContentGrid">
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h5 class="calendar-title"><i class="fas fa-calendar-alt"></i> Calendario de Visitas</h5>
+                    <div class="calendar-controls">
+                        <button class="calendar-nav" onclick="mesAnterior()" id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
+                        <div class="month-year" id="monthYear">Junio 2025</div>
+                        <button class="calendar-nav" onclick="mesSiguiente()" id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-body">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Dom</th>
+                                <th>Lun</th>
+                                <th>Mar</th>
+                                <th>Mié</th>
+                                <th>Jue</th>
+                                <th>Vie</th>
+                                <th>Sáb</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendarBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="sidebar">
+                <div class="upcoming-events">
+                    <div class="upcoming-header">
+                        <h5 class="upcoming-title"><i class="fas fa-clock"></i> Próximas Visitas</h5>
+                        <span class="upcoming-count" id="proximasCount">0</span>
+                    </div>
+                    <div class="upcoming-list" id="proximasVisitas">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid mt-4" id="seccionTodasVisitas" style="display:none;">
+            <div class="card" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                <div class="card-header d-flex justify-content-between align-items-center" style="border-radius: 20px 20px 0 0; background: #f8f9fa;">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Todas las Visitas</h5>
+                    <button class="btn btn-success btn-sm" onclick="exportarExcelTodas()"><i class="fas fa-file-excel me-2"></i>Exportar Excel</button>
+                </div>
+                <div class="card-body" style="background: #fff; border-radius: 0 0 20px 20px;">
+                    <div id="tarjetasTodasVisitas">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDetalleVisita" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-check me-2"></i> Detalle de Visita</h5>
+                    <button type="button" class="btn-close" onclick="cerrarModal('modalDetalleVisita')"></button>
+                </div>
+                <div class="modal-body" id="detalleVisitaContent">
+                </div>
+                <div class="modal-footer" id="detalleVisitaActions">
+                    <!-- Los botones se agregarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para motivo de rechazo -->
+    <div class="modal fade" id="modalMotivoRechazo" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-times-circle me-2 text-danger"></i> Motivo de Rechazo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMotivoRechazo">
+                        <div class="mb-3">
+                            <label for="motivoRechazo" class="form-label">Motivo del rechazo <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="motivoRechazo" name="motivoRechazo" rows="4" 
+                                placeholder="Por favor, indique el motivo por el cual rechaza esta visita..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmarRechazo()">
+                        <i class="fas fa-times me-2"></i>Rechazar Visita
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Timestamp: <%= new Date().getTime() %> - Forzar actualización de caché
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        let todasLasVisitas = []; 
+        let visitaActual = null; // Para almacenar la visita actual en el modal
+
+        const tipoLabels = { 'evaluacion': 'Evaluación', 'retiro': 'Retiro', 'inspeccion': 'Inspección', 'seguimiento': 'Seguimiento' };
+        const estadoLabels = { 'pendiente': 'Pendiente', 'confirmada': 'Confirmada', 'cancelada': 'Cancelada' };
+        const prioridadLabels = { 'normal': 'Normal', 'alta': 'Alta', 'urgente': 'Urgente' };
+        const respuestaLabels = { 'pendiente': 'Pendiente de Respuesta', 'aceptada': 'Aceptada', 'rechazada': 'Rechazada' };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await cargarVisitas();
+            initializeCalendar();
+            loadStatistics();
+            loadUpcomingEvents();
+            setupEventListeners();
+        });
+
+        async function cargarVisitas() {
+            try {
+                console.log('Cargando visitas del cliente...');
+                const response = await fetch('/clientes/api/mis-visitas');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const visitasCrudas = await response.json();
+                console.log('Visitas recibidas:', visitasCrudas);
+                
+                todasLasVisitas = visitasCrudas.map(v => ({
+                    id: v.id,
+                    tipo: v.tipo || 'evaluacion',
+                    titulo: v.titulo || `Visita de ${v.tipo}`,
+                    fecha: v.fecha.split('T')[0],
+                    hora: new Date(v.fecha).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+                    estado: v.estado,
+                    prioridad: v.prioridad || 'normal',
+                    direccion: v.direccion || 'No especificada',
+                    descripcion: v.observaciones || '',
+                    contacto: { nombre: v.contacto || 'No especificado', telefono: '' },
+                    respuestaCliente: v.respuestaCliente || 'pendiente',
+                    motivoRechazo: v.motivoRechazo || '',
+                    fechaRespuestaCliente: v.fechaRespuestaCliente || ''
+                }));
+                
+                console.log('Visitas procesadas:', todasLasVisitas);
+                
+                // Actualizar la interfaz después de cargar las visitas
+                loadStatistics();
+                loadUpcomingEvents();
+                generateCalendar(currentMonth, currentYear);
+                
+            } catch (error) {
+                console.error('Error al cargar visitas:', error);
+                mostrarAlerta('No se pudieron cargar las visitas desde el servidor.', 'error');
+                todasLasVisitas = [];
+            }
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('btnVerTodasVisitas').addEventListener('click', function(e) {
+                e.preventDefault();
+                const seccion = document.getElementById('seccionTodasVisitas');
+                if (seccion.style.display === 'none') {
+                    renderTablaTodasVisitas();
+                    seccion.style.display = 'block';
+                    seccion.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    seccion.style.display = 'none';
+                }
+            });
+        }
+
+        async function loadStatistics() {
+            if (todasLasVisitas.length === 0) return;
+
+            const confirmadas = todasLasVisitas.filter(v => v.estado === 'confirmada').length;
+            const pendientes = todasLasVisitas.filter(v => v.estado === 'pendiente').length;
+            const rechazadas = todasLasVisitas.filter(v => v.estado === 'cancelada').length;
+
+            animateCounter('confirmadasCount', confirmadas);
+            animateCounter('pendientesCount', pendientes);
+            animateCounter('rechazadasCount', rechazadas);
+            animateCounter('totalVisitasCount', todasLasVisitas.length);
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            let currentValue = 0;
+            const increment = targetValue / 20;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue);
+                }
+            }, 50);
+        }
+
+        function initializeCalendar() {
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        function generateCalendar(month, year) {
+            const monthNames = [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ];
+            document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            let calendarHTML = '';
+            let date = 1;
+
+            for (let week = 0; week < 6; week++) {
+                calendarHTML += '<tr>';
+                for (let day = 0; day < 7; day++) {
+                    if (week === 0 && day < firstDay) {
+                        calendarHTML += '<td class="other-month"></td>';
+                    } else if (date > daysInMonth) {
+                        calendarHTML += '<td class="other-month"></td>';
+                    } else {
+                        const cellDate = new Date(year, month, date);
+                        const isToday = cellDate.toDateString() === today.toDateString();
+                        const events = getEventsForDate(cellDate);
+                        let cellClass = isToday ? 'today' : '';
+                        let eventsHTML = events.map(event => `<span class="event-dot ${event.estado}" title="${event.titulo}"></span>`).join('');
+                        
+                        calendarHTML += `<td class="${cellClass}" onclick="mostrarEventosDia('${cellDate.toISOString().split('T')[0]}')">
+                                            <div class="date-number">${date}</div>
+                                            <div>${eventsHTML}</div>
+                                         </td>`;
+                        date++;
+                    }
+                }
+                calendarHTML += '</tr>';
+                if (date > daysInMonth) break;
+            }
+            document.getElementById('calendarBody').innerHTML = calendarHTML;
+        }
+
+        function getEventsForDate(date) {
+            const dateString = date.toISOString().split('T')[0];
+            return todasLasVisitas.filter(visita => visita.fecha === dateString && visita.estado !== 'cancelada');
+        }
+
+        function mesAnterior() {
+            currentMonth--;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        function mesSiguiente() {
+            currentMonth++;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        function loadUpcomingEvents() {
+            const today = new Date();
+            const upcomingEvents = todasLasVisitas
+                .filter(v => new Date(v.fecha) >= today && v.estado !== 'cancelada')
+                .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+                .slice(0, 5);
+            
+            let eventsHTML = '';
+            if (upcomingEvents.length === 0) {
+                eventsHTML = `<div class="empty-state"><i class="fas fa-calendar-times"></i><h5>No hay visitas próximas</h5></div>`;
+            } else {
+                upcomingEvents.forEach(visita => {
+                    eventsHTML += `
+                        <div class="event-item">
+                            <div class="event-header">
+                                <h6 class="event-title">${visita.titulo}</h6>
+                                <span class="event-status ${visita.estado}">${estadoLabels[visita.estado]}</span>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-detail"><i class="fas fa-calendar-day"></i><span>${formatearFecha(visita.fecha)}</span></div>
+                                <div class="event-detail"><i class="fas fa-clock"></i><span>${visita.hora}</span></div>
+                            </div>
+                            <div class="event-actions">
+                                <button class="btn-sm-custom btn-view" onclick="verDetalleVisita(${visita.id})"><i class="fas fa-eye"></i>Ver</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            document.getElementById('proximasVisitas').innerHTML = eventsHTML;
+            document.getElementById('proximasCount').textContent = upcomingEvents.length;
+        }
+
+        function formatearFecha(fechaString) {
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+        }
+        
+        function mostrarEventosDia(fechaString) {
+            const eventos = getEventsForDate(new Date(fechaString));
+            if(eventos.length > 0) {
+                verDetalleVisita(eventos[0].id);
+            }
+        }
+
+        function verDetalleVisita(id) {
+            const visita = todasLasVisitas.find(v => v.id === id);
+            if (!visita) return;
+            
+            visitaActual = visita; // Guardar la visita actual
+            
+            const detalleHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item"><div class="detail-label">Tipo</div><div class="detail-value">${tipoLabels[visita.tipo]}</div></div>
+                    <div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value"><span class="event-status ${visita.estado}">${estadoLabels[visita.estado]}</span></div></div>
+                    <div class="detail-item"><div class="detail-label">Respuesta del Cliente</div><div class="detail-value"><span class="badge bg-${getRespuestaColor(visita.respuestaCliente)}">${respuestaLabels[visita.respuestaCliente]}</span></div></div>
+                    <div class="detail-item"><div class="detail-label">Fecha</div><div class="detail-value">${formatearFechaCompleta(visita.fecha)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Hora</div><div class="detail-value">${visita.hora}</div></div>
+                    <div class="detail-item"><div class="detail-label">Dirección</div><div class="detail-value">${visita.direccion}</div></div>
+                    ${visita.descripcion ? `<div class="detail-item"><div class="detail-label">Descripción</div><div class="detail-value">${visita.descripcion}</div></div>` : ''}
+                    ${visita.motivoRechazo ? `<div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Motivo de Rechazo</div><div class="detail-value text-danger">${visita.motivoRechazo}</div></div>` : ''}
+                    ${visita.fechaRespuestaCliente ? `<div class="detail-item"><div class="detail-label">Fecha de Respuesta</div><div class="detail-value">${formatearFechaCompleta(visita.fechaRespuestaCliente)}</div></div>` : ''}
+                </div>`;
+                
+            document.getElementById('detalleVisitaContent').innerHTML = detalleHTML;
+            
+            // Generar botones de acción según el estado de respuesta
+            const accionesHTML = generarBotonesAccion(visita);
+            document.getElementById('detalleVisitaActions').innerHTML = accionesHTML;
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalDetalleVisita'));
+            modal.show();
+        }
+
+        function getRespuestaColor(respuesta) {
+            const colorMap = {
+                'pendiente': 'warning',
+                'aceptada': 'success',
+                'rechazada': 'danger'
+            };
+            return colorMap[respuesta] || 'secondary';
+        }
+
+        function generarBotonesAccion(visita) {
+            if (visita.respuestaCliente !== 'pendiente') {
+                return `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <div class="ms-auto">
+                        <span class="badge bg-${getRespuestaColor(visita.respuestaCliente)} fs-6">
+                            ${respuestaLabels[visita.respuestaCliente]}
+                        </span>
+                    </div>
+                `;
+            }
+
+            return `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-success me-2" onclick="aceptarVisita(${visita.id})">
+                        <i class="fas fa-check me-2"></i>Aceptar Visita
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="mostrarModalRechazo()">
+                        <i class="fas fa-times me-2"></i>Rechazar Visita
+                    </button>
+                </div>
+            `;
+        }
+
+        async function aceptarVisita(id) {
+            try {
+                console.log('Aceptando visita:', id);
+                const response = await fetch(`/clientes/api/visitas/${id}/aceptar`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                console.log('Respuesta de aceptar visita:', result);
+
+                if (result.success) {
+                    mostrarAlerta('Visita aceptada exitosamente', 'success');
+                    // Cerrar el modal actual
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetalleVisita'));
+                    modal.hide();
+                    // Recargar los datos
+                    await cargarVisitas();
+                } else {
+                    mostrarAlerta(result.message || 'Error al aceptar la visita', 'error');
+                }
+            } catch (error) {
+                console.error('Error al aceptar visita:', error);
+                mostrarAlerta('Error de conexión al aceptar la visita', 'error');
+            }
+        }
+
+        function mostrarModalRechazo() {
+            // Cerrar el modal de detalles
+            const modalDetalle = bootstrap.Modal.getInstance(document.getElementById('modalDetalleVisita'));
+            modalDetalle.hide();
+            
+            // Limpiar el formulario
+            document.getElementById('formMotivoRechazo').reset();
+            
+            // Mostrar el modal de motivo de rechazo
+            const modalRechazo = new bootstrap.Modal(document.getElementById('modalMotivoRechazo'));
+            modalRechazo.show();
+        }
+
+        async function confirmarRechazo() {
+            const motivoRechazo = document.getElementById('motivoRechazo').value.trim();
+            
+            if (!motivoRechazo) {
+                mostrarAlerta('Debe proporcionar un motivo para rechazar la visita', 'error');
+                return;
+            }
+
+            if (!visitaActual) {
+                mostrarAlerta('Error: No se encontró la visita', 'error');
+                return;
+            }
+
+            try {
+                console.log('Rechazando visita:', visitaActual.id, 'con motivo:', motivoRechazo);
+                const response = await fetch(`/clientes/api/visitas/${visitaActual.id}/rechazar`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ motivo: motivoRechazo })
+                });
+
+                const result = await response.json();
+                console.log('Respuesta de rechazar visita:', result);
+
+                if (result.success) {
+                    mostrarAlerta('Visita rechazada exitosamente', 'success');
+                    // Cerrar el modal de rechazo
+                    const modalRechazo = bootstrap.Modal.getInstance(document.getElementById('modalMotivoRechazo'));
+                    modalRechazo.hide();
+                    // Recargar los datos
+                    await cargarVisitas();
+                } else {
+                    mostrarAlerta(result.message || 'Error al rechazar la visita', 'error');
+                }
+            } catch (error) {
+                console.error('Error al rechazar visita:', error);
+                mostrarAlerta('Error de conexión al rechazar la visita', 'error');
+            }
+        }
+
+        function cerrarModal(modalId) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            if (modal) {
+                modal.hide();
+            }
+        }
+
+        function formatearFechaCompleta(fechaString) {
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function renderTablaTodasVisitas() {
+            const contenedor = document.getElementById('tarjetasTodasVisitas');
+            let html = '';
+            if (todasLasVisitas.length === 0) {
+                html = `<div class="empty-state"><i class="fas fa-calendar-times"></i><h5>No hay visitas registradas</h5></div>`;
+            } else {
+                todasLasVisitas.forEach(visita => {
+                    html += `
+                        <div style="background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 1.5rem; padding: 1.5rem; display: flex; gap: 1.5rem;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 1.1rem; font-weight: 700;">${visita.titulo}</div>
+                                <div>${formatearFechaCompleta(visita.fecha)} - ${visita.hora}</div>
+                                <div><span class="event-status ${visita.estado}">${estadoLabels[visita.estado]}</span></div>
+                            </div>
+                            <div><button class="btn btn-outline-primary btn-sm" onclick="verDetalleVisita(${visita.id})"><i class="fas fa-eye"></i></button></div>
+                        </div>`;
+                });
+            }
+            contenedor.innerHTML = html;
+        }
+
+        function mostrarAlerta(mensaje, tipo = 'info') {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo} alert-dismissible fade show`;
+            alerta.setAttribute('role', 'alert');
+            alerta.innerHTML = `${mensaje}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            document.body.appendChild(alerta);
+            setTimeout(() => alerta.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

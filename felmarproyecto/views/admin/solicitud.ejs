@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Solicitudes | Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00616e;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --success-color: #00616e;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #d1b97c;
+            --purple-color: #6f42c1;
+            --orange-color: #fd7e14;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        .header-nav { padding: 0.35rem 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-link, .nav-link i { font-size: 0.82rem !important; }
+        .user-btn { font-size: 0.82rem !important; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        .content-wrapper {
+            padding: 0.5rem 0.5rem;
+            max-width: 1100px;
+            margin: 26px auto;
+            padding-top: 40px !important;
+        }
+
+        .page-header {
+            background: #fff;
+            border-radius: 14px;
+            padding: 0.7rem 1.2rem;
+            margin-bottom: 0.7rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title { font-size: 1.4rem; font-weight: 700; color: var(--nav-primary-color); margin-bottom: 0.2rem; }
+        .breadcrumb { background: none; padding: 0; margin: 0; font-size: 0.8rem; }
+        .breadcrumb-item { color: var(--nav-secondary-color); }
+        .breadcrumb-item.active { color: var(--nav-secondary-color); opacity: 0.7; }
+        .breadcrumb-item a { color: var(--nav-primary-color); text-decoration: none; transition: all 0.2s ease; }
+        .breadcrumb-item a:hover { color: var(--nav-primary-dark); }
+
+        .card {
+            background: var(--nav-white);
+            border: 1px sahora
+            olid #e2e8f0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .table {
+            table-layout: fixed;
+            width: 100%;
+            background: #fff;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table thead th, .table tbody td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0.4rem 0.3rem;
+            font-size: 0.85rem;
+            max-width: 160px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            color: var(--nav-primary-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            border-top: none;
+            border-bottom: 2px solid #e0e3e7;
+        }
+        .table tbody tr {
+            transition: background 0.2s;
+        }
+        .table tbody tr:hover {
+            background: #f3f6f8;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table tbody td:last-child {
+            text-align: center;
+        }
+
+        .badge {
+            padding: 0.32em 1.1em;
+            font-weight: 600;
+            border-radius: 12px;
+            font-size: 0.97em;
+            letter-spacing: 0.01em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border: none;
+            display: inline-block;
+            min-width: 74px;
+            text-align: center;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+        }
+        .badge-pendiente {
+            background-color: #fff9c4;
+            color: #665c00;
+        }
+        .badge-en_proceso {
+            background-color: #ffe0b2;
+            color: #a67c00;
+        }
+        .badge-completada {
+            background-color: #b2f2bb;
+            color: #218838;
+        }
+        .badge-alta, .badge.bg-danger {
+            background-color: #ffb3b3 !important;
+            color: #b71c1c !important;
+        }
+        .badge-baja, .badge.bg-info {
+            background-color: #b3e5fc !important;
+            color: #0277bd !important;
+        }
+        .badge.bg-primary, .badge-retiro {
+            background-color: #b3c6ff !important;
+            color: #003366 !important;
+        }
+        .badge.bg-warning, .badge-visitas {
+            background-color: #fff9c4 !important;
+            color: #a67c00 !important;
+        }
+        .badge.bg-success {
+            background-color: #b2f2bb !important;
+            color: #218838 !important;
+        }
+        .badge.bg-info, .badge-evaluacion {
+            background-color: #b2ebf2 !important;
+            color: #00616e !important;
+        }
+        .badge.bg-secondary, .badge-otros {
+            background-color: #eceff1 !important;
+            color: #37474f !important;
+        }
+        .badge:hover {
+            filter: brightness(0.97) drop-shadow(0 2px 8px rgba(0,0,0,0.10));
+            transform: translateY(-2px) scale(1.04);
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            background: #fafbfc;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-control {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--nav-primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 97, 110, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color));
+            transform: translateY(-1px);
+        }
+
+        .btn-info.btn-sm {
+            background: #e3f2fd;
+            color: #00616e;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 0.38em 0.7em;
+            font-size: 1.05em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+        }
+        .btn-info.btn-sm i {
+            color: #00616e;
+            font-size: 1.1em;
+        }
+        .btn-info.btn-sm:hover, .btn-info.btn-sm:focus {
+            background: #b3e5fc;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,97,110,0.10);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .btn-info.btn-sm:hover i, .btn-info.btn-sm:focus i {
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .page-header { flex-direction: column; gap: 1rem; text-align: center; padding: 1rem; }
+            .page-title { font-size: 1.1rem; }
+            .card-body { padding: 0.7rem; }
+            .table thead th, .table tbody td { padding: 0.4rem 0.3rem; font-size: 0.85rem; }
+        }
+        @media (max-width: 768px) {
+            .nav-menu { display: none !important; }
+            .user-dropdown { width: 100%; justify-content: flex-end; }
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 14px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+                background: #fff;
+                margin-bottom: 1rem;
+            }
+            .table {
+                min-width: 700px;
+                width: 100%;
+                font-size: 0.92em;
+                border-radius: 14px;
+                background: #fff;
+            }
+            .table thead th, .table tbody td {
+                font-size: 0.85em;
+                padding: 0.32rem 0.18rem;
+                white-space: nowrap;
+            }
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu d-none d-md-flex" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" type="button" style="background:#009688;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <div class="d-block d-md-none">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+                        <a href="/admin/clientes" class="dropdown-item"><i class="fas fa-building"></i> Clientes</a>
+                        <a href="/admin/solicitud" class="dropdown-item"><i class="fas fa-tasks"></i> Solicitudes</a>
+                        <a href="/admin/Cotizaciones" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones</a>
+                        <a href="/admin/Certificados" class="dropdown-item"><i class="fas fa-file-alt"></i> Certificados</a>
+                        <a href="/admin/visitas" class="dropdown-item"><i class="fas fa-calendar-check"></i> Visitas</a>
+                        <a href="/admin/residuos" class="dropdown-item"><i class="fas fa-chart-bar"></i> Residuos y precios</a>
+                        <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    </div>
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Gestión de Solicitudes</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Solicitudes</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CLIENTE</th>
+                                <th>TIPO</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>URGENCIA</th>
+                                <th>ESTADO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="solicitudesTableBody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles y cambiar estado -->
+    <div class="modal fade" id="solicitudModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Detalles de la Solicitud
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Cliente</label>
+                            <p id="modalCliente" class="form-control-static"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Solicitud</label>
+                            <p id="modalTipo" class="form-control-static"></p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Descripción</label>
+                            <p id="modalDescripcion" class="form-control-static"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Urgencia</label>
+                            <p id="modalUrgencia" class="form-control-static"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estado Actual</label>
+                            <select class="form-select" id="modalEstado">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En Proceso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="actualizarEstado()">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let solicitudModal;
+        let solicitudActualId;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            solicitudModal = new bootstrap.Modal(document.getElementById('solicitudModal'));
+            cargarSolicitudes();
+            // Soporte para múltiples dropdowns admin
+            document.querySelectorAll('.admin-dropdown-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    // Encuentra el menú más cercano
+                    const menu = btn.parentElement.querySelector('.admin-dropdown-menu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            });
+            document.addEventListener('click', function(e) {
+                document.querySelectorAll('.admin-dropdown-menu.show').forEach(function(menu) {
+                    menu.classList.remove('show');
+                });
+            });
+        });
+
+        async function cargarSolicitudes() {
+            try {
+                const response = await fetch('/api/solicitudes/listar');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('solicitudesTableBody');
+                tbody.innerHTML = '';
+                
+                if (!data.data || data.data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-tasks fa-3x mb-3" style="opacity: 0.3;"></i>
+                                    <h5>No hay solicitudes registradas</h5>
+                                    <p class="text-muted">Las solicitudes aparecerán aquí cuando los clientes las creen</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                data.data.forEach(solicitud => {
+                    const estadoBadgeClass = {
+                        'pendiente': 'badge-pendiente',
+                        'en_proceso': 'badge-en_proceso',
+                        'completada': 'badge-completada'
+                    }[solicitud.estado];
+
+                    const clienteInfo = solicitud.cliente ? `
+                        <div>
+                            <strong>${solicitud.cliente.nombre_empresa}</strong><br>
+                            <small class="text-muted">RUT: ${solicitud.cliente_id}</small>
+                        </div>
+                    ` : 'N/A';
+
+                    const urgenciaBadgeClass = {
+                        'alta': 'bg-danger',
+                        'media': 'bg-warning',
+                        'baja': 'bg-info'
+                    }[solicitud.urgencia];
+
+                    const tipoSolicitudBadge = {
+                        'retiro': 'bg-primary',
+                        'evaluacion': 'bg-info',
+                        'cotizacion': 'bg-success',
+                        'visitas': 'bg-warning',
+                        'otros': 'bg-secondary'
+                    }[solicitud.tipo_solicitud];
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>#${solicitud.id}</td>
+                            <td>${clienteInfo}</td>
+                            <td>
+                                <span class="badge ${tipoSolicitudBadge}">
+                                    ${solicitud.tipo_solicitud.toUpperCase()}
+                                </span>
+                            </td>
+                            <td>${solicitud.descripcion ? solicitud.descripcion.substring(0, 50) + (solicitud.descripcion.length > 50 ? '...' : '') : 'Sin descripción'}</td>
+                            <td>
+                                <span class="badge ${urgenciaBadgeClass}">
+                                    ${solicitud.urgencia.toUpperCase()}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge ${estadoBadgeClass}">
+                                    ${solicitud.estado.replace('_', ' ').toUpperCase()}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-info btn-sm" onclick="verDetalles(${solicitud.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error al cargar solicitudes:', error);
+                document.getElementById('solicitudesTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            Error al cargar las solicitudes. Por favor, intente nuevamente.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function verDetalles(id) {
+            try {
+                const response = await fetch(`/api/solicitudes/${id}`);
+                const data = await response.json();
+                
+                if (data.success && data.solicitud) {
+                    const solicitud = data.solicitud;
+                    solicitudActualId = solicitud.id;
+                    
+                    const clienteInfo = solicitud.cliente ? 
+                        `${solicitud.cliente.nombre_empresa} (RUT: ${solicitud.cliente_id})` : 'N/A';
+                    
+                    document.getElementById('modalCliente').textContent = clienteInfo;
+                    document.getElementById('modalTipo').textContent = solicitud.tipo_solicitud;
+                    document.getElementById('modalDescripcion').textContent = solicitud.descripcion;
+                    document.getElementById('modalUrgencia').textContent = solicitud.urgencia.toUpperCase();
+                    document.getElementById('modalEstado').value = solicitud.estado;
+                    
+                    solicitudModal.show();
+                } else {
+                    alert('Error al cargar los detalles de la solicitud');
+                }
+            } catch (error) {
+                console.error('Error al cargar detalles:', error);
+                alert('Error al cargar los detalles de la solicitud');
+            }
+        }
+
+        async function actualizarEstado() {
+            const nuevoEstado = document.getElementById('modalEstado').value;
+            
+            try {
+                const response = await fetch(`/solicitudes/estado/${solicitudActualId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ estado: nuevoEstado })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    solicitudModal.hide();
+                    cargarSolicitudes();
+                    // Mostrar notificación de éxito
+                    const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                    document.getElementById('toastMessage').textContent = 'Estado actualizado correctamente';
+                    toast.show();
+                } else {
+                    throw new Error(data.message || 'Error al actualizar el estado');
+                }
+            } catch (error) {
+                console.error('Error al actualizar estado:', error);
+                // Mostrar notificación de error
+                const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+                document.getElementById('errorToastMessage').textContent = error.message;
+                toast.show();
+            }
+        }
+    </script>
+</body>
+</html>

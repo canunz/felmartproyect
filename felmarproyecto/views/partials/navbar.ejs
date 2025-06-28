@@ -1,0 +1,234 @@
+<!-- views/partials/navbar.ejs -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Felmart Logo" style="height: 38px; margin-right: 10px;">
+      <span class="fw-bold" style="color: #00616e; font-size: 1.5rem; letter-spacing: -1px;">Felmart</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-globe"></i> Inicio</a></li>
+        <% if (usuario && (usuario.rol === 'administrador' || usuario.rol === 'operador')) { %>
+          <li class="nav-item"><a class="nav-link" href="/clientes"><i class="fas fa-building"></i> Clientes</a></li>
+        <% } %>
+        <li class="nav-item"><a class="nav-link" href="/solicitudes"><i class="fas fa-list"></i> Solicitudes</a></li>
+        <li class="nav-item"><a class="nav-link" href="/cotizaciones"><i class="fas fa-file-alt"></i> Cotizaciones</a></li>
+        <li class="nav-item"><a class="nav-link" href="/certificados"><i class="fas fa-file-alt"></i> Certificados</a></li>
+        <li class="nav-item"><a class="nav-link" href="/visitas"><i class="fas fa-calendar-alt"></i> Visitas</a></li>
+        <li class="nav-item"><a class="nav-link" href="/residuos"><i class="fas fa-chart-bar"></i> Residuos y precios</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <% if (usuario) { %>
+          <div class="dropdown">
+            <button class="btn btn-teal rounded-pill px-3 fw-bold dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user"></i> <%= usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1) %>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="/perfil">Mi Perfil</a></li>
+              <li><a class="dropdown-item" href="/logout">Cerrar sesión</a></li>
+            </ul>
+          </div>
+        <% } else { %>
+          <a href="/login" class="btn btn-outline-secondary">Iniciar sesión</a>
+          <a href="/registro" class="btn btn-outline-secondary">Registrarse</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+:root {
+    --nav-primary-color: #00616e;
+    --nav-primary-dark: #004d57;
+    --nav-primary-light: #00818f;
+    --nav-secondary-color: #6c757d;
+    --nav-white: #ffffff;
+    --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header-nav {
+    background: var(--nav-white);
+    box-shadow: var(--nav-shadow);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--nav-primary-color);
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1rem;
+    color: var(--nav-secondary-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: var(--nav-transition);
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--nav-primary-color);
+    background: rgba(0, 97, 110, 0.05);
+}
+
+.nav-link i {
+    font-size: 16px;
+}
+
+.user-dropdown {
+    position: relative;
+}
+
+.user-btn {
+    background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--nav-transition);
+}
+
+.user-btn:hover {
+    background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color));
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--nav-white);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+    z-index: 1000;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--nav-primary-color);
+    text-decoration: none;
+    transition: var(--nav-transition);
+    font-size: 14px;
+    border-radius: 8px;
+    margin: 0.25rem 0;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background: rgba(0, 97, 110, 0.05);
+    color: var(--nav-primary-color);
+    transform: translateX(5px);
+}
+
+.dropdown-item.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.dropdown-item.text-danger:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color) !important;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+}
+</style>
+
+<script>
+// Dropdown funcional para el admin
+const adminDropdownBtn = document.getElementById('adminDropdownBtn');
+const adminDropdownMenu = document.getElementById('adminDropdownMenu');
+
+adminDropdownBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    adminDropdownMenu.classList.toggle('show');
+});
+
+document.addEventListener('click', function(e) {
+    if (!adminDropdownMenu.contains(e.target) && !adminDropdownBtn.contains(e.target)) {
+        adminDropdownMenu.classList.remove('show');
+    }
+});
+</script>

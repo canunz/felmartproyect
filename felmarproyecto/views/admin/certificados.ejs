@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Cotizaciones | Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00818f;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --purple-color: #6f42c1;
+            --orange-color: #fd7e14;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--light-bg); line-height: 1.6; }
+        .header-nav { padding: 0.35rem 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-link, .nav-link i { font-size: 0.82rem !important; }
+        .user-btn { font-size: 0.82rem !important; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notification-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: var(--light-bg); border-radius: 12px 12px 0 0; position: sticky; top: 0; z-index: 1; }
+        .notification-title { font-weight: 600; color: var(--nav-primary-color); margin: 0; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .notification-item { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f3f4; transition: all 0.2s ease; cursor: pointer; }
+        .notification-item:hover { background: var(--light-bg); }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-item.unread { background: rgba(0, 97, 110, 0.02); border-left: 3px solid var(--nav-primary-color); }
+        .notification-text { font-size: 0.85rem; font-weight: 600; color: var(--nav-primary-color); margin: 0 0 0.25rem 0; }
+        .notification-desc { font-size: 0.75rem; color: var(--nav-secondary-color); margin: 0 0 0.5rem 0; line-height: 1.4; }
+        .notification-time { font-size: 0.7rem; color: var(--nav-secondary-color); font-style: italic; }
+        .content-wrapper { padding-top: 120px !important; padding: 2rem 1.5rem; max-width: 1400px; margin: 0 auto; }
+        .page-header { background: var(--nav-white); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); border: 1px solid #e2e8f0; }
+        .page-title { font-size: 2rem; font-weight: 700; color: var(--nav-primary-color); margin-bottom: 0.5rem; }
+        .breadcrumb { background: none; padding: 0; margin: 0; font-size: 0.875rem; }
+        .breadcrumb-item { color: var(--nav-secondary-color); }
+        .breadcrumb-item.active { color: var(--nav-secondary-color); opacity: 0.7; }
+        .breadcrumb-item a { color: var(--nav-primary-color); text-decoration: none; transition: all 0.2s ease; }
+        .breadcrumb-item a:hover { color: var(--nav-primary-dark); }
+        .btn-primary { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); border: none; padding: 0.75rem 1.5rem; border-radius: var(--border-radius); font-weight: 600; font-size: 0.875rem; transition: all 0.2s ease; box-shadow: var(--shadow); }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+        .btn-success { background: linear-gradient(135deg, #28a745, #20c997); border: none; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4); }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .stats-row { margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; text-align: center; transition: all 0.3s ease; height: 100%; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .stat-number { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1; }
+        .stat-label { font-size: 0.95rem; color: #6c757d; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card.total .stat-number { color: #3498db; }
+        .stat-card.pendientes .stat-number { color: #f39c12; }
+        .stat-card.aceptadas .stat-number { color: #27ae60; }
+        .stat-card.rechazadas .stat-number { color: #e74c3c; }
+        .filter-section { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem; border: 1px solid #e9ecef; }
+        .data-table-container { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e9ecef; overflow: hidden; }
+        .table-header { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; padding: 1.5rem 2rem; }
+        .table-title { font-size: 1.25rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.75rem; }
+        .table-responsive { max-height: 600px; overflow-y: auto; }
+        .table { margin: 0; }
+        .table thead th { background: #f8f9fa; border: none; color: var(--nav-primary-color); font-weight: 600; padding: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; }
+        .table tbody td { padding: 1rem; border-color: #f1f3f4; vertical-align: middle; }
+        .table tbody tr { transition: all 0.2s ease; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .badge { padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 600; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge.bg-warning { background: #fff3cd !important; color: #856404 !important; }
+        .badge.bg-success { background: #d1edff !important; color: #0c5460 !important; }
+        .badge.bg-danger { background: #f8d7da !important; color: #721c24 !important; }
+        .btn { border-radius: 10px; font-weight: 500; padding: 0.625rem 1.25rem; transition: all 0.3s ease; border: none; font-size: 0.9rem; }
+        .btn-group .btn { padding: 0.375rem 0.75rem; margin: 0 0.125rem; border-radius: 8px; font-size: 0.8rem; }
+        .btn-outline-primary { border: 1px solid var(--nav-primary-color); color: var(--nav-primary-color); background: transparent; }
+        .btn-outline-primary:hover { background: var(--nav-primary-color); color: white; border-color: var(--nav-primary-color); }
+        .btn-outline-warning { border: 1px solid var(--warning-color); color: var(--warning-color); background: transparent; }
+        .btn-outline-warning:hover { background: var(--warning-color); color: white; border-color: var(--warning-color); }
+        .btn-outline-danger { border: 1px solid var(--danger-color); color: var(--danger-color); background: transparent; }
+        .btn-outline-danger:hover { background: var(--danger-color); color: white; border-color: var(--danger-color); }
+        .form-control, .form-select { border: 1px solid #dee2e6; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.95rem; transition: all 0.3s ease; }
+        .form-control:focus, .form-select:focus { border-color: var(--nav-primary-color); box-shadow: 0 0 0 0.2rem rgba(0, 97, 110, 0.25); }
+        .loading { text-align: center; padding: 3rem; color: #6c757d; }
+        .loading i { font-size: 2rem; margin-bottom: 1rem; animation: spin 1s linear infinite; }
+        .readonly { background-color: #f8f9fa !important; cursor: not-allowed; }
+        
+        /* Toast Notifications (IGUAL QUE EN TU ARCHIVO) */
+        .toast-container { position: fixed; top: 80px; right: 20px; z-index: 9999; }
+        .toast { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .content-wrapper { padding: 1rem; }
+            .page-header { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+            .page-title { font-size: 1.5rem; }
+            .table thead th, .table tbody td { padding: 1rem; font-size: 0.8rem; }
+            .notification-dropdown { width: 280px; right: -50px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu d-none d-md-flex" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" id="adminDropdownBtn" type="button" style="background:#009688;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" id="adminDropdownMenu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <!-- Opciones de navegación solo en móvil -->
+                    <div class="d-block d-md-none">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+                        <a href="/admin/clientes" class="dropdown-item"><i class="fas fa-building"></i> Clientes</a>
+                        <a href="/admin/solicitud" class="dropdown-item"><i class="fas fa-tasks"></i> Solicitudes</a>
+                        <a href="/admin/Cotizaciones" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones</a>
+                        <a href="/admin/Certificados" class="dropdown-item"><i class="fas fa-file-alt"></i> Certificados</a>
+                        <a href="/admin/visitas" class="dropdown-item"><i class="fas fa-calendar-check"></i> Visitas</a>
+                        <a href="/admin/residuos" class="dropdown-item"><i class="fas fa-chart-bar"></i> Residuos y precios</a>
+                        <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    </div>
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast Container (IGUAL QUE EN TU ARCHIVO) -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="content-wrapper">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">Gestión de Certificados</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Inicio</a></li>
+                        <li class="breadcrumb-item active">Certificados</li>
+                    </ol>
+                </nav>
+            </div>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCertificado">
+                <i class="fas fa-plus me-2"></i>Nuevo Certificado
+            </a>
+        </div>
+
+        <!-- MENSAJES DE NOTIFICACIÓN -->
+        <div id="mensajes-contenedor">
+            <!-- Los mensajes aparecerán aquí -->
+        </div>
+
+        <% if (error && error.length > 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error[0] %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        <% } %>
+        <% if (success && success.length > 0) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success[0] %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        <% } %>
+
+        <div class="card mt-4">
+            <div class="table-header">
+            <h5 class="table-title">
+                <i class="fas fa-file-invoice me-2"></i>Lista de Certificados
+                <span class="badge bg-light text-dark ms-2" id="nuevasCotizacionesBadge" style="display: none;">0</span>
+            </h5>
+            <!-- Filtros -->
+            <form class="row g-3 align-items-end mb-3" method="GET" action="">
+                <div class="col-md-4">
+                    <label for="filtroCliente" class="form-label mb-1">Cliente</label>
+                    <select class="form-select" id="filtroCliente" name="cliente">
+                        <option value="">Todos</option>
+                        <% if (typeof clientes !== 'undefined' && clientes.length > 0) { %>
+                          <% clientes.forEach(c => { %>
+                            <option value="<%= c.id %>" <%= (typeof clienteSeleccionado !== 'undefined' && clienteSeleccionado == c.id) ? 'selected' : '' %>><%= c.nombre %> (<%= c.email %>)</option>
+                          <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="fechaDesde" class="form-label mb-1">Fecha desde</label>
+                    <input type="date" class="form-control" id="fechaDesde" name="fechaDesde" value="<%= typeof fechaDesde !== 'undefined' ? fechaDesde : '' %>">
+                </div>
+                <div class="col-md-3">
+                    <label for="fechaHasta" class="form-label mb-1">Fecha hasta</label>
+                    <input type="date" class="form-control" id="fechaHasta" name="fechaHasta" value="<%= typeof fechaHasta !== 'undefined' ? fechaHasta : '' %>">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-primary w-100"><i class="fas fa-filter me-2"></i>Filtrar</button>
+                </div>
+            </form>
+            <!-- Fin filtros -->
+            </div>
+            <div class="card-body">
+                <% if (certificados && certificados.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Visita</th>
+                                <th>Fecha Emisión</th>
+                                <th>Observaciones</th>
+                                <th>PDF</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% certificados.forEach(certificado => { %>
+                            <tr>
+                                <td><%= certificado.id %></td>
+                                <td>
+                                    <% if (certificado.cliente) { %>
+                                        <strong><%= certificado.cliente.nombre_empresa %></strong><br>
+                                        <small class="text-muted"><%= certificado.cliente_id %></small>
+                                    <% } else { %>
+                                        <%= certificado.cliente_id %>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (certificado.visita_retiro_id) { %>
+                                        <span class="badge bg-info">Visita <%= certificado.visita_retiro_id %></span>
+                                    <% } else { %>
+                                        <span class="text-muted">-</span>
+                                    <% } %>
+                                </td>
+                                <td><%= certificado.fechaEmision ? new Date(certificado.fechaEmision).toLocaleDateString('es-ES') : '-' %></td>
+                                <td><%= certificado.observaciones || '-' %></td>
+                                <td>
+                                    <% if (certificado.rutaPdf) { %>
+                                        <a href="/admin/certificados/descargar/<%= certificado.id %>" class="btn btn-sm btn-outline-success" title="Descargar PDF">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    <% } else { %>
+                                        <span class="text-muted">No PDF</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-end">
+                                    <a href="#" class="btn btn-sm btn-outline-primary btn-editar-certificado" data-certificado='<%= JSON.stringify(certificado) %>' title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/admin/certificados/eliminar/<%= certificado.id %>" method="POST" style="display:inline;" class="form-eliminar-certificado">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-certificate fa-4x text-muted mb-3"></i>
+                    <p class="lead text-muted">No hay certificados registrados</p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast para notificaciones -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong class="me-auto">Notificación</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal para crear certificado -->
+    <div class="modal fade" id="modalCrearCertificado" tabindex="-1" aria-labelledby="modalCrearCertificadoLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden;">
+          <form id="formCrearCertificado" action="/admin/certificados/crear" method="POST" enctype="multipart/form-data">
+            <div class="modal-header" style="background: linear-gradient(135deg, #00616e, #00818f); color: white; border-bottom: none; padding: 1.5rem 2rem;">
+              <h5 class="modal-title" id="modalCrearCertificadoLabel" style="font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-plus-circle"></i> Nuevo Certificado
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem; background: #fafbfc;">
+              <div class="mb-3">
+                <label for="cliente_id" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-user"></i> Cliente
+                </label>
+                <select class="form-control" id="cliente_id" name="cliente_id" required>
+                  <option value="">Selecciona un cliente</option>
+                  <% if (typeof clientes !== 'undefined' && clientes.length > 0) { %>
+                    <% clientes.forEach(c => { %>
+                      <option value="<%= c.id %>"><%= c.nombre %> (<%= c.email %>)</option>
+                    <% }) %>
+                  <% } %>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="visita_retiro_id" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-calendar-check"></i> ID Visita (opcional)
+                </label>
+                <input type="text" class="form-control" id="visita_retiro_id" name="visita_retiro_id">
+              </div>
+              <div class="mb-3">
+                <label for="observaciones" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-comment"></i> Observaciones
+                </label>
+                <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="archivoPdf" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-file-pdf"></i> Archivo PDF (obligatorio)
+                </label>
+                <input type="file" class="form-control" id="archivoPdf" name="archivoPdf" required accept="application/pdf">
+              </div>
+            </div>
+            <div class="modal-footer" style="background: #fff; border-top: 1px solid #e2e8f0; padding: 1.5rem 2rem; gap: 1rem;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Crear Certificado</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para editar certificado -->
+    <div class="modal fade" id="modalEditarCertificado" tabindex="-1" aria-labelledby="modalEditarCertificadoLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden;">
+          <form id="formEditarCertificado" action="/admin/certificados/editar/" method="POST" enctype="multipart/form-data">
+            <div class="modal-header" style="background: linear-gradient(135deg, #00616e, #00818f); color: white; border-bottom: none; padding: 1.5rem 2rem;">
+              <h5 class="modal-title" id="modalEditarCertificadoLabel" style="font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-edit"></i> Editar Certificado
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter: invert(1); opacity: 0.8;"></button>
+            </div>
+            <div class="modal-body" style="padding: 2rem; background: #fafbfc;">
+              <input type="hidden" id="editar_id" name="id">
+              <div class="mb-3">
+                <label for="editar_cliente_id" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-user"></i> Cliente
+                </label>
+                <select class="form-control" id="editar_cliente_id" name="cliente_id" disabled>
+                  <option value="">Selecciona un cliente</option>
+                  <% if (typeof clientes !== 'undefined' && clientes.length > 0) { %>
+                    <% clientes.forEach(c => { %>
+                      <option value="<%= c.id %>"><%= c.nombre %> (<%= c.email %>)</option>
+                    <% }) %>
+                  <% } %>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editar_visita_retiro_id" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-calendar-check"></i> ID Visita (opcional)
+                  <button type="button" class="btn btn-link p-0 ms-2 toggle-edit-btn" data-target="editar_visita_retiro_id" title="Habilitar edición"><i class="fas fa-eye"></i></button>
+                </label>
+                <input type="text" class="form-control" id="editar_visita_retiro_id" name="visita_retiro_id" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="editar_observaciones" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-comment"></i> Observaciones
+                  <button type="button" class="btn btn-link p-0 ms-2 toggle-edit-btn" data-target="editar_observaciones" title="Habilitar edición"><i class="fas fa-eye"></i></button>
+                </label>
+                <textarea class="form-control" id="editar_observaciones" name="observaciones" rows="3" disabled></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="editar_fecha_emision" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-calendar-day"></i> Fecha de Emisión
+                  <button type="button" class="btn btn-link p-0 ms-2 toggle-edit-btn" data-target="editar_fecha_emision" title="Habilitar edición"><i class="fas fa-eye"></i></button>
+                </label>
+                <input type="date" class="form-control" id="editar_fecha_emision" name="fechaEmision" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="editar_archivoPdf" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-file-pdf"></i> Archivo PDF (opcional, sube uno nuevo para reemplazar)
+                  <button type="button" class="btn btn-link p-0 ms-2 toggle-edit-btn" data-target="editar_archivoPdf" title="Habilitar edición"><i class="fas fa-eye"></i></button>
+                </label>
+                <input type="file" class="form-control" id="editar_archivoPdf" name="archivoPdf" accept="application/pdf" disabled>
+              </div>
+            </div>
+            <div class="modal-footer" style="background: #fff; border-top: 1px solid #e2e8f0; padding: 1.5rem 2rem; gap: 1rem;">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <% if (error && error.length > 0) { %>
+      <script>window.errorMsg = '<%= error[0] %>';</script>
+    <% } %>
+    <% if (success && success.length > 0) { %>
+      <script>window.successMsg = '<%= success[0] %>';</script>
+    <% } %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar dropdown del admin
+            const adminDropdownBtn = document.getElementById('adminDropdownBtn');
+            const adminDropdownMenu = document.getElementById('adminDropdownMenu');
+            if (adminDropdownBtn && adminDropdownMenu) {
+                adminDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    adminDropdownMenu.classList.toggle('show');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!adminDropdownMenu.contains(e.target) && !adminDropdownBtn.contains(e.target)) {
+                        adminDropdownMenu.classList.remove('show');
+                    }
+                });
+            }
+
+            // Verificar mensajes del servidor
+            if (window.errorMsg) mostrarToast(window.errorMsg, 'error');
+            if (window.successMsg) mostrarToast(window.successMsg, 'success');
+
+            // VERIFICAR PARÁMETROS URL PARA NOTIFICACIONES
+            checkUrlParams();
+            
+            // Toggle edit buttons functionality
+            document.querySelectorAll('.toggle-edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    if (input) {
+                        input.disabled = !input.disabled;
+                        this.querySelector('i').classList.toggle('fa-eye');
+                        this.querySelector('i').classList.toggle('fa-eye-slash');
+                    }
+                });
+            });
+            
+            // Edit certificate buttons
+            document.querySelectorAll('.btn-editar-certificado').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const certificado = JSON.parse(this.getAttribute('data-certificado'));
+                    document.getElementById('editar_id').value = certificado.id;
+                    document.getElementById('editar_cliente_id').value = certificado.cliente_usuario_id || '';
+                    document.getElementById('editar_visita_retiro_id').value = certificado.visita_retiro_id || '';
+                    document.getElementById('editar_observaciones').value = certificado.observaciones || '';
+                    document.getElementById('editar_fecha_emision').value = certificado.fechaEmision ? new Date(certificado.fechaEmision).toISOString().slice(0,10) : '';
+                    document.getElementById('editar_archivoPdf').value = '';
+                    document.getElementById('formEditarCertificado').action = '/admin/certificados/editar/' + certificado.id;
+                    var modal = new bootstrap.Modal(document.getElementById('modalEditarCertificado'));
+                    modal.show();
+                });
+            });
+            
+            // Handle delete forms with confirmation
+            document.querySelectorAll('.form-eliminar-certificado').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (confirm('¿Estás seguro de que deseas eliminar este certificado? Esta acción no se puede deshacer.')) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // PRIMERO HACER PRUEBA SIMPLE
+            console.log('Verificando parámetros URL:', urlParams.toString());
+            
+            if (urlParams.get('created') === 'success') {
+                console.log('Detectado created=success');
+                // PRUEBA CON ALERT PRIMERO
+                alert('¡Certificado creado exitosamente!');
+                // Y TAMBIÉN CON TOAST
+                mostrarToast('¡Certificado creado exitosamente!', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            if (urlParams.get('updated') === 'success') {
+                console.log('Detectado updated=success');
+                alert('¡Certificado modificado exitosamente!');
+                mostrarToast('¡Certificado modificado exitosamente!', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            if (urlParams.get('deleted') === 'success') {
+                console.log('Detectado deleted=success');
+                alert('¡Certificado eliminado exitosamente!');
+                mostrarToast('¡Certificado eliminado exitosamente!', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            if (urlParams.get('error') === 'true') {
+                const errorMsg = urlParams.get('error_msg') || 'Ocurrió un error';
+                console.log('Detectado error:', errorMsg);
+                alert('Error: ' + errorMsg);
+                mostrarToast('Error: ' + errorMsg, 'error');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // Sistema de notificaciones toast (IGUAL QUE EN TU ARCHIVO)
+        function mostrarToast(mensaje, tipo = 'info') {
+            console.log('mostrarToast llamado:', mensaje, tipo);
+            
+            const toastContainer = document.getElementById('toastContainer');
+            console.log('toastContainer encontrado:', toastContainer);
+            
+            if (!toastContainer) {
+                console.error('No se encontró toastContainer');
+                // Crear el contenedor si no existe
+                const container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                container.style.position = 'fixed';
+                container.style.top = '80px';
+                container.style.right = '20px';
+                container.style.zIndex = '9999';
+                document.body.appendChild(container);
+            }
+            
+            const iconos = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            const colores = {
+                success: 'text-success',
+                error: 'text-danger',
+                warning: 'text-warning',
+                info: 'text-info'
+            };
+            
+            const toastId = 'toast-' + Date.now();
+            
+            const toastHTML = `
+                <div class="toast" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+                    <div class="toast-header">
+                        <i class="${iconos[tipo]} ${colores[tipo]} me-2"></i>
+                        <strong class="me-auto">Felmart</strong>
+                        <small>ahora</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${mensaje}
+                    </div>
+                </div>
+            `;
+            
+            const finalContainer = document.getElementById('toastContainer');
+            finalContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            console.log('toastElement creado:', toastElement);
+            
+            const toast = new bootstrap.Toast(toastElement);
+            console.log('bootstrap.Toast creado:', toast);
+            
+            toast.show();
+            
+            // Remover toast después de que se oculte
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+    </script>
+
+</body>
+</html>

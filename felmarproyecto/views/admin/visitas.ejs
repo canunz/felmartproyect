@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link rel="icon" type="image/x-icon" href="/img/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --nav-primary-color: #00616e;
+            --nav-primary-dark: #004d57;
+            --nav-primary-light: #00818f;
+            --nav-secondary-color: #6c757d;
+            --nav-white: #ffffff;
+            --nav-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --nav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --border-radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Header Navigation - Exacto como el segundo código */
+        .header-nav { padding: 0.35rem 0; }
+        .nav-container { display: flex; align-items: center; justify-content: flex-start; padding-left: 2px; padding-right: 0; max-width: 100%; margin: 0; gap: 4px; }
+        .nav-container > * { margin-right: 4px; }
+        .nav-container > *:last-child { margin-right: 0; }
+        .logo-icon { width: 22px; height: 22px; font-size: 0.8rem; margin-right: 6px; }
+        .logo-section span { font-size: 0.92rem; }
+        .nav-link, .nav-link i { font-size: 0.82rem !important; }
+        .user-btn { font-size: 0.82rem !important; padding: 0.32rem 0.8rem !important; border-radius: 1rem !important; }
+        .nav-menu { display: flex; align-items: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; color: var(--nav-secondary-color); text-decoration: none; border-radius: 8px; transition: var(--nav-transition); font-weight: 500; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .nav-link i { font-size: 16px; }
+        .user-area { display: flex; align-items: center; gap: 0.75rem; }
+        .notification-bell { position: relative; background: transparent; border: 1px solid rgba(0, 97, 110, 0.2); color: var(--nav-secondary-color); padding: 0.5rem; border-radius: 8px; cursor: pointer; transition: var(--nav-transition); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
+        .notification-bell:hover { color: var(--nav-primary-color); border-color: var(--nav-primary-color); background: rgba(0, 97, 110, 0.05); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--nav-white); }
+        .user-dropdown { position: relative; }
+        .user-btn { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border: none; padding: 0.5rem 1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; transition: var(--nav-transition); }
+        .user-btn:hover { background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color)); }
+        .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); min-width: 200px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1000; padding: 0.5rem; margin-top: 0.5rem; }
+        .dropdown-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; color: var(--nav-primary-color); text-decoration: none; transition: var(--nav-transition); font-size: 14px; border-radius: 8px; margin: 0.25rem 0; font-weight: 500; }
+        .dropdown-item:hover { background: rgba(0, 97, 110, 0.05); color: var(--nav-primary-color); transform: translateX(5px); }
+        .dropdown-item.text-danger { color: var(--danger-color) !important; }
+        .dropdown-item.text-danger:hover { background: rgba(220, 53, 69, 0.1); color: var(--danger-color) !important; }
+        .dropdown-item i { width: 20px; text-align: center; }
+        .notification-dropdown { position: absolute; top: calc(100% + 8px); right: 0; background: var(--nav-white); border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); width: 300px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; z-index: 1001; border: 1px solid #e2e8f0; max-height: 400px; overflow-y: auto; }
+        .notification-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        .content-wrapper {
+            padding: 2rem 1.5rem;
+            max-width: 1396px;
+            margin: 0 auto;
+            padding-top: 99px;
+        }
+
+        .page-header {
+            background: var(--nav-white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-item {
+            color: var(--nav-secondary-color);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--nav-secondary-color);
+            opacity: 0.7;
+        }
+
+        .breadcrumb-item a {
+            color: var(--nav-primary-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--nav-primary-dark);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color));
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stats-cards {
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--nav-white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.pendientes { background: linear-gradient(135deg, var(--warning-color), #ff8c00); }
+        .stat-icon.confirmadas { background: linear-gradient(135deg, var(--success-color), #20c997); }
+        .stat-icon.completadas { background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); }
+        .stat-icon.canceladas { background: linear-gradient(135deg, var(--danger-color), #c82333); }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--nav-primary-color);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--nav-secondary-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Mejoras para las visitas programadas */
+        .visits-list {
+            background: var(--nav-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .visits-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .visits-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--nav-primary-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .visits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .visit-item {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .visit-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0, 97, 110, 0.15);
+            border-color: var(--nav-primary-light);
+        }
+
+        .visit-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            color: white;
+        }
+
+        .visit-header h6 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .visit-content {
+            padding: 1.5rem;
+        }
+
+        .visit-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--nav-secondary-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .meta-item i {
+            margin-right: 0.75rem;
+            width: 18px;
+            color: var(--nav-primary-color);
+            font-size: 1rem;
+        }
+
+        .visit-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-pendiente {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 1px solid #f6d55c;
+        }
+
+        .status-confirmada {
+            background: linear-gradient(135deg, #d4edda, #a8e6cf);
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+
+        .status-completada {
+            background: linear-gradient(135deg, #cce5ff, #b3d9ff);
+            color: #004085;
+            border: 1px solid #17a2b8;
+        }
+
+        .status-rechazada {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+
+        .visit-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .visit-actions button {
+            padding: 0.625rem 1.25rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 2px solid transparent;
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .visit-actions .btn-outline-primary {
+            color: var(--nav-primary-color);
+            border-color: var(--nav-primary-color);
+            background: white;
+        }
+
+        .visit-actions .btn-outline-primary:hover {
+            background: var(--nav-primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.3);
+        }
+
+        .visit-actions .btn-outline-warning {
+            color: #f39c12;
+            border-color: #f39c12;
+            background: white;
+        }
+
+        .visit-actions .btn-outline-warning:hover {
+            background: #f39c12;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .visit-actions .btn-outline-danger {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+            background: white;
+        }
+
+        .visit-actions .btn-outline-danger:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Modal Mejorado */
+        .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            color: white;
+            border-bottom: none;
+            padding: 2rem;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+            font-size: 1.5rem;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+            background: #fafbfc;
+        }
+
+        .modal-footer {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 2rem;
+            gap: 1rem;
+        }
+
+        /* Form Controls Mejorados */
+        .form-label {
+            font-weight: 600;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--nav-primary-light);
+            font-size: 1rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 500;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--nav-primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 97, 110, 0.1);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        /* Detalles Modal Mejorado */
+        .detail-group {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .detail-label {
+            font-weight: 700;
+            color: var(--nav-primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-value {
+            color: var(--nav-secondary-color);
+            margin: 0;
+            font-weight: 500;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Botones Personalizados */
+        .btn-custom-primary {
+            background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light));
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.2);
+        }
+
+        .btn-custom-primary:hover {
+            background: linear-gradient(135deg, var(--nav-primary-dark), var(--nav-primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 97, 110, 0.3);
+            color: white;
+        }
+
+        .btn-custom-secondary {
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            color: var(--nav-secondary-color);
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom-secondary:hover {
+            background: #e9ecef;
+            border-color: #ced4da;
+            transform: translateY(-2px);
+            color: var(--nav-secondary-color);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #c82333);
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none !important;
+            }
+            .user-dropdown { 
+                width: 100%; 
+                justify-content: flex-end; 
+                position: relative;
+            }
+            .dropdown-menu {
+                position: absolute;
+                top: calc(100% + 8px);
+                right: 0;
+                z-index: 1003;
+                min-width: 250px;
+                max-width: 90vw;
+            }
+            .dropdown-menu.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            .content-wrapper {
+                padding: 1rem;
+                margin-top: 110px !important;
+            }
+            .page-header {
+                padding: 1.5rem;
+                margin-bottom: 1.2rem;
+            }
+            .stats-cards {
+                margin-bottom: 1.2rem;
+                gap: 1.2rem !important;
+            }
+            .stat-card {
+                padding: 1.2rem;
+                margin-bottom: 0.7rem;
+            }
+            .visits-grid {
+                grid-template-columns: 1fr;
+                padding: 0.5rem;
+                gap: 1rem;
+                overflow-x: auto;
+            }
+            .visit-item {
+                min-width: 320px;
+                max-width: 100%;
+                margin-bottom: 1.2rem;
+            }
+            .visit-actions {
+                flex-direction: column;
+            }
+            .visit-actions button {
+                max-width: none;
+            }
+            .modal-body {
+                padding: 1.5rem;
+            }
+            .modal-header {
+                padding: 1.5rem;
+            }
+            .modal-footer {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER DE NAVEGACIÓN INICIO -->
+    <header class="header-nav" style="background:#fff; border-bottom:2px solid #e0e3e7; width:100vw; position:fixed; top:0; left:0; right:0; z-index:1002; margin:0; padding:0; height:84px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(60,60,60,0.06);">
+        <div class="nav-container" style="max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 24px;">
+            <a href="/dashboard" class="logo-section" style="display:flex;align-items:center;text-decoration:none;">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:10px;">
+                <span class="logo-text" style="font-size:1.45rem;font-weight:700;color:#00616e;">Felmart</span>
+            </a>
+            <nav style="height:100%;display:flex;align-items:center;">
+                <ul class="nav-menu d-none d-md-flex" style="display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none;height:100%;">
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/dashboard" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tachometer-alt" style="font-size:1.08em;"></i><span>Inicio</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/clientes" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-building" style="font-size:1.08em;"></i><span>Clientes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/solicitud" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-tasks" style="font-size:1.08em;"></i><span>Solicitudes</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Cotizaciones" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Cotizaciones</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/Certificados" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-file-alt" style="font-size:1.08em;"></i><span>Certificados</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/visitas" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-calendar-check" style="font-size:1.08em;"></i><span>Visitas</span></a></li>
+                    <li class="nav-item" style="display:flex;align-items:center;height:100%;"><a href="/admin/residuos" class="nav-link" style="color:#5a646e;font-weight:500;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:7px;padding:10px 16px 0 16px;border-radius:7px;transition:background 0.2s;height:100%;"><i class="fas fa-chart-bar" style="font-size:1.08em;"></i><span style="white-space:nowrap;">Residuos y precios</span></a></li>
+                </ul>
+            </nav>
+            <div class="user-dropdown" style="display:flex;align-items:center;height:100%;">
+                <button class="user-btn admin-dropdown-btn" id="adminDropdownBtn" type="button" style="background:#009688;color:white;border:none;padding:0.5rem 1.1rem;border-radius:50px;display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer;transition:all 0.3s;font-size:0.98rem;margin-top:0;box-shadow:0 2px 8px rgba(0,150,136,0.08);">
+                    <i class="fas fa-user-shield" style="font-size:1.08em;"></i>
+                    <span>Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu admin-dropdown-menu" id="adminDropdownMenu" style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:none;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.1);min-width:200px;padding:0.5rem;margin-top:0.5rem;z-index:1000;">
+                    <div class="d-block d-md-none">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Inicio</a>
+                        <a href="/admin/clientes" class="dropdown-item"><i class="fas fa-building"></i> Clientes</a>
+                        <a href="/admin/solicitud" class="dropdown-item"><i class="fas fa-tasks"></i> Solicitudes</a>
+                        <a href="/admin/Cotizaciones" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones</a>
+                        <a href="/admin/Certificados" class="dropdown-item"><i class="fas fa-file-alt"></i> Certificados</a>
+                        <a href="/admin/visitas" class="dropdown-item"><i class="fas fa-calendar-check"></i> Visitas</a>
+                        <a href="/admin/residuos" class="dropdown-item"><i class="fas fa-chart-bar"></i> Residuos y precios</a>
+                        <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    </div>
+                    <a href="/admin/perfil" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="/admin/ayuda-soporte" class="dropdown-item"><i class="fas fa-question-circle"></i> Ayuda y Soporte</a>
+                    <div style="border-top:1px solid #e9ecef;margin:0.5rem 0;"></div>
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> Volver al Inicio</a>
+                    <a href="/logout" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- HEADER DE NAVEGACIÓN FIN -->
+
+    <!-- Content -->
+    <div class="content-wrapper">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">Gestión de Visitas</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Visitas</li>
+                        </ol>
+                    </nav>
+                </div>
+                <button class="btn btn-primary" onclick="mostrarModalNuevaVisita()">
+                    <i class="fas fa-plus me-2"></i>Nueva Visita
+                </button>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="row stats-cards mb-4 g-4" id="stats-container">
+            <!-- Las tarjetas de estadísticas se generarán dinámicamente -->
+        </div>
+
+        <!-- Lista de Visitas -->
+        <div class="visits-list">
+            <div class="visits-header">
+                <h2 class="visits-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Visitas Programadas
+                </h2>
+            </div>
+            <div id="visitasContainer" class="visits-grid">
+                <!-- Las visitas se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Visita -->
+    <div class="modal fade" id="nuevaVisitaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-plus"></i>
+                        Nueva Visita
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="nuevaVisitaForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-building"></i>
+                                    Cliente *
+                                </label>
+                                <select class="form-select" name="clienteId" id="clienteSelect" required>
+                                    <option value="">Seleccione un cliente</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Tipo de Visita *
+                                </label>
+                                <select class="form-select" name="tipoVisita" required>
+                                    <option value="">Seleccione tipo</option>
+                                    <option value="evaluacion">Evaluación</option>
+                                    <option value="retiro">Retiro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Fecha *
+                                </label>
+                                <input type="date" class="form-control" name="fecha" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Hora *
+                                </label>
+                                <input type="time" class="form-control" name="hora" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-file-invoice"></i>
+                                    Cotización (Opcional)
+                                </label>
+                                <select class="form-select" name="cotizacionId" id="cotizacionSelect">
+                                    <option value="">Seleccione una cotización</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Solicitud de Retiro (Opcional)
+                                </label>
+                                <select class="form-select" name="solicitudId" id="solicitudSelect">
+                                    <option value="">Seleccione una solicitud</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-comment"></i>
+                                Observaciones
+                            </label>
+                            <textarea class="form-control" name="observaciones" rows="3" placeholder="Ingrese observaciones para la visita..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-custom-primary" onclick="guardarVisita()">
+                        <i class="fas fa-save me-2"></i>Guardar Visita
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalles Visita -->
+    <div class="modal fade" id="detallesVisitaModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Detalles de la Visita
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-group">
+                                <div class="detail-label">
+                                    <i class="fas fa-building"></i>
+                                    Cliente
+                                </div>
+                                <p class="detail-value" id="detallesCliente">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-group">
+                                <div class="detail-label">
+                                    <i class="fas fa-tag"></i>
+                                    Tipo de Visita
+                                </div>
+                                <p class="detail-value" id="detallesTipo">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-group">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Fecha
+                                </div>
+                                <p class="detail-value" id="detallesFecha">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="detail-group">
+                                <div class="detail-label">
+                                    <i class="fas fa-clock"></i>
+                                    Hora
+                                </div>
+                                <p class="detail-value" id="detallesHora">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-info-circle"></i>
+                            Estado
+                        </div>
+                        <p class="detail-value" id="detallesEstado">-</p>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-comment"></i>
+                            Observaciones
+                        </div>
+                        <p class="detail-value" id="detallesObservaciones">-</p>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Dirección
+                        </div>
+                        <p class="detail-value" id="detallesDireccion">-</p>
+                    </div>
+                    
+                    <!-- Contenedor para la respuesta del cliente -->
+                    <div id="detallesRespuestaClienteContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cerrar
+                    </button>
+                    <!-- Botón Gestionar Certificados eliminado -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Visita -->
+    <div class="modal fade" id="editarVisitaModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit"></i>
+                        Editar Visita
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarVisitaForm">
+                        <input type="hidden" name="visitaId" id="editVisitaId">
+                        <input type="hidden" name="clienteId" id="editClienteId">
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-tag"></i>
+                                        Tipo de Visita
+                                    </label>
+                                    <select class="form-select" name="tipoVisita" id="editTipoVisita" required>
+                                        <option value="">Seleccione tipo</option>
+                                        <option value="evaluacion">Evaluación</option>
+                                        <option value="retiro">Retiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-info-circle"></i>
+                                        Estado
+                                    </label>
+                                    <select class="form-select" name="estado" id="editEstado" required>
+                                        <option value="">Seleccione estado</option>
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="confirmada">Confirmada</option>
+                                        <option value="completada">Completada</option>
+                                        <option value="rechazada">Rechazada</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-calendar"></i>
+                                        Fecha
+                                    </label>
+                                    <input type="date" class="form-control" name="fecha" id="editFecha" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-clock"></i>
+                                        Hora
+                                    </label>
+                                    <input type="time" class="form-control" name="hora" id="editHora" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comment"></i>
+                                Observaciones
+                            </label>
+                            <textarea class="form-control" name="observaciones" id="editObservaciones" rows="4" placeholder="Ingrese observaciones para la visita..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-custom-primary" onclick="guardarEdicionVisita()">
+                        <i class="fas fa-save me-2"></i>
+                        Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmar Eliminar -->
+    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--danger-color), #c82333);">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-3">
+                        <div class="mb-4">
+                            <i class="fas fa-trash-alt text-danger" style="font-size: 4rem; opacity: 0.7;"></i>
+                        </div>
+                        <h6 class="mb-3" style="color: var(--nav-primary-color); font-weight: 600;">
+                            ¿Está seguro de que desea eliminar esta visita?
+                        </h6>
+                        <p class="text-danger mb-0">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            <strong>Esta acción no se puede deshacer.</strong>
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestionar Certificados -->
+    <div class="modal fade custom-modal-overlay" id="gestionarCertificadosModal" tabindex="-1" style="background:rgba(0,0,0,0.65);">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius:18px; box-shadow:0 8px 40px rgba(0,0,0,0.18);">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--nav-primary-color), var(--nav-primary-light)); color: white; border-top-left-radius:18px; border-top-right-radius:18px;">
+                    <h5 class="modal-title" style="font-weight:700; letter-spacing:0.5px;">
+                        <i class="fas fa-certificate"></i>
+                        Gestionar Certificados
+                    </h5>
+                    <!-- Quitamos la X de cerrar -->
+                </div>
+                <div class="modal-body" style="background:#fafdff; border-bottom-left-radius:18px; border-bottom-right-radius:18px;">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <ul class="nav nav-tabs" id="certificadosTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="asignar-tab" data-bs-toggle="tab" data-bs-target="#asignar" type="button" role="tab">
+                                        <i class="fas fa-link me-2"></i>Asignar Existente
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="crear-tab" data-bs-toggle="tab" data-bs-target="#crear" type="button" role="tab">
+                                        <i class="fas fa-plus me-2"></i>Crear Nuevo
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="certificadosTabsContent">
+                        <!-- Tab Asignar Certificado Existente -->
+                        <div class="tab-pane fade show active" id="asignar" role="tabpanel">
+                            <div class="mb-3">
+                                <label for="certificadoExistente" class="form-label">
+                                    <i class="fas fa-certificate me-2"></i>Seleccionar Certificado
+                                </label>
+                                <select class="form-select" id="certificadoExistente" style="border-radius:10px;">
+                                    <option value="">Cargando certificados...</option>
+                                </select>
+                            </div>
+                            <div class="alert alert-info" style="border-radius:10px;">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Selecciona un certificado existente para asignarlo a esta visita.
+                            </div>
+                        </div>
+
+                        <!-- Tab Crear Nuevo Certificado -->
+                        <div class="tab-pane fade" id="crear" role="tabpanel">
+                            <form id="formNuevoCertificado" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="archivoCertificado" class="form-label">
+                                        <i class="fas fa-file-pdf me-2"></i>Archivo PDF (obligatorio)
+                                    </label>
+                                    <input type="file" class="form-control" id="archivoCertificado" name="archivoPdf" accept="application/pdf" required style="border-radius:10px;">
+                                    <div class="form-text">Máximo 10MB. Solo archivos PDF.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="observacionesCertificado" class="form-label">
+                                        <i class="fas fa-comment me-2"></i>Observaciones
+                                    </label>
+                                    <textarea class="form-control" id="observacionesCertificado" name="observaciones" rows="3" placeholder="Observaciones del certificado..." style="border-radius:10px;"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fechaEmisionCertificado" class="form-label">
+                                        <i class="fas fa-calendar me-2"></i>Fecha de Emisión
+                                    </label>
+                                    <input type="date" class="form-control" id="fechaEmisionCertificado" name="fechaEmision" style="border-radius:10px;">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-bottom-left-radius:18px; border-bottom-right-radius:18px; background:#fafdff;">
+                    <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal" style="border-radius:8px;">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-custom-primary" onclick="asignarCertificado()" id="btnAsignarCertificado" style="border-radius:8px;">
+                        <i class="fas fa-link me-2"></i>
+                        Asignar Certificado
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="crearCertificado()" id="btnCrearCertificado" style="display: none; border-radius:8px;">
+                        <i class="fas fa-plus me-2"></i>
+                        Crear Certificado
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script de debug temporal -->
+    <script>
+        // Debug temporal para verificar que el dropdown funcione
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Debug: Verificando elementos del dropdown...');
+            
+            const btn = document.getElementById('adminDropdownBtn');
+            const menu = document.getElementById('adminDropdownMenu');
+            
+            console.log('Botón encontrado:', !!btn);
+            console.log('Menú encontrado:', !!menu);
+            
+            if (btn) {
+                console.log('Botón HTML:', btn.outerHTML);
+            }
+            
+            if (menu) {
+                console.log('Menú HTML:', menu.outerHTML);
+            }
+        });
+    </script>
+    
+    <script>
+        // Variables globales
+        let visitaModal;
+        let allClients = [];
+        let allCotizaciones = [];
+        let allSolicitudes = [];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando aplicación de visitas...');
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            try {
+                console.log('Cargando datos iniciales...');
+                await loadClients();
+                await loadCotizaciones();
+                await loadSolicitudes();
+                await loadVisits();
+                await loadStatistics();
+                initializeEventListeners();
+                console.log('Aplicación inicializada correctamente');
+            } catch (error) {
+                console.error('Error al cargar la aplicación:', error);
+                showAlert('Error al cargar la aplicación', 'error');
+            }
+        }
+
+        // Event Listeners
+        function initializeEventListeners() {
+            // Dropdown toggles - Mejorado para responsive
+            const adminDropdownBtn = document.getElementById('adminDropdownBtn');
+            const adminDropdownMenu = document.getElementById('adminDropdownMenu');
+            
+            if (adminDropdownBtn && adminDropdownMenu) {
+                adminDropdownBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Click en botón admin dropdown');
+                    adminDropdownMenu.classList.toggle('show');
+                });
+            }
+
+            // Close dropdowns when clicking outside - Mejorado
+            document.addEventListener('click', function(event) {
+                const userDropdown = document.getElementById('adminDropdownMenu');
+                if (!userDropdown) return;
+                
+                // Si el click fue en el botón o dentro del menú, no cerrar
+                if (
+                    event.target.closest('#adminDropdownBtn') ||
+                    event.target.closest('#adminDropdownMenu')
+                ) {
+                    return;
+                }
+                
+                // Solo cerrar si está abierto
+                if (userDropdown.classList.contains('show')) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+
+            // Set minimum date to today
+            const fechaInput = document.querySelector('input[name="fecha"]');
+            if (fechaInput) {
+                fechaInput.min = new Date().toISOString().split('T')[0];
+            }
+
+            // Cliente change event
+            document.getElementById('clienteSelect')?.addEventListener('change', function() {
+                const clienteId = this.value;
+                if (clienteId) {
+                    loadCotizacionesByCliente(clienteId);
+                    loadSolicitudesByCliente(clienteId);
+                }
+            });
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('adminDropdownMenu');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        // API Functions
+        async function loadClients() {
+            try {
+                console.log('Cargando clientes...');
+                const response = await fetch('/api/visitas/clientes');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                allClients = data.success ? data.data : [];
+                
+                console.log(`${allClients.length} clientes cargados`);
+                
+                const select = document.getElementById('clienteSelect');
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccionar cliente...</option>';
+                    allClients.forEach(client => {
+                        select.innerHTML += `<option value="${client.rut}">${client.nombre_empresa}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients:', error);
+                showAlert('Error al cargar los clientes: ' + error.message, 'error');
+                allClients = [];
+            }
+        }
+
+        async function loadCotizaciones() {
+            try {
+                const response = await fetch('/cotizaciones/api/listar');
+                if (response.ok) {
+                    const data = await response.json();
+                    allCotizaciones = data.success ? data.cotizaciones || [] : [];
+                    console.log('Cotizaciones cargadas:', allCotizaciones.length);
+                    console.log('Estructura de cotizaciones:', allCotizaciones[0]); // Para debug
+                }
+            } catch (error) {
+                console.error('Error loading cotizaciones:', error);
+                allCotizaciones = [];
+            }
+        }
+
+        async function loadSolicitudes() {
+            try {
+                const response = await fetch('/api/solicitudes/listar');
+                if (response.ok) {
+                    const data = await response.json();
+                    allSolicitudes = data.data || [];
+                    console.log('Solicitudes cargadas:', allSolicitudes.length);
+                }
+            } catch (error) {
+                console.error('Error loading solicitudes:', error);
+            }
+        }
+
+        async function loadCotizacionesByCliente(clienteId) {
+            try {
+                console.log('Filtrando cotizaciones para cliente RUT:', clienteId);
+                console.log('Total cotizaciones disponibles:', allCotizaciones.length);
+                
+                // Filtrar cotizaciones donde el cliente coincida con el RUT seleccionado
+                const cotizacionesCliente = allCotizaciones.filter(cotizacion => {
+                    // Buscar en detallesJson
+                    if (cotizacion.detallesJson) {
+                        try {
+                            const detalles = typeof cotizacion.detallesJson === 'string' 
+                                ? JSON.parse(cotizacion.detallesJson) 
+                                : cotizacion.detallesJson;
+                            
+                            const datosContacto = detalles.datosContacto || detalles.cliente;
+                            
+                            if (datosContacto && datosContacto.rut === clienteId) {
+                                console.log('✅ Cotización encontrada para cliente:', cotizacion.numeroCotizacion);
+                                return true;
+                            }
+                        } catch (e) {
+                            console.log('Error parsing detallesJson:', e);
+                        }
+                    }
+                    
+                    // Buscar en detalles (campo alternativo)
+                    if (cotizacion.detalles) {
+                        try {
+                            const detalles = typeof cotizacion.detalles === 'string' 
+                                ? JSON.parse(cotizacion.detalles) 
+                                : cotizacion.detalles;
+                            
+                            const datosContacto = detalles.datosContacto || detalles.cliente;
+                            
+                            if (datosContacto && datosContacto.rut === clienteId) {
+                                console.log('✅ Cotización encontrada para cliente (detalles):', cotizacion.numeroCotizacion);
+                                return true;
+                            }
+                        } catch (e) {
+                            console.log('Error parsing detalles:', e);
+                        }
+                    }
+                    
+                    // Buscar en campos directos (si existen)
+                    if (cotizacion.rut === clienteId) {
+                        console.log('✅ Cotización encontrada para cliente (RUT directo):', cotizacion.numeroCotizacion);
+                        return true;
+                    }
+                    
+                    return false;
+                });
+                
+                console.log(`📋 Cotizaciones filtradas para cliente ${clienteId}:`, cotizacionesCliente.length);
+                
+                const select = document.getElementById('cotizacionSelect');
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccione una cotización</option>';
+                    
+                    if (cotizacionesCliente.length === 0) {
+                        select.innerHTML += '<option value="" disabled>No hay cotizaciones para este cliente</option>';
+                    } else {
+                        cotizacionesCliente.forEach(cotizacion => {
+                            const numeroCotizacion = cotizacion.numeroCotizacion || cotizacion.numero_cotizacion;
+                            select.innerHTML += `<option value="${numeroCotizacion}">Cotización #${numeroCotizacion}</option>`;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading cotizaciones by cliente:', error);
+            }
+        }
+
+        async function loadSolicitudesByCliente(clienteId) {
+            try {
+                const solicitudesCliente = allSolicitudes.filter(s => s.clienteRut == clienteId);
+                const select = document.getElementById('solicitudSelect');
+                if (select) {
+                    select.innerHTML = '<option value="">Seleccione una solicitud</option>';
+                    solicitudesCliente.forEach(solicitud => {
+                        select.innerHTML += `<option value="${solicitud.id}">Solicitud #${solicitud.numero_solicitud}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading solicitudes by cliente:', error);
+            }
+        }
+
+        async function loadVisits() {
+            try {
+                console.log('Cargando visitas...');
+                const response = await fetch('/visitas/api/visitas');
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Datos de visitas recibidos:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar las visitas');
+                }
+                
+                // Verificar que data.data existe y es un array
+                const visitas = data.data || [];
+                console.log(`${visitas.length} visitas cargadas`);
+                console.log('Primera visita:', visitas[0]); // DEBUG: ver qué campos llegan
+                
+                // Actualizar la lista de visitas
+                updateVisitsList(visitas);
+                
+            } catch (error) {
+                console.error('Error al cargar visitas:', error);
+                showAlert('Error al cargar las visitas: ' + error.message, 'error');
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/visitas/api/visitas/estadisticas');
+                if (!response.ok) throw new Error('No se pudieron cargar las estadísticas.');
+                
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'Error en la respuesta de la API.');
+
+                const stats = result.data;
+                const container = document.getElementById('stats-container');
+                container.innerHTML = '';
+
+                const statConfig = {
+                    pendiente: { label: 'Pendientes', icon: 'fa-clock', color: '#ffc107' },
+                    confirmada: { label: 'Confirmadas', icon: 'fa-check-circle', color: '#28a745' },
+                    completada: { label: 'Completadas', icon: 'fa-check-double', color: '#00616e' },
+                    rechazada: { label: 'Rechazadas', icon: 'fa-times-circle', color: '#dc3545' }
+                };
+
+                for (const key in statConfig) {
+                    if (Object.hasOwnProperty.call(statConfig, key)) {
+                        const config = statConfig[key];
+                        const count = stats[key] || 0;
+                        const cardHTML = `
+                            <div class="col">
+                                <div class="stat-card">
+                                    <div class="stat-content">
+                                        <div class="stat-icon" style="background-color: ${config.color};">
+                                            <i class="fas ${config.icon}"></i>
+                                        </div>
+                                        <div>
+                                            <div class="stat-number">${count}</div>
+                                            <div class="stat-label">${config.label}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += cardHTML;
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+                const container = document.getElementById('stats-container');
+                container.innerHTML = '<p class="text-danger">No se pudieron cargar las estadísticas.</p>';
+            }
+        }
+
+        function updateVisitsList(visitas) {
+            const container = document.getElementById('visitasContainer');
+            
+            if (visitas.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-calendar-times text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
+                        </div>
+                        <h6 class="text-muted mb-3" style="font-weight: 600;">No hay visitas programadas</h6>
+                        <p class="text-muted mb-4">Crea tu primera visita para comenzar</p>
+                        <button class="btn btn-primary" onclick="mostrarModalNuevaVisita()">
+                            <i class="fas fa-plus me-2"></i> Nueva Visita
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Ordenar visitas por fecha y hora más recientes primero
+            const visitasOrdenadas = visitas.sort((a, b) => {
+                const fechaA = new Date(a.fecha + 'T' + a.hora);
+                const fechaB = new Date(b.fecha + 'T' + b.hora);
+                return fechaB - fechaA; // Más recientes primero
+            });
+            
+            container.innerHTML = visitasOrdenadas.map(visita => createVisitItemHTML(visita)).join('');
+        }
+
+        function createVisitItemHTML(visita) {
+            const statusConfig = {
+                pendiente: { label: 'Pendiente', class: 'status-pendiente', icon: 'fa-clock' },
+                confirmada: { label: 'Confirmada', class: 'status-confirmada', icon: 'fa-check-circle' },
+                completada: { label: 'Completada', class: 'status-completada', icon: 'fa-check-double' },
+                rechazada: { label: 'Rechazada', class: 'status-rechazada', icon: 'fa-times-circle' }
+            };
+
+            const finalStatus = statusConfig[visita.estado] || { 
+                label: visita.estado, 
+                class: 'status-pendiente', 
+                icon: 'fa-question-circle' 
+            };
+
+            const cliente = {
+                nombre_empresa: visita.cliente_nombre || 'Cliente no encontrado',
+                direccion: visita.cliente_direccion || 'Dirección no especificada'
+            };
+
+            return `
+                <div class="visit-item">
+                    <div class="visit-header">
+                        <h6>
+                            <i class="fas fa-building me-2"></i>
+                            ${cliente.nombre_empresa}
+                        </h6>
+                    </div>
+                    <div class="visit-content">
+                        <div class="visit-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i> 
+                                ${formatearFecha(visita.fecha)}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 
+                                ${visita.hora}
+                            </div>
+                        </div>
+                        <div class="meta-item mb-3" style="grid-column: span 2;">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            ${cliente.direccion}
+                        </div>
+                        <div class="meta-item mb-3" style="grid-column: span 2;">
+                            <i class="fas fa-tag"></i> 
+                            ${visita.tipo_visita ? visita.tipo_visita.charAt(0).toUpperCase() + visita.tipo_visita.slice(1) : 'Tipo no especificado'}
+                        </div>
+                        
+                        <div class="text-center">
+                            <span class="visit-status ${finalStatus.class}">
+                                <i class="fas ${finalStatus.icon} me-1"></i>
+                                ${finalStatus.label}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="visit-actions">
+                        <button class="btn btn-outline-primary" onclick="verDetallesVisita(${visita.id})" title="Ver detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="editarVisita(${visita.id})" title="Editar visita">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="confirmarEliminarVisita(${visita.id})" title="Eliminar visita">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function guardarVisita() {
+            const form = document.getElementById('nuevaVisitaForm');
+            const formData = new FormData(form);
+            
+            // Validar campos requeridos
+            const clienteId = formData.get('clienteId');
+            const tipoVisita = formData.get('tipoVisita');
+            const fecha = formData.get('fecha');
+            const hora = formData.get('hora');
+            
+            if (!clienteId || !tipoVisita || !fecha || !hora) {
+                showAlert('Por favor complete todos los campos requeridos', 'warning');
+                return;
+            }
+            
+            const visitaData = {
+                cliente_id: clienteId,
+                tipo_visita: tipoVisita,
+                fecha: fecha,
+                hora: hora,
+                cotizacion_id: formData.get('cotizacionId') || null,
+                solicitud_id: formData.get('solicitudId') || null,
+                observaciones: formData.get('observaciones') || null,
+                estado: 'pendiente'
+            };
+            
+            try {
+                console.log('Enviando datos:', visitaData);
+                
+                const response = await fetch('/visitas/api/visitas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(visitaData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Visita guardada:', result);
+                
+                showAlert('Visita creada correctamente y correo enviado al cliente', 'success');
+                
+                // Cerrar modal y recargar datos
+                const modal = bootstrap.Modal.getInstance(document.getElementById('nuevaVisitaModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                await loadVisits();
+                await loadStatistics();
+                form.reset();
+                
+            } catch (error) {
+                console.error('Error al guardar visita:', error);
+                showAlert('Error al guardar la visita: ' + error.message, 'error');
+            }
+        }
+
+        function mostrarModalNuevaVisita() {
+            const modal = new bootstrap.Modal(document.getElementById('nuevaVisitaModal'));
+            modal.show();
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return 'No especificada';
+            return new Date(fecha).toLocaleDateString('es-ES');
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 9999;
+                min-width: 340px;
+                max-width: 90vw;
+                border-radius: 16px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+                border: none;
+                padding: 1.2rem 2rem;
+                font-size: 1.15rem;
+                font-weight: 600;
+                text-align: center;
+                background: ${type === 'error' ? 'linear-gradient(135deg, #ff4757, #ff3742)' : type === 'success' ? 'linear-gradient(135deg, #2ed573, #1dd1a1)' : '#fff'};
+                color: ${type === 'error' ? 'white' : type === 'success' ? 'white' : '#333'};
+                animation: ${type === 'error' ? 'shake 0.3s' : 'none'};
+            `;
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center" style="gap:12px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}" style="font-size:2rem;"></i>
+                    <div>${message}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            // Auto cerrar después de 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 150);
+            }, 5000);
+        }
+        // Animación shake para errores
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes shake { 0% { transform: translateX(-50%) translateY(0); } 20% { transform: translateX(-50%) translateY(-5px); } 40% { transform: translateX(-50%) translateY(5px); } 60% { transform: translateX(-50%) translateY(-5px); } 80% { transform: translateX(-50%) translateY(5px); } 100% { transform: translateX(-50%) translateY(0); } }`;
+        document.head.appendChild(style);
+
+        // Función para ver detalles de una visita
+        async function verDetallesVisita(id) {
+            const modal = new bootstrap.Modal(document.getElementById('detallesVisitaModal'));
+            
+            // Limpiar contenido anterior
+            document.getElementById('detallesCliente').textContent = 'Cargando...';
+            document.getElementById('detallesTipo').textContent = '...';
+            document.getElementById('detallesFecha').textContent = '...';
+            document.getElementById('detallesHora').textContent = '...';
+            document.getElementById('detallesEstado').textContent = '...';
+            document.getElementById('detallesObservaciones').textContent = '...';
+            document.getElementById('detallesDireccion').textContent = '...';
+
+            modal.show();
+
+            try {
+                const response = await fetch(`/visitas/api/visitas/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                const visita = result.data;
+                
+                // Guardar visita actual para gestión de certificados
+                visitaActual = visita;
+                
+                // Actualizar contenido del modal
+                document.getElementById('detallesCliente').textContent = (visita.cliente_nombre || visita.cliente?.nombre_empresa || 'Cliente no encontrado');
+                document.getElementById('detallesDireccion').textContent = (visita.cliente_direccion || visita.cliente?.direccion || 'Dirección no especificada');
+                document.getElementById('detallesTipo').textContent = visita.tipo_visita ? visita.tipo_visita.charAt(0).toUpperCase() + visita.tipo_visita.slice(1) : 'Tipo no especificado';
+                document.getElementById('detallesFecha').textContent = formatearFecha(visita.fecha);
+                document.getElementById('detallesHora').textContent = visita.hora;
+                document.getElementById('detallesEstado').textContent = visita.estado ? visita.estado.charAt(0).toUpperCase() + visita.estado.slice(1) : 'Estado no especificado';
+                document.getElementById('detallesObservaciones').textContent = visita.observaciones || 'Sin observaciones';
+                
+            } catch (error) {
+                console.error('Error al obtener detalles de la visita:', error);
+                showAlert('Error al cargar los detalles de la visita: ' + error.message, 'error');
+                document.getElementById('detallesCliente').textContent = 'Error al cargar datos.';
+            }
+        }
+
+        // Función para editar una visita
+        async function editarVisita(id) {
+            try {
+                const response = await fetch(`/visitas/api/visitas/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                const visita = result.data;
+                
+                // Llenar formulario de edición
+                document.getElementById('editVisitaId').value = visita.id;
+                document.getElementById('editClienteId').value = visita.clienteId;
+                document.getElementById('editTipoVisita').value = visita.tipoVisita;
+                document.getElementById('editFecha').value = visita.fecha;
+                document.getElementById('editHora').value = visita.hora;
+                document.getElementById('editObservaciones').value = visita.observaciones || '';
+                document.getElementById('editEstado').value = visita.estado;
+                
+                // Mostrar modal de edición
+                const modal = new bootstrap.Modal(document.getElementById('editarVisitaModal'));
+                modal.show();
+                
+            } catch (error) {
+                console.error('Error al cargar datos para editar:', error);
+                showAlert('Error al cargar los datos de la visita: ' + error.message, 'error');
+            }
+        }
+
+        // Función para guardar cambios de edición
+        async function guardarEdicionVisita() {
+            const form = document.getElementById('editarVisitaForm');
+            const formData = new FormData(form);
+            const visitaId = formData.get('visitaId');
+            
+            const visitaData = {
+                tipo_visita: formData.get('tipoVisita'), // CAMBIO: ahora snake_case
+                fecha: formData.get('fecha'),
+                hora: formData.get('hora'),
+                observaciones: formData.get('observaciones'),
+                estado: formData.get('estado')
+            };
+            
+            try {
+                const response = await fetch(`/visitas/api/visitas/${visitaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(visitaData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                showAlert('Visita actualizada correctamente', 'success');
+                
+                // Cerrar modal y recargar datos
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editarVisitaModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                await loadVisits();
+                await loadStatistics();
+                
+            } catch (error) {
+                console.error('Error al actualizar visita:', error);
+                showAlert('Error al actualizar la visita: ' + error.message, 'error');
+            }
+        }
+
+        // Función para confirmar la eliminación de una visita
+        function confirmarEliminarVisita(id) {
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+            deleteBtn.onclick = () => {
+                eliminarVisita(id);
+                confirmModal.hide();
+            };
+            confirmModal.show();
+        }
+
+        // Función para eliminar una visita
+        async function eliminarVisita(id) {
+            try {
+                const response = await fetch(`/visitas/api/visitas/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                showAlert('Visita eliminada correctamente', 'success');
+                
+                await loadVisits();
+                await loadStatistics();
+
+            } catch (error) {
+                console.error('Error al eliminar visita:', error);
+                showAlert('Error al eliminar la visita: ' + error.message, 'error');
+            }
+        }
+
+        // Variables globales para gestión de certificados
+        let visitaActual = null;
+        let certificadosDisponibles = [];
+
+        // Función para gestionar certificados
+        async function gestionarCertificados() {
+            const modalElement = document.getElementById('gestionarCertificadosModal');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            if (modalElement.classList.contains('show')) {
+                // Si ya está abierto, lo cierro
+                modalInstance.hide();
+                return;
+            }
+            if (!visitaActual) {
+                showAlert('No hay visita seleccionada', 'error');
+                return;
+            }
+            modalInstance.show();
+            // Cargar certificados del cliente
+            await cargarCertificadosCliente();
+            // Configurar tabs
+            configurarTabsCertificados();
+        }
+
+        // Función para cargar certificados del cliente
+        async function cargarCertificadosCliente() {
+            try {
+                const response = await fetch(`/api/certificados/cliente/${visitaActual.clienteId}`);
+                if (!response.ok) {
+                    // Mostrar mensaje bonito si no hay certificados
+                    const select = document.getElementById('certificadoExistente');
+                    select.style.display = 'none';
+                    document.querySelector('.alert-info').style.display = 'none';
+                    document.getElementById('btnAsignarCertificado').style.display = 'none';
+                    const contenedor = select.parentElement;
+                    contenedor.innerHTML += `<div class='text-center py-4'><i class='fas fa-certificate fa-3x mb-3 text-muted'></i><h5 class='text-muted'>No hay certificados disponibles para este cliente</h5><p class='text-muted'>Puedes crear uno nuevo en la pestaña <b>Crear Nuevo</b>.</p></div>`;
+                    return;
+                }
+                const result = await response.json();
+                certificadosDisponibles = result.data || [];
+                const select = document.getElementById('certificadoExistente');
+                select.style.display = '';
+                document.querySelector('.alert-info').style.display = '';
+                document.getElementById('btnAsignarCertificado').style.display = '';
+                select.innerHTML = '<option value="">Selecciona un certificado</option>';
+                certificadosDisponibles.forEach(cert => {
+                    const option = document.createElement('option');
+                    option.value = cert.id;
+                    option.textContent = `Certificado ${cert.id} - ${cert.fechaEmision ? new Date(cert.fechaEmision).toLocaleDateString('es-ES') : 'Sin fecha'} - ${cert.observaciones || 'Sin observaciones'}`;
+                    select.appendChild(option);
+                });
+                if (certificadosDisponibles.length === 0) {
+                    select.style.display = 'none';
+                    document.querySelector('.alert-info').style.display = 'none';
+                    document.getElementById('btnAsignarCertificado').style.display = 'none';
+                    const contenedor = select.parentElement;
+                    contenedor.innerHTML += `<div class='text-center py-4'><i class='fas fa-certificate fa-3x mb-3 text-muted'></i><h5 class='text-muted'>No hay certificados disponibles para este cliente</h5><p class='text-muted'>Puedes crear uno nuevo en la pestaña <b>Crear Nuevo</b>.</p></div>`;
+                }
+            } catch (error) {
+                console.error('Error al cargar certificados:', error);
+                showAlert('Error al cargar certificados del cliente: ' + error.message, 'error');
+            }
+        }
+
+        // Función para configurar tabs de certificados
+        function configurarTabsCertificados() {
+            const tabs = document.querySelectorAll('#certificadosTabs .nav-link');
+            const btnAsignar = document.getElementById('btnAsignarCertificado');
+            const btnCrear = document.getElementById('btnCrearCertificado');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.getAttribute('data-bs-target');
+                    
+                    if (target === '#asignar') {
+                        btnAsignar.style.display = 'inline-block';
+                        btnCrear.style.display = 'none';
+                    } else if (target === '#crear') {
+                        btnAsignar.style.display = 'none';
+                        btnCrear.style.display = 'inline-block';
+                    }
+                });
+            });
+        }
+
+        // Función para asignar certificado existente
+        async function asignarCertificado() {
+            const certificadoId = document.getElementById('certificadoExistente').value;
+            
+            if (!certificadoId) {
+                showAlert('Por favor selecciona un certificado', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/certificados/asignar-visita', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        visitaId: visitaActual.id,
+                        certificadoId: certificadoId
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                showAlert('Certificado asignado correctamente a la visita', 'success');
+                
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('gestionarCertificadosModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+            } catch (error) {
+                console.error('Error al asignar certificado:', error);
+                showAlert('Error al asignar certificado: ' + error.message, 'error');
+            }
+        }
+
+        // Función para crear nuevo certificado
+        async function crearCertificado() {
+            const form = document.getElementById('formNuevoCertificado');
+            const formData = new FormData(form);
+            // Validar archivo
+            const archivo = document.getElementById('archivoCertificado').files[0];
+            if (!archivo) {
+                showAlert('Por favor selecciona un archivo PDF', 'warning');
+                return;
+            }
+            if (archivo.type !== 'application/pdf') {
+                showAlert('El archivo debe ser un PDF', 'warning');
+                return;
+            }
+            if (archivo.size > 10 * 1024 * 1024) {
+                showAlert('El archivo es demasiado grande. Máximo 10MB', 'warning');
+                return;
+            }
+            // Agregar datos de la visita
+            formData.append('visitaId', visitaActual.id);
+            formData.append('observaciones', document.getElementById('observacionesCertificado').value);
+            formData.append('fechaEmision', document.getElementById('fechaEmisionCertificado').value);
+            try {
+                const response = await fetch('/api/certificados/crear-desde-visita', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    showAlert(result.message || 'Error al crear certificado', 'error');
+                    return;
+                }
+                showAlert(result.message || '¡Nuevo certificado realizado con éxito!', 'success');
+                // Cerrar modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('gestionarCertificadosModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                // Limpiar formulario
+                form.reset();
+                // Refrescar lista de certificados del cliente
+                await cargarCertificadosCliente();
+            } catch (error) {
+                console.error('Error al crear certificado:', error);
+                showAlert('Error al crear certificado: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

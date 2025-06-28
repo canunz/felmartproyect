@@ -1,0 +1,139 @@
+<%- include('../partials/header') %>
+<style>
+  .list-card {background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,97,110,0.08), 0 1.5px 4px rgba(0,97,110,0.08); padding: 2.5rem 2rem 2rem 2rem; margin-top: 2.5rem; margin-bottom: 2rem; max-width: 950px; margin-left: auto; margin-right: auto;}
+  .list-title {font-size: 2rem; font-weight: 700; color: #00616e; display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1.5rem;}
+  .list-title i {font-size: 2.2rem; color: #00b4d8;}
+  .list-table th, .list-table td {vertical-align: middle !important;}
+  .list-table tbody tr:hover {background: #f1f8fa; transition: background 0.2s;}
+  .list-table th {background: #eaf6f8; color: #00616e; font-weight: 600;}
+  .list-table {border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,97,110,0.06);}
+  @media (max-width: 767px) {.list-card { padding: 1.2rem 0.5rem; } .list-title { font-size: 1.3rem; }}
+</style>
+<div class="list-card">
+  <div class="list-title">
+    <i class="fas fa-file-invoice-dollar"></i> Lista de Cotizaciones
+  </div>
+  <form action="/cotizaciones" method="GET" class="row mb-3">
+    <div class="col-md-3 mb-2">
+      <select name="estado" id="estado" class="form-select">
+        <option value="todos" <%= estado === 'todos' ? 'selected' : '' %>>Todos</option>
+        <option value="pendiente" <%= estado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+        <option value="aceptada" <%= estado === 'aceptada' ? 'selected' : '' %>>Aceptada</option>
+        <option value="rechazada" <%= estado === 'rechazada' ? 'selected' : '' %>>Rechazada</option>
+      </select>
+    </div>
+    <div class="col-md-3 mb-2">
+      <input type="date" name="fechaDesde" id="fechaDesde" class="form-control" value="<%= fechaDesde %>">
+    </div>
+    <div class="col-md-3 mb-2">
+      <input type="date" name="fechaHasta" id="fechaHasta" class="form-control" value="<%= fechaHasta %>">
+    </div>
+    <div class="col-md-3 mb-2">
+      <button class="btn btn-primary w-100"><i class="fas fa-search"></i> Filtrar</button>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table list-table">
+      <thead>
+        <tr>
+          <th>N° Cotización</th>
+          <th>Cliente</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (cotizaciones && cotizaciones.length > 0) { %>
+          <% cotizaciones.forEach(cotizacion => { %>
+            <tr>
+              <td><%= cotizacion.numeroCotizacion %></td>
+              <td><%= cotizacion.nombre %></td>
+              <td><%= new Date(cotizacion.fechaCotizacion).toLocaleDateString() %></td>
+              <td>$<%= cotizacion.total.toLocaleString() %></td>
+              <td>
+                <span class="badge bg-<%= 
+                  cotizacion.estado === 'pendiente' ? 'warning' : 
+                  cotizacion.estado === 'aceptada' ? 'success' : 
+                  cotizacion.estado === 'rechazada' ? 'danger' : 'secondary' 
+                %>">
+                  <%= cotizacion.estado.charAt(0).toUpperCase() + cotizacion.estado.slice(1) %>
+                </span>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="/cotizaciones/detalles/<%= cotizacion.id %>" class="btn btn-sm btn-info">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="/cotizaciones/descargar/<%= cotizacion.id %>" class="btn btn-sm btn-success">
+                    <i class="fas fa-download"></i>
+                  </a>
+                  <% if (cotizacion.estado === 'pendiente') { %>
+                    <button type="button" class="btn btn-sm btn-danger" 
+                            onclick="rechazarCotizacion('<%= cotizacion.id %>')">
+                      <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success" 
+                            onclick="aceptarCotizacion('<%= cotizacion.id %>')">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                No hay cotizaciones registradas
+              </div>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal para rechazar cotización -->
+<div class="modal fade" id="rechazarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Rechazar Cotización</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="rechazarForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo del rechazo</label>
+                        <textarea class="form-control" id="motivo" name="motivo" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Rechazar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function rechazarCotizacion(id) {
+    const modal = new bootstrap.Modal(document.getElementById('rechazarModal'));
+    document.getElementById('rechazarForm').action = `/cotizaciones/rechazar/${id}`;
+    modal.show();
+}
+
+function aceptarCotizacion(id) {
+    if (confirm('¿Está seguro de aceptar esta cotización?')) {
+        window.location.href = `/cotizaciones/aceptar/${id}`;
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Certificados - Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00616e;
+            --primary-dark: #004d57;
+            --primary-light: #00818f;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles - Idéntica a solicitudes */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .user-dropdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 250px;
+            margin-top: 0.5rem;
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 97, 110, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-container {
+            padding: 60px 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+        }
+
+        /* Certificate List */
+        .certificate-list {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .certificate-list:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .certificate-item {
+            padding: 2rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .certificate-item:last-child {
+            border-bottom: none;
+        }
+
+        .certificate-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .certificate-info {
+            flex: 1;
+        }
+
+        .certificate-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .certificate-date {
+            display: flex;
+            align-items: center;
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .certificate-date i {
+            margin-right: 0.5rem;
+        }
+
+        .certificate-description {
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .certificate-status {
+            margin: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            min-width: 100px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .status-emitido {
+            background: linear-gradient(135deg, #d4edda, #95d5b2);
+            color: var(--success-color);
+            border: 2px solid var(--success-color);
+        }
+
+        .status-pendiente {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 2px solid var(--warning-color);
+        }
+
+        .status-vencido {
+            background: linear-gradient(135deg, #f8d7da, #ffb3ba);
+            color: var(--danger-color);
+            border: 2px solid var(--danger-color);
+        }
+
+        .certificate-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--success-color), #34ce57);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            min-width: 180px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+        .btn-disabled {
+            background: #e9ecef;
+            color: var(--secondary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: not-allowed;
+            min-width: 180px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(0, 97, 110, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .btn-close {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            opacity: 1;
+        }
+
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .certificate-preview {
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            background: #fafafa;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .certificate-preview h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .certificate-details {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-value {
+            color: var(--secondary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .certificate-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .certificate-status {
+                margin: 0;
+            }
+
+            .certificate-actions {
+                width: 100%;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .detail-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover;">
+                Felmart
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/solicitudes">
+                            <i class="fas fa-file-alt me-2"></i>Mis Solicitudes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/cotizaciones">
+                            <i class="fas fa-calculator me-2"></i>Cotizaciones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/calendario">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/clientes/certificados">
+                            <i class="fas fa-certificate me-2"></i>Certificados
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="btn user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>
+                        Cliente
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <small style="color: rgba(255,255,255,0.8);">Bienvenido</small><br>
+                                    <strong style="color: white;">Cliente</strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/miperfil">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/cambiar-password">
+                                <i class="fas fa-key me-2 text-warning"></i>
+                                Cambiar Contraseña
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/ayuda-soporte">
+                                <i class="fas fa-question-circle me-2 text-info"></i>
+                                Ayuda y Soporte
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/">
+                                <i class="fas fa-home me-2 text-secondary"></i>
+                                Volver al Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header fade-in">
+                <h1 class="page-title">Mis Certificados</h1>
+                <p class="page-subtitle">Gestiona y descarga tus certificados ambientales</p>
+            </div>
+            
+            <!-- Certificate List -->
+            <div class="certificate-list fade-in">
+                <div id="certificatesContainer">
+                    <!-- Los certificados se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalle Certificado -->
+    <div class="modal fade" id="modalDetalleCertificado" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-certificate me-2"></i>
+                        Detalle del Certificado
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="detalleCertificadoContent">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" id="btnDescargarModal">
+                        <i class="fas fa-download me-2"></i>Descargar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Función para cargar los certificados desde el backend
+        async function cargarCertificados() {
+            try {
+                const response = await fetch('/api/certificados/cliente', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    throw new Error(`Error al cargar los certificados: ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Respuesta del servidor no válida');
+                }
+
+                const certificados = await response.json();
+                renderCertificados(certificados);
+            } catch (error) {
+                console.error('Error al cargar certificados:', error);
+                document.getElementById('certificatesContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error al cargar certificados</h3>
+                        <p>No se pudieron cargar los certificados.<br>
+                        Por favor, intenta recargar la página.</p>
+                        <button onclick="window.location.reload()" class="btn btn-primary mt-3">
+                            <i class="fas fa-sync-alt"></i> Recargar página
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Obtener estado label y clase
+        function getEstadoInfo(estado) {
+            const estados = {
+                'emitido': { label: 'Emitido', class: 'status-emitido', icon: 'fas fa-check-circle' },
+                'pendiente': { label: 'Pendiente', class: 'status-pendiente', icon: 'fas fa-clock' },
+                'vencido': { label: 'Vencido', class: 'status-vencido', icon: 'fas fa-times-circle' }
+            };
+            return estados[estado] || { label: estado, class: 'status-pendiente', icon: 'fas fa-clock' };
+        }
+
+        // Renderizar certificados
+        function renderCertificados(certificados) {
+            const container = document.getElementById('certificatesContainer');
+            
+            if (!certificados || certificados.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-certificate"></i>
+                        <h3>No hay certificados disponibles</h3>
+                        <p>Aún no tienes certificados asignados.<br>
+                        Contacta con nuestro equipo para solicitar un certificado.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            certificados.forEach(cert => {
+                html += `
+                    <div class="certificate-item">
+                        <div class="certificate-info">
+                            <div class="certificate-title">${cert.titulo}</div>
+                            <div class="certificate-date">
+                                <i class="fas fa-calendar"></i>
+                                ${cert.fecha}
+                            </div>
+                            <div class="certificate-description">
+                                ${cert.descripcion}
+                            </div>
+                        </div>
+                        
+                        <div class="certificate-actions">
+                            ${cert.rutaPdf ? 
+                                `<a href="/clientes/certificados/descargar/${cert.id}" class="btn-download">
+                                    <i class="fas fa-download"></i>
+                                    Descargar PDF
+                                </a>` :
+                                `<button class="btn-disabled" disabled>
+                                    <i class="fas fa-clock"></i>
+                                    PDF no disponible
+                                </button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            addRowClickListeners(certificados);
+        }
+
+        // Ver detalle del certificado
+        function verDetalle(certificado) {
+            if (!certificado) return;
+            
+            const content = `
+                <div class="certificate-preview">
+                    <h2>CERTIFICADO</h2>
+                    <div style="margin: 1rem 0; color: #6c757d;">
+                        <strong>FELMART LTDA.</strong><br>
+                        Gestión Integral de Residuos
+                    </div>
+                    <h4 style="color: var(--primary-color);">${certificado.titulo}</h4>
+                </div>
+                
+                <div class="certificate-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID Certificado:</span>
+                        <span class="detail-value">#${certificado.id}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Fecha de Emisión:</span>
+                        <span class="detail-value">${certificado.fecha}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <h6 style="color: var(--primary-color); margin-bottom: 0.75rem;">Observaciones</h6>
+                    <p style="color: #6c757d; line-height: 1.6;">${certificado.descripcion}</p>
+                </div>
+            `;
+            
+            document.getElementById('detalleCertificadoContent').innerHTML = content;
+            document.getElementById('btnDescargarModal').onclick = () => window.location.href = `/clientes/certificados/descargar/${certificado.id}`;
+            document.getElementById('btnDescargarModal').style.display = certificado.rutaPdf ? 'block' : 'none';
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalDetalleCertificado'));
+            modal.show();
+        }
+
+        // Agregar click en las filas para ver detalle
+        function addRowClickListeners(certificados) {
+            document.querySelectorAll('.certificate-item').forEach((item, index) => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', (e) => {
+                    // No abrir modal si se hizo click en un botón
+                    if (!e.target.closest('a, button')) {
+                        verDetalle(certificados[index]);
+                    }
+                });
+            });
+        }
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarCertificados();
+        });
+    </script>
+</body>
+</html>

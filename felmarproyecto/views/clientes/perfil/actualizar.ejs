@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00616e;
+            --primary-dark: #004d57;
+            --primary-light: #00818f;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .user-dropdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        /* Dropdown Menu Styles */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 250px;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 97, 110, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-container {
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Back Button */
+        .back-button {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.2);
+        }
+
+        .back-button:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 97, 110, 0.3);
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 97, 110, 0.1);
+        }
+
+        .invalid-feedback {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--danger-color);
+            margin-top: 0.25rem;
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: var(--danger-color);
+        }
+
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: var(--success-color);
+        }
+
+        /* Ocultar validación mientras se escribe o si el campo tiene contenido válido */
+        .form-control.typing,
+        .form-select.typing {
+            border-color: #e9ecef !important;
+        }
+
+        .typing + .invalid-feedback,
+        .form-control:valid + .invalid-feedback,
+        .form-select:valid + .invalid-feedback {
+            display: none !important;
+        }
+
+        /* Mostrar borde verde para campos válidos */
+        .form-control.is-valid,
+        .form-select.is-valid {
+            border-color: var(--success-color) !important;
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.2);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 97, 110, 0.3);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Loading State */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Required indicator */
+        .required::after {
+            content: ' *';
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .form-card {
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                width: 100%;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <div class="logo-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                Felmart
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/cliente">
+                            <i class="fas fa-tachometer-alt me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/solicitudes">
+                            <i class="fas fa-file-alt me-2"></i>Mis Solicitudes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/cotizaciones">
+                            <i class="fas fa-calculator me-2"></i>Cotizaciones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/calendario">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/certificados">
+                            <i class="fas fa-certificate me-2"></i>Certificados
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="btn user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>
+                        <% if (typeof perfilUsuario !== 'undefined' && perfilUsuario) { %>
+                            <%= perfilUsuario.nombre || 'Cliente' %>
+                        <% } else { %>
+                            Cliente
+                        <% } %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <small style="color: rgba(255,255,255,0.8);">Bienvenido</small><br>
+                                    <strong style="color: white;"><%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? (perfilUsuario.nombre || 'Cliente') : 'Cliente' %></strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item active" href="/clientes/perfil/miperfil">
+                                <i class="fas fa-user me-2" style="color: #0d6efd;"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/cambiar-password">
+                                <i class="fas fa-key me-2" style="color: #ffc107;"></i>
+                                Cambiar Contraseña
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/ayuda-soporte">
+                                <i class="fas fa-question-circle me-2" style="color: #17a2b8;"></i>
+                                Ayuda y Soporte
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/dashboard/cliente">
+                                <i class="fas fa-arrow-left me-2" style="color: #6c757d;"></i>
+                                Volver al Panel
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <!-- Back Button -->
+                <a href="/clientes/perfil/miperfil" class="back-button fade-in">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Perfil
+                </a>
+
+                <!-- Page Header -->
+                <div class="page-header fade-in">
+                    <h1><i class="fas fa-user-edit me-2"></i>Editar Perfil</h1>
+                    <p>Actualiza tu información personal y datos de contacto</p>
+                </div>
+
+                <!-- Alert Messages -->
+                <% if (typeof error !== 'undefined' && error) { %>
+                <!-- Error notification will appear here via the layout -->
+                <% } %>
+
+                <% if (typeof success !== 'undefined' && success) { %>
+                <!-- Success notification will appear here via the layout -->
+                <% } %>
+
+                <!-- Form Card -->
+                <div class="form-card fade-in">
+                    <form action="/perfil/actualizar" method="POST" class="needs-validation" novalidate id="editForm">
+                        
+                        <!-- Información Personal -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user"></i>
+                                Información Personal
+                            </h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label required">Nombre Completo</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.nombre : 'catalina' %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese su nombre completo
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="rut" class="form-label required">RUT</label>
+                                    <input type="text" class="form-control" id="rut" name="rut" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.rut : '21.653.864-3' %>" 
+                                           placeholder="Ej: 12.345.678-9" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese un RUT válido
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label required">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.email : 'catasoledad96@gmail.com' %>" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese un correo electrónico válido
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.telefono : '+56229993862' %>"
+                                           placeholder="+56 9 1234 5678">
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese un teléfono válido
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información Empresarial -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-building"></i>
+                                Información Empresarial
+                            </h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre_empresa" class="form-label">Nombre de la Empresa</label>
+                                    <input type="text" class="form-control" id="nombre_empresa" name="nombre_empresa" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.nombre_empresa : 'Akva Group S.A' %>"
+                                           placeholder="Nombre de su empresa">
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el nombre de la empresa
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="contacto_principal" class="form-label">Contacto Principal</label>
+                                    <input type="text" class="form-control" id="contacto_principal" name="contacto_principal" 
+                                           value="<%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.contacto_principal : 'Manuel Hernandez' %>"
+                                           placeholder="Nombre del contacto principal">
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese el nombre del contacto
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">Dirección</label>
+                                <textarea class="form-control" id="direccion" name="direccion" rows="3" 
+                                          placeholder="Dirección completa"><%= (typeof perfilUsuario !== 'undefined' && perfilUsuario) ? perfilUsuario.direccion : 'Avenida los Ríos 6451' %></textarea>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese la dirección
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de Ubicación -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Ubicación
+                            </h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="region_id" class="form-label">Región</label>
+                                    <select class="form-select" id="region_id" name="region_id">
+                                        <option value="">Seleccione una región</option>
+                                        <option value="1" selected>Región de Los Lagos</option>
+                                        <option value="2">Región del Biobío</option>
+                                        <option value="3">Región de La Araucanía</option>
+                                        <option value="4">Región de Los Ríos</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor seleccione una región
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="comuna_id" class="form-label">Comuna</label>
+                                    <select class="form-select" id="comuna_id" name="comuna_id">
+                                        <option value="">Seleccione una comuna</option>
+                                        <option value="1" selected>Puerto Montt</option>
+                                        <option value="2">Puerto Varas</option>
+                                        <option value="3">Ancud</option>
+                                        <option value="4">Castro</option>
+                                        <option value="5">Concepción</option>
+                                        <option value="6">Talcahuano</option>
+                                        <option value="7">Temuco</option>
+                                        <option value="8">Valdivia</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor seleccione una comuna
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-custom" id="updateBtn">
+                                <i class="fas fa-save me-2"></i>
+                                Guardar Cambios
+                            </button>
+                            <a href="/clientes/perfil/miperfil" class="btn-secondary-custom">
+                                <i class="fas fa-times me-2"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                        
+                    </form>
+                </div>
+
+                <div class="alert alert-success" style="margin-top: 2rem; text-align: center;">
+                    <i class="fas fa-check-circle"></i> Perfil actualizado correctamente.
+                </div>
+                <a href="/clientes/perfil/miperfil" class="btn btn-primary" style="display: block; margin: 2rem auto 0 auto; width: fit-content;">Volver a mi perfil</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editForm');
+            const updateBtn = document.getElementById('updateBtn');
+            const regionSelect = document.getElementById('region_id');
+            const comunaSelect = document.getElementById('comuna_id');
+
+            // Obtener todos los campos del formulario
+            const formFields = form.querySelectorAll('input, select, textarea');
+
+            // Agregar event listeners para ocultar validación mientras se escribe
+            formFields.forEach(field => {
+                // Mientras escribe (input/change)
+                field.addEventListener('input', function() {
+                    this.classList.add('typing');
+                    this.classList.remove('is-invalid', 'is-valid');
+                    
+                    // Si el campo tiene contenido, ocultar mensaje de error inmediatamente
+                    if (this.value.trim().length > 0) {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                field.addEventListener('change', function() {
+                    this.classList.add('typing');
+                    this.classList.remove('is-invalid', 'is-valid');
+                    
+                    // Si el campo tiene contenido, ocultar mensaje de error inmediatamente
+                    if (this.value.trim().length > 0) {
+                        this.setCustomValidity('');
+                    }
+                });
+
+                // Al salir del campo (blur) - quitar la clase typing
+                field.addEventListener('blur', function() {
+                    this.classList.remove('typing');
+                    
+                    // Validación inmediata al salir del campo si tiene contenido
+                    if (this.value.trim().length > 0) {
+                        if (this.checkValidity()) {
+                            this.classList.add('is-valid');
+                            this.classList.remove('is-invalid');
+                        }
+                    }
+                });
+            });
+
+            // Validación del formulario
+            form.addEventListener('submit', function(event) {
+                // Quitar la clase typing de todos los campos al enviar
+                formFields.forEach(field => {
+                    field.classList.remove('typing');
+                });
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Mostrar estado de carga
+                    updateBtn.classList.add('loading');
+                    updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+                    updateBtn.disabled = true;
+                }
+                form.classList.add('was-validated');
+            });
+
+            // Cargar comunas cuando se selecciona una región
+            regionSelect.addEventListener('change', async function() {
+                const regionId = this.value;
+                
+                if (!regionId) {
+                    comunaSelect.innerHTML = '<option value="">Primero seleccione una región</option>';
+                    return;
+                }
+
+                try {
+                    // Mostrar estado de carga en comunas
+                    comunaSelect.innerHTML = '<option value="">Cargando comunas...</option>';
+                    comunaSelect.disabled = true;
+
+                    const response = await fetch(`/api/regiones/${regionId}/comunas`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        throw new Error(data.message || 'Error al cargar comunas');
+                    }
+                    
+                    // Limpiar y llenar select de comunas
+                    comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
+                    
+                    if (data.comunas && data.comunas.length > 0) {
+                        data.comunas.forEach(comuna => {
+                            const option = document.createElement('option');
+                            option.value = comuna.id;
+                            option.textContent = comuna.nombre;
+                            comunaSelect.appendChild(option);
+                        });
+                    } else {
+                        comunaSelect.innerHTML = '<option value="">No hay comunas disponibles</option>';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error al cargar comunas:', error);
+                    comunaSelect.innerHTML = '<option value="">Error al cargar comunas</option>';
+                } finally {
+                    comunaSelect.disabled = false;
+                }
+            });
+
+            // Formatear RUT chileno mientras se escribe
+            const rutInput = document.getElementById('rut');
+            rutInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^0-9kK]/g, '');
+                
+                if (value.length <= 1) {
+                    e.target.value = value.toUpperCase();
+                    return;
+                }
+                
+                // Separar cuerpo y dígito verificador
+                let cuerpo = value.slice(0, -1);
+                let dv = value.slice(-1).toUpperCase();
+                
+                // Formatear cuerpo con puntos
+                if (cuerpo.length > 3) {
+                    cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                }
+                
+                // Combinar con guión
+                e.target.value = cuerpo + '-' + dv;
+            });
+
+            // Formatear teléfono
+            const telefonoInput = document.getElementById('telefono');
+            telefonoInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^0-9+]/g, '');
+                if (value.startsWith('56') && value.length > 2) {
+                    value = '+56 ' + value.slice(2);
+                }
+                e.target.value = value;
+            });
+
+            // Animación de entrada
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

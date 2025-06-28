@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda y Soporte - Felmart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #00616e;
+            --primary-dark: #004d57;
+            --primary-light: #00818f;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            line-height: 1.6;
+        }
+
+        /* Navigation Styles */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 97, 110, 0.05);
+        }
+
+        .user-dropdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-weight: 500;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 250px;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem 0;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 97, 110, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .search-input {
+            position: relative;
+        }
+
+        .search-input input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .search-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 97, 110, 0.1);
+            outline: none;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .category-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-icon.solicitudes {
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        }
+
+        .category-icon.cotizaciones {
+            background: linear-gradient(135deg, var(--warning-color), #e0a800);
+        }
+
+        .category-icon.calendario {
+            background: linear-gradient(135deg, var(--success-color), #1e7e34);
+        }
+
+        .category-icon.certificados {
+            background: linear-gradient(135deg, var(--info-color), #117a8b);
+        }
+
+        .category-icon.perfil {
+            background: linear-gradient(135deg, #6f42c1, #563d7c);
+        }
+
+        .category-icon.general {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .category-description {
+            color: var(--secondary-color);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .topics-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .topics-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .topics-list li:last-child {
+            border-bottom: none;
+        }
+
+        .topics-list li:hover {
+            color: var(--primary-color);
+            padding-left: 0.5rem;
+        }
+
+        .topics-list li i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+            width: 16px;
+        }
+
+        /* Help Content */
+        .help-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .help-content.active {
+            display: block;
+        }
+
+        .help-content h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 1rem;
+        }
+
+        .help-section {
+            margin-bottom: 3rem;
+        }
+
+        .help-section h3 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-section h3 i {
+            color: var(--primary-light);
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+        }
+
+        .step-item {
+            counter-increment: step-counter;
+            margin-bottom: 2rem;
+            padding-left: 3.5rem;
+            position: relative;
+        }
+
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.3);
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .step-description {
+            color: var(--secondary-color);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-left: 5px solid var(--info-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box h4 {
+            color: var(--info-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #495057;
+        }
+
+        .info-box li {
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .faq-section h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 1rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: #f8f9fa;
+            border: none;
+            padding: 1.25rem;
+            width: 100%;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .faq-question:hover {
+            background: #e9ecef;
+        }
+
+        .faq-question i {
+            transition: var(--transition);
+        }
+
+        .faq-answer {
+            padding: 1.5rem;
+            color: var(--secondary-color);
+            line-height: 1.6;
+            display: none;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .contact-section h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .contact-section p {
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-method {
+            text-align: center;
+            padding: 2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            transition: var(--transition);
+            background: #f8f9fa;
+        }
+
+        .contact-method:hover {
+            border-color: var(--primary-color);
+            background: white;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .contact-method i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .contact-method h6 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .contact-method p {
+            color: var(--secondary-color);
+            margin: 0.5rem 0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .contact-method small {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Back Button */
+        .back-button {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            margin-bottom: 2rem;
+            margin-left: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 97, 110, 0.2);
+        }
+
+        .back-button:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 97, 110, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                padding: 2rem 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .step-item {
+                padding-left: 2.5rem;
+            }
+
+            .help-content,
+            .faq-section,
+            .contact-section {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="/img/logo.png" alt="Logo Felmart" class="logo-img" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover;">
+                Felmart
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/solicitudes">
+                            <i class="fas fa-file-alt me-2"></i>Mis Solicitudes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/cotizaciones">
+                            <i class="fas fa-calculator me-2"></i>Cotizaciones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/calendario">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendario
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes/certificados">
+                            <i class="fas fa-certificate me-2"></i>Certificados
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="dropdown">
+                    <button class="btn user-dropdown dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-2"></i>
+                        Cliente
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <small style="color: rgba(255,255,255,0.8);">Bienvenido</small><br>
+                                    <strong style="color: white;">Cliente</strong>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/miperfil">
+                                <i class="fas fa-user me-2" style="color: #0d6efd;"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/clientes/perfil/cambiar-password">
+                                <i class="fas fa-key me-2" style="color: #ffc107;"></i>
+                                Cambiar Contraseña
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item active" href="/clientes/ayuda-soporte">
+                                <i class="fas fa-question-circle me-2" style="color: #17a2b8;"></i>
+                                Ayuda y Soporte
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/">
+                                <i class="fas fa-home me-2" style="color: #6c757d;"></i>
+                                Volver al Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Back Button -->
+        <a href="/dashboard" class="back-button fade-in">
+            <i class="fas fa-arrow-left"></i>
+            Volver al Panel
+        </a>
+
+        <!-- Page Header -->
+        <div class="page-header fade-in">
+            <h1><i class="fas fa-question-circle me-3"></i>Centro de Ayuda y Soporte</h1>
+            <p>Encuentra respuestas claras y aprende a usar todas las funciones de Felmart paso a paso</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box fade-in">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar ayuda sobre solicitudes, certificados, calendario..." onkeyup="searchHelp()">
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="categories-grid fade-in" id="categoriesGrid">
+            <div class="category-card" onclick="showHelp('solicitudes')">
+                <div class="category-icon solicitudes">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h4 class="category-title">Solicitudes de Retiro</h4>
+                <p class="category-description">Todo lo que necesitas saber para crear y gestionar tus solicitudes de retiro de residuos de forma fácil</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo crear una solicitud nueva?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Qué significan los estados?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Puedo modificar mi solicitud?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo hacer seguimiento?</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="showHelp('cotizaciones')">
+                <div class="category-icon cotizaciones">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h4 class="category-title">Cotizaciones</h4>
+                <p class="category-description">Aprende a revisar, entender y gestionar las cotizaciones que recibes para tus servicios</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo revisar mis cotizaciones?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Qué incluyen los precios?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo aceptar o rechazar?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Puedo pedir cambios?</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="showHelp('calendario')">
+                <div class="category-icon calendario">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h4 class="category-title">Calendario y Visitas</h4>
+                <p class="category-description">Programa y gestiona tus visitas técnicas de manera simple y eficiente</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo agendar una visita?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Qué tipos de visitas hay?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Puedo cambiar la fecha?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo cancelar una visita?</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="showHelp('certificados')">
+                <div class="category-icon certificados">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h4 class="category-title">Certificados</h4>
+                <p class="category-description">Accede, descarga y gestiona todos tus certificados ambientales de forma rápida</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo descargar certificados?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Qué significan los estados?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cuándo estará listo?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo solicitar uno nuevo?</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="showHelp('perfil')">
+                <div class="category-icon perfil">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4 class="category-title">Mi Perfil y Cuenta</h4>
+                <p class="category-description">Configura tu información personal y mantén tu cuenta segura</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo editar mis datos?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo cambiar contraseña?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo activar notificaciones?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo proteger mi cuenta?</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="showHelp('general')">
+                <div class="category-icon general">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h4 class="category-title">Información General</h4>
+                <p class="category-description">Conceptos básicos sobre Felmart y manejo de residuos que debes conocer</p>
+                <ul class="topics-list">
+                    <li><i class="fas fa-chevron-right"></i>¿Qué es Felmart?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Qué residuos aceptamos?</li>
+                    <li><i class="fas fa-chevron-right"></i>¿Cómo funciona el proceso?</li>
+                    <li><i class="fas fa-chevron-right"></i>Preguntas más frecuentes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Help Content Sections -->
+        <div class="help-content" id="solicitudes-help">
+            <h2><i class="fas fa-file-alt me-2"></i>Solicitudes de Retiro</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-plus-circle"></i>¿Cómo crear una solicitud nueva?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Accede a "Mis Solicitudes"</div>
+                        <div class="step-description">Desde el menú principal, haz clic en "Mis Solicitudes" o ve directamente desde tu panel de control.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Haz clic en "Nueva Solicitud"</div>
+                        <div class="step-description">Encontrarás el botón verde "Nueva Solicitud" en la parte superior derecha de la página.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Completa la información básica</div>
+                        <div class="step-description">Llena los campos requeridos: tipo de residuo, cantidad estimada, dirección de retiro y fecha preferida.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Añade detalles adicionales</div>
+                        <div class="step-description">Describe características especiales de los residuos, acceso al lugar y cualquier información relevante.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Envía tu solicitud</div>
+                        <div class="step-description">Revisa toda la información y haz clic en "Enviar Solicitud". Recibirás una confirmación inmediata.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-info-circle"></i>¿Qué significan los estados de mi solicitud?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-list"></i>Estados de Solicitud</h4>
+                    <ul>
+                        <li><strong>Pendiente:</strong> Tu solicitud fue recibida y está en revisión por nuestro equipo.</li>
+                        <li><strong>En Proceso:</strong> Estamos preparando la cotización y programando la visita técnica.</li>
+                        <li><strong>Cotizada:</strong> Has recibido una cotización que está esperando tu aprobación.</li>
+                        <li><strong>Aprobada:</strong> La cotización fue aceptada y el servicio está programado.</li>
+                        <li><strong>Completada:</strong> El retiro de residuos se realizó exitosamente.</li>
+                        <li><strong>Cancelada:</strong> La solicitud fue cancelada por ti o por razones técnicas.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-edit"></i>¿Puedo modificar mi solicitud?</h3>
+                <p>Sí, puedes modificar tu solicitud dependiendo de su estado actual:</p>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Solicitudes "Pendientes"</div>
+                        <div class="step-description">Puedes editar todos los campos haciendo clic en "Editar" desde la lista de solicitudes.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Solicitudes "En Proceso"</div>
+                        <div class="step-description">Puedes modificar cantidad y detalles adicionales, pero no el tipo de residuo.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Solicitudes "Cotizadas" o posteriores</div>
+                        <div class="step-description">Los cambios requieren contactar a soporte. Usa el chat o llámanos directamente.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-search"></i>¿Cómo hacer seguimiento a mi solicitud?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Panel de Control</div>
+                        <div class="step-description">Desde tu dashboard puedes ver el resumen de todas tus solicitudes activas con sus estados actuales.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Mis Solicitudes</div>
+                        <div class="step-description">En esta sección encuentras el historial completo con filtros por fecha, estado y tipo de residuo.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Notificaciones por Email</div>
+                        <div class="step-description">Recibirás emails automáticos cada vez que cambie el estado de tu solicitud.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Detalles de Solicitud</div>
+                        <div class="step-description">Haz clic en "Ver Detalles" para ver toda la información, historial de cambios y documentos relacionados.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-content" id="cotizaciones-help">
+            <h2><i class="fas fa-calculator me-2"></i>Cotizaciones</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-eye"></i>¿Cómo revisar mis cotizaciones?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Accede a "Cotizaciones"</div>
+                        <div class="step-description">Desde el menú principal o el dashboard, haz clic en "Cotizaciones" para ver todas tus cotizaciones.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Revisa la lista</div>
+                        <div class="step-description">Verás todas las cotizaciones organizadas por fecha, con estado y monto total visible.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Ve los detalles</div>
+                        <div class="step-description">Haz clic en "Ver Detalles" para revisar el desglose completo de costos y servicios incluidos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Descarga el PDF</div>
+                        <div class="step-description">Puedes descargar una versión en PDF de la cotización para tus archivos o contabilidad.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-dollar-sign"></i>¿Qué incluyen los precios de las cotizaciones?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-list-check"></i>Servicios Incluidos</h4>
+                    <ul>
+                        <li><strong>Visita técnica:</strong> Evaluación profesional en tu ubicación (sin costo adicional).</li>
+                        <li><strong>Transporte:</strong> Vehículos especializados para el tipo de residuo específico.</li>
+                        <li><strong>Mano de obra:</strong> Personal capacitado para la recolección y manejo seguro.</li>
+                        <li><strong>Documentación:</strong> Manifiestos de transporte y certificados ambientales.</li>
+                        <li><strong>Tratamiento:</strong> Procesamiento adecuado según normativas ambientales vigentes.</li>
+                        <li><strong>Certificación:</strong> Certificados de disposición final o valorización.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-check-circle"></i>¿Cómo aceptar o rechazar una cotización?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Revisa los detalles completos</div>
+                        <div class="step-description">Asegúrate de entender todos los servicios incluidos, fechas y condiciones antes de decidir.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Para aceptar</div>
+                        <div class="step-description">Haz clic en "Aceptar Cotización". Se te pedirá confirmar y podrás programar la fecha de servicio.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Para rechazar</div>
+                        <div class="step-description">Haz clic en "Rechazar" e indica el motivo. Esto nos ayuda a mejorar futuras cotizaciones.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirmación</div>
+                        <div class="step-description">Recibirás un email confirmando tu decisión y los siguientes pasos a seguir.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-comment-alt"></i>¿Puedo pedir cambios en una cotización?</h3>
+                <p>Absolutamente. Entendemos que a veces se necesitan ajustes:</p>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Cambios menores</div>
+                        <div class="step-description">Para ajustes en cantidades o fechas, puedes escribir en el chat de soporte desde la cotización.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Cambios significativos</div>
+                        <div class="step-description">Si necesitas modificar servicios o condiciones importantes, contacta telefónicamente para mejor atención.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Nueva cotización</div>
+                        <div class="step-description">Los cambios grandes pueden requerir una nueva cotización, que se preparará sin costo adicional.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-content" id="calendario-help">
+            <h2><i class="fas fa-calendar-alt me-2"></i>Calendario y Visitas</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-calendar-plus"></i>¿Cómo agendar una visita técnica?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Accede al Calendario</div>
+                        <div class="step-description">Ve a la sección "Calendario" desde el menú principal para ver tu calendario de servicios.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Solicita una visita</div>
+                        <div class="step-description">Haz clic en "Agendar Visita" y selecciona el tipo: evaluación inicial, seguimiento o retiro programado.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Elige fecha y hora</div>
+                        <div class="step-description">Selecciona entre las fechas disponibles. Los horarios van de 8:00 AM a 5:00 PM, lunes a viernes.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Proporciona información</div>
+                        <div class="step-description">Añade detalles sobre acceso, contacto en sitio y cualquier información relevante para la visita.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirma la cita</div>
+                        <div class="step-description">Recibirás confirmación por email con los detalles del técnico asignado y número de contacto.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-tools"></i>¿Qué tipos de visitas técnicas existen?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-list"></i>Tipos de Visita</h4>
+                    <ul>
+                        <li><strong>Evaluación inicial:</strong> Para nuevas solicitudes que requieren inspección previa para cotizar correctamente.</li>
+                        <li><strong>Visita de seguimiento:</strong> Revisión del progreso en proyectos largos o verificación de condiciones especiales.</li>
+                        <li><strong>Retiro programado:</strong> Cuando se ejecuta el servicio de recolección de residuos ya cotizado y aprobado.</li>
+                        <li><strong>Inspección de emergencia:</strong> Para situaciones urgentes que requieren atención inmediata.</li>
+                        <li><strong>Auditoría ambiental:</strong> Revisión completa de procesos y documentación para certificaciones.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-calendar-times"></i>¿Puedo cambiar la fecha de una visita?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Con anticipación (24+ horas)</div>
+                        <div class="step-description">Puedes reprogramar directamente desde el calendario haciendo clic en la cita y seleccionando "Reprogramar".</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Cambios de último momento</div>
+                        <div class="step-description">Para cambios con menos de 24 horas, contacta por teléfono para verificar disponibilidad inmediata.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Selecciona nueva fecha</div>
+                        <div class="step-description">El sistema te mostrará las próximas fechas disponibles. Confirma tu nueva selección.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirmación actualizada</div>
+                        <div class="step-description">Recibirás un nuevo email de confirmación con los detalles actualizados de tu cita.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-times-circle"></i>¿Cómo cancelar una visita?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Encuentra tu cita</div>
+                        <div class="step-description">En el calendario, localiza la visita que deseas cancelar y haz clic en ella.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Selecciona "Cancelar"</div>
+                        <div class="step-description">En el popup de detalles, encontrarás la opción "Cancelar Visita" en color rojo.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Indica el motivo</div>
+                        <div class="step-description">Selecciona la razón de cancelación. Esto nos ayuda a mejorar nuestro servicio.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirmación</div>
+                        <div class="step-description">La cancelación será procesada inmediatamente y recibirás confirmación por email.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-content" id="certificados-help">
+            <h2><i class="fas fa-certificate me-2"></i>Certificados</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-download"></i>¿Cómo descargar mis certificados?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Ve a "Certificados"</div>
+                        <div class="step-description">Desde el menú principal, accede a la sección "Certificados" para ver todos tus documentos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Busca el certificado</div>
+                        <div class="step-description">Usa los filtros por fecha, tipo o estado para encontrar rápidamente el certificado que necesitas.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Verifica el estado</div>
+                        <div class="step-description">Solo los certificados con estado "Disponible" pueden descargarse. Los "En proceso" aún no están listos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Descarga</div>
+                        <div class="step-description">Haz clic en el botón "Descargar PDF" para obtener una copia oficial del certificado.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-info-circle"></i>¿Qué significan los estados de los certificados?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-list"></i>Estados de Certificados</h4>
+                    <ul>
+                        <li><strong>En proceso:</strong> El certificado está siendo preparado y revisado por nuestro equipo técnico.</li>
+                        <li><strong>En revisión:</strong> El documento está en verificación final antes de ser aprobado oficialmente.</li>
+                        <li><strong>Disponible:</strong> El certificado está listo y puede ser descargado en formato PDF.</li>
+                        <li><strong>Vencido:</strong> Certificado que ya cumplió su periodo de validez y necesita renovación.</li>
+                        <li><strong>Cancelado:</strong> Certificado anulado por cambios en el servicio o solicitud del cliente.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-clock"></i>¿Cuándo estará listo mi certificado?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Certificados de Disposición</div>
+                        <div class="step-description">Generalmente están listos entre 3-5 días hábiles después de completado el servicio de retiro.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Certificados de Valorización</div>
+                        <div class="step-description">Pueden tomar 7-10 días hábiles ya que requieren confirmación del proceso de reciclaje o reutilización.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Auditorías Ambientales</div>
+                        <div class="step-description">Los certificados de auditoría se entregan en 15-20 días hábiles por la complejidad del análisis.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Notificación</div>
+                        <div class="step-description">Recibirás un email automático cuando tu certificado esté listo para descarga.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-plus"></i>¿Cómo solicitar un certificado adicional?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Desde el servicio completado</div>
+                        <div class="step-description">En la lista de certificados, busca servicios "Completados" y haz clic en "Solicitar Certificado Adicional".</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Especifica el tipo</div>
+                        <div class="step-description">Indica si necesitas certificado de disposición, valorización, o ambos tipos de documento.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Proporciona justificación</div>
+                        <div class="step-description">Explica brevemente por qué necesitas el certificado adicional (auditoría, requerimiento legal, etc.).</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirmación</div>
+                        <div class="step-description">La solicitud será procesada y recibirás el certificado en los plazos habituales.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-content" id="perfil-help">
+            <h2><i class="fas fa-user me-2"></i>Mi Perfil y Cuenta</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-edit"></i>¿Cómo editar mis datos personales?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Accede a "Mi Perfil"</div>
+                        <div class="step-description">Desde el menú de usuario (tu nombre), selecciona "Mi Perfil" para ver tu información actual.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Haz clic en "Editar"</div>
+                        <div class="step-description">En la página de perfil, encontrarás el botón "Editar Información" para modificar tus datos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Actualiza los campos</div>
+                        <div class="step-description">Puedes cambiar nombre, teléfono, dirección y preferencias de contacto. El email requiere verificación adicional.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Guarda los cambios</div>
+                        <div class="step-description">Haz clic en "Guardar Cambios" y recibirás confirmación de que la información fue actualizada.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-key"></i>¿Cómo cambiar mi contraseña?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Ve a "Cambiar Contraseña"</div>
+                        <div class="step-description">Desde el menú de usuario, selecciona "Cambiar Contraseña" para acceder al formulario seguro.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Ingresa tu contraseña actual</div>
+                        <div class="step-description">Por seguridad, primero debes confirmar tu contraseña actual antes de crear una nueva.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Crea una contraseña segura</div>
+                        <div class="step-description">La nueva contraseña debe tener mínimo 8 caracteres, incluyendo mayúsculas, minúsculas y números.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Confirma el cambio</div>
+                        <div class="step-description">Reingresa la nueva contraseña para confirmar y haz clic en "Actualizar Contraseña".</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-bell"></i>¿Cómo activar las notificaciones?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Accede a Configuración</div>
+                        <div class="step-description">En tu perfil, ve a la sección "Preferencias de Notificación" para configurar alertas.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Selecciona tipos de notificación</div>
+                        <div class="step-description">Puedes elegir recibir alertas por: cambios de estado, nuevas cotizaciones, recordatorios de citas y certificados listos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Elige el medio</div>
+                        <div class="step-description">Configura si prefieres recibir notificaciones por email, SMS, o ambos métodos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Guarda preferencias</div>
+                        <div class="step-description">Confirma tu configuración. Los cambios se aplicarán inmediatamente para futuras notificaciones.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-shield-alt"></i>¿Cómo proteger mi cuenta?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-lock"></i>Medidas de Seguridad Recomendadas</h4>
+                    <ul>
+                        <li><strong>Contraseña fuerte:</strong> Usa combinación de letras, números y símbolos. Evita información personal.</li>
+                        <li><strong>Cambio regular:</strong> Cambia tu contraseña cada 3-6 meses por precaución.</li>
+                        <li><strong>Cierre de sesión:</strong> Siempre cierra sesión en computadoras compartidas o públicas.</li>
+                        <li><strong>Verificación de actividad:</strong> Revisa regularmente el historial de accesos en tu perfil.</li>
+                        <li><strong>Información actualizada:</strong> Mantén tu email y teléfono actualizados para recuperación de cuenta.</li>
+                        <li><strong>Reporta actividad sospechosa:</strong> Contacta inmediatamente si notas accesos no autorizados.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-content" id="general-help">
+            <h2><i class="fas fa-info-circle me-2"></i>Información General</h2>
+            
+            <div class="help-section">
+                <h3><i class="fas fa-building"></i>¿Qué es Felmart?</h3>
+                <p>Felmart es una empresa especializada en la gestión integral de residuos, comprometida con el cuidado del medio ambiente y el cumplimiento de la normativa ambiental vigente. Ofrecemos servicios completos de recolección, transporte, tratamiento y disposición final de diversos tipos de residuos industriales y comerciales.</p>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-leaf"></i>Nuestros Servicios Principales</h4>
+                    <ul>
+                        <li><strong>Recolección especializada:</strong> Retiro seguro de residuos en tu ubicación con personal capacitado.</li>
+                        <li><strong>Transporte certificado:</strong> Vehículos especializados que cumplen normativas de seguridad ambiental.</li>
+                        <li><strong>Tratamiento adecuado:</strong> Procesamiento según el tipo de residuo y regulaciones ambientales.</li>
+                        <li><strong>Certificación completa:</strong> Documentación oficial que garantiza el manejo responsable.</li>
+                        <li><strong>Consultoría ambiental:</strong> Asesoría para optimizar la gestión de residuos en tu empresa.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-recycle"></i>¿Qué tipos de residuos aceptamos?</h3>
+                <div class="info-box">
+                    <h4><i class="fas fa-trash-alt"></i>Residuos que Gestionamos</h4>
+                    <ul>
+                        <li><strong>Residuos peligrosos:</strong> Solventes, pinturas, aceites usados, baterías, productos químicos.</li>
+                        <li><strong>Residuos electrónicos:</strong> Computadores, teléfonos, equipos eléctricos y componentes electrónicos.</li>
+                        <li><strong>Residuos industriales:</strong> Metales, plásticos industriales, residuos de producción.</li>
+                        <li><strong>Residuos médicos:</strong> Material hospitalario, medicamentos vencidos, elementos contaminados.</li>
+                        <li><strong>Aceites y lubricantes:</strong> Aceites usados de motor, hidráulicos y lubricantes industriales.</li>
+                        <li><strong>Residuos de construcción:</strong> Materiales de demolición, restos de obra que requieren manejo especial.</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i>Residuos que NO Aceptamos</h4>
+                    <ul>
+                        <li><strong>Residuos radioactivos:</strong> Materiales con radiación requieren gestores especializados.</li>
+                        <li><strong>Explosivos y municiones:</strong> Por razones de seguridad, no manejamos estos materiales.</li>
+                        <li><strong>Residuos domiciliarios comunes:</strong> Basura orgánica e inorgánica del hogar.</li>
+                        <li><strong>Residuos infecciosos de alto riesgo:</strong> Material de laboratorio de alta peligrosidad biológica.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-cogs"></i>¿Cómo funciona nuestro proceso?</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <div class="step-title">Solicitud inicial</div>
+                        <div class="step-description">Recibes tu solicitud con información detallada sobre los residuos a gestionar y programamos una evaluación.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Visita técnica</div>
+                        <div class="step-description">Nuestro equipo técnico visita tu ubicación para evaluar tipo, cantidad y condiciones especiales de los residuos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Cotización personalizada</div>
+                        <div class="step-description">Preparamos una cotización detallada con todos los servicios necesarios y costos transparentes.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Programación del servicio</div>
+                        <div class="step-description">Una vez aprobada la cotización, coordinamos fecha y hora para el retiro de residuos.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Recolección segura</div>
+                        <div class="step-description">Personal especializado retira los residuos usando equipos de protección y vehículos certificados.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Transporte y tratamiento</div>
+                        <div class="step-description">Los residuos son transportados a plantas autorizadas para su tratamiento adecuado según normativas.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-title">Certificación final</div>
+                        <div class="step-description">Entregamos certificados oficiales que confirman el manejo responsable y disposición final correcta.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3><i class="fas fa-question"></i>Preguntas más frecuentes</h3>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Cuánto tiempo toma procesar una solicitud?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        El tiempo varía según la complejidad: solicitudes simples se procesan en 1-2 días hábiles, mientras que residuos especiales pueden tomar 3-5 días para la evaluación técnica y preparación de cotización.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Tienen servicio de emergencia?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Sí, ofrecemos servicio de emergencia 24/7 para situaciones que representen riesgo ambiental o de seguridad. Contacta nuestra línea de emergencia para activar el protocolo especial.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Puedo agendar servicios regulares o periódicos?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Absolutamente. Ofrecemos contratos para servicios regulares (semanal, quincenal, mensual) con tarifas preferenciales y programación automática según tus necesidades operativas.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Qué documentación necesito como empresa?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Necesitas: RUT de la empresa, identificación del responsable, descripción detallada de los residuos, y según el tipo, pueden requerirse permisos ambientales específicos que te ayudamos a gestionar.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Los precios incluyen todos los costos?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Sí, nuestras cotizaciones incluyen todos los costos: visita técnica, recolección, transporte, tratamiento, documentación y certificación. No hay costos ocultos ni sorpresas.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        ¿Qué pasa si cancelo un servicio programado?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        Puedes cancelar sin costo hasta 24 horas antes. Cancelaciones con menos tiempo pueden generar un cargo por movilización según la distancia y recursos ya comprometidos.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2><i class="fas fa-question-circle me-2"></i>Preguntas Frecuentes Generales</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cómo crear mi primera solicitud de retiro?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Es muy simple: ve a "Mis Solicitudes" → "Nueva Solicitud" → completa el formulario con tipo de residuo, cantidad y ubicación → envía la solicitud. Nuestro equipo te contactará en menos de 24 horas para coordinar la visita técnica.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Puedo modificar una solicitud después de enviarla?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Sí, mientras la solicitud esté en estado "Pendiente" o "En Proceso" puedes hacer cambios directamente desde la plataforma. Para solicitudes ya cotizadas, contacta a soporte para evaluar los cambios necesarios.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cómo sé cuándo estará lista mi cotización?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Recibirás notificaciones automáticas por email cuando cambie el estado de tu solicitud. También puedes verificar el progreso en tiempo real desde tu dashboard o la sección "Mis Solicitudes".
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué incluye el servicio de retiro?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Incluye: evaluación técnica inicial, recolección con personal especializado, transporte en vehículos certificados, tratamiento según normativas ambientales, y certificación oficial de disposición final o valorización.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cuánto demora en llegar mi certificado?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Los certificados de disposición están listos en 3-5 días hábiles, mientras que los de valorización pueden tomar 7-10 días. Recibirás notificación por email cuando esté disponible para descarga.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Puedo reprogramar una visita técnica?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Sí, desde tu calendario puedes reprogramar con al menos 24 horas de anticipación. Para cambios de último momento, contacta por teléfono para verificar disponibilidad inmediata del técnico.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cómo actualizar mi información de contacto?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Ve a "Mi Perfil" desde el menú de usuario, haz clic en "Editar Información", actualiza los campos necesarios y guarda los cambios. Los cambios se aplicarán inmediatamente a futuras comunicaciones.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Tienen descuentos para servicios regulares?
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="faq-answer">
+                    Sí, ofrecemos tarifas preferenciales para contratos de servicios regulares (mensuales, trimestrales, anuales). Contacta a nuestro equipo comercial para conocer las opciones disponibles según tu volumen y frecuencia.
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2><i class="fas fa-headset me-2"></i>¿Necesitas más ayuda?</h2>
+            <p>Si no encontraste la respuesta que buscabas, nuestro equipo de soporte está aquí para ayudarte</p>
+            
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <i class="fas fa-phone"></i>
+                    <h6>Línea de Atención</h6>
+                    <p>+56 2 2345 6789</p>
+                    <small>Lunes a Viernes: 8:00 AM - 6:00 PM</small>
+                </div>
+
+                <div class="contact-method">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h6>Emergencias 24/7</h6>
+                    <p>+56 2 2345 6700</p>
+                    <small>Solo para emergencias ambientales</small>
+                </div>
+
+                <div class="contact-method">
+                    <i class="fas fa-envelope"></i>
+                    <h6>Email de Soporte</h6>
+                    <p>soporte@felmart.cl</p>
+                    <small>Respuesta en menos de 4 horas</small>
+                </div>
+
+                <div class="contact-method">
+                    <i class="fas fa-comments"></i>
+                    <h6>Chat en Línea</h6>
+                    <p>Disponible en la plataforma</p>
+                    <small>Lunes a Viernes: 8:00 AM - 8:00 PM</small>
+                </div>
+
+                <div class="contact-method">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h6>Oficina Principal</h6>
+                    <p>Av. Providencia 1234, Santiago</p>
+                    <small>Atención con cita previa</small>
+                </div>
+
+                <div class="contact-method">
+                    <i class="fas fa-globe"></i>
+                    <h6>Sitio Web</h6>
+                    <p>www.felmart.cl</p>
+                    <small>Información adicional y recursos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Show specific help content
+        function showHelp(category) {
+            // Hide all help content
+            const allHelp = document.querySelectorAll('.help-content');
+            allHelp.forEach(content => content.classList.remove('active'));
+            
+            // Hide categories grid
+            document.getElementById('categoriesGrid').style.display = 'none';
+            
+            // Show specific help content
+            const helpContent = document.getElementById(category + '-help');
+            if (helpContent) {
+                helpContent.classList.add('active');
+                helpContent.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Add back button to help content if not exists
+            if (!helpContent.querySelector('.back-to-categories')) {
+                const backButton = document.createElement('a');
+                backButton.href = '#';
+                backButton.className = 'back-button back-to-categories';
+                backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a Categorías';
+                backButton.onclick = function(e) {
+                    e.preventDefault();
+                    showCategories();
+                };
+                helpContent.insertBefore(backButton, helpContent.firstChild);
+            }
+        }
+
+        // Show categories grid
+        function showCategories() {
+            // Hide all help content
+            const allHelp = document.querySelectorAll('.help-content');
+            allHelp.forEach(content => content.classList.remove('active'));
+            
+            // Show categories grid
+            document.getElementById('categoriesGrid').style.display = 'grid';
+            
+            // Scroll to categories
+            document.getElementById('categoriesGrid').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Search functionality
+        function searchHelp() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categories = document.querySelectorAll('.category-card');
+            
+            categories.forEach(category => {
+                const title = category.querySelector('.category-title').textContent.toLowerCase();
+                const description = category.querySelector('.category-description').textContent.toLowerCase();
+                const topics = Array.from(category.querySelectorAll('.topics-list li'))
+                    .map(li => li.textContent.toLowerCase()).join(' ');
+                
+                const content = title + ' ' + description + ' ' + topics;
+                
+                if (content.includes(searchTerm)) {
+                    category.style.display = 'block';
+                    category.style.opacity = '1';
+                } else {
+                    category.style.display = searchTerm === '' ? 'block' : 'none';
+                    category.style.opacity = searchTerm === '' ? '1' : '0.3';
+                }
+            });
+        }
+
+        // FAQ toggle functionality
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer.show').forEach(openAnswer => {
+                    openAnswer.classList.remove('show');
+                    openAnswer.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
+                });
+                
+                // Open clicked FAQ
+                answer.classList.add('show');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add fade-in animation to elements
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
