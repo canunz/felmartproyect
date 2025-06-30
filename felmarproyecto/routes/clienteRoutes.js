@@ -186,7 +186,7 @@ router.post('/api/clientes', requireAuth, requireAdmin, clienteController.crearC
 router.put('/api/clientes/:id', requireAuth, clienteController.actualizarCliente);
 
 // Eliminar cliente (solo admin)
-router.delete('/api/clientes/:rut', requireAuth, requireAdmin, clienteController.eliminarCliente);
+router.delete('/:rut', requireAuth, requireAdmin, clienteController.eliminarCliente);
 
 // Crear solicitud de cliente
 router.post('/api/clientes/solicitudes', requireAuth, async (req, res) => {

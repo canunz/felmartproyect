@@ -830,24 +830,44 @@
                 mostrarNotificacion('Error: RUT no válido', 'danger');
                 return;
             }
-            if (confirm('¿Está seguro de que desea eliminar este cliente?\n\nEsta acción no se puede deshacer.')) {
+
+            // Limpiar y validar el RUT
+            const rutLimpio = rut.trim();
+            
+            if (!rutLimpio) {
+                mostrarNotificacion('Error: RUT inválido', 'danger');
+                return;
+            }
+
+            if (confirm('¿Está seguro de que desea eliminar este cliente?\n\nEsta acción no se puede deshacer y eliminará todos los datos asociados al cliente.')) {
                 try {
-                    const response = await fetch(`/api/clientes/${rut}`, {
+                    const rutCodificado = encodeURIComponent(rutLimpio);
+                    
+                    const response = await fetch(`/clientes/${rutCodificado}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
+
+                    if (!response.ok) {
+                        const data = await response.json();
+                        throw new Error(data.message || 'Error al eliminar el cliente');
+                    }
+
                     const data = await response.json();
+
                     if (data.success) {
-                        cargarClientes();
-                        mostrarNotificacion(data.message || 'Cliente eliminado correctamente', 'success');
+                        mostrarNotificacion('Cliente eliminado correctamente', 'success');
+                        setTimeout(() => {
+                            cargarClientes();
+                        }, 500);
                     } else {
-                        mostrarNotificacion(data.message || 'Error al eliminar el cliente', 'danger');
+                        throw new Error(data.message || 'Error al eliminar el cliente');
                     }
                 } catch (error) {
                     console.error('Error al eliminar cliente:', error);
-                    mostrarNotificacion('Error al eliminar el cliente', 'danger');
+                    mostrarNotificacion(error.message || 'Error al eliminar el cliente. Por favor, inténtelo de nuevo.', 'danger');
                 }
             }
         }

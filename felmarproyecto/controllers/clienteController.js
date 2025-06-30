@@ -1,7 +1,8 @@
 // controllers/clienteController.js
-const { Cliente, Usuario, SolicitudRetiro, Comuna, VisitaRetiro, Cotizacion, Certificado } = require('../models');
+const { Cliente, Usuario, SolicitudRetiro, Comuna, VisitaRetiro, Cotizacion, Certificado, CotizacionResiduo } = require('../models');
 const Region = require('../models/Region');
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 
 // Función para validar solo el formato del RUT chileno
 const validarRut = (rut) => {
@@ -436,17 +437,13 @@ const clienteController = {
         });
       }
 
-      // Primero buscar el cliente con su usuario asociado
-      const rutFormateado = formatearRut(rut);
+      // Decodificar el RUT de la URL y formatearlo
+      const rutDecodificado = decodeURIComponent(rut);
+      const rutFormateado = formatearRut(rutDecodificado);
+
+      // Buscar el cliente y su usuario asociado
       const cliente = await Cliente.findOne({
-        where: { rut: rutFormateado },
-        include: [
-          {
-            model: Usuario,
-            attributes: ['id'],
-            where: { rol: 'cliente' }
-          }
-        ]
+        where: { rut: rutFormateado }
       });
 
       if (!cliente) {
@@ -456,41 +453,105 @@ const clienteController = {
         });
       }
 
-      // Verificar si el cliente tiene solicitudes asociadas
-      const solicitudes = await SolicitudRetiro.findAll({
-        where: { cliente_id: rutFormateado }
+      // Buscar el usuario asociado
+      const usuario = await Usuario.findOne({
+        where: { 
+          id: cliente.usuario_id,
+          rol: 'cliente'
+        }
       });
 
-      // Si tiene solicitudes, eliminarlas primero
-      if (solicitudes && solicitudes.length > 0) {
-        await SolicitudRetiro.destroy({ where: { cliente_id: rutFormateado } });
-      }
-
-      // Eliminar el cliente
-      await Cliente.destroy({
-        where: { rut: rutFormateado }
-      });
-
-      // Luego eliminar el usuario asociado
-      if (cliente.Usuario) {
-        await Usuario.destroy({
-          where: { 
-            id: cliente.Usuario.id,
-            rol: 'cliente'
-          }
+      if (!usuario) {
+        return res.status(404).json({
+          success: false,
+          message: 'Usuario asociado no encontrado'
         });
       }
 
-      res.json({
-        success: true,
-        message: 'Cliente y solicitudes asociadas eliminados exitosamente'
-      });
+      // Comenzar una transacción
+      const t = await sequelize.transaction();
+
+      try {
+        // 1. Eliminar visitas relacionadas con solicitudes
+        await VisitaRetiro.destroy({
+          where: {
+            cliente_id: rutFormateado
+          },
+          transaction: t
+        });
+
+        // 2. Eliminar solicitudes
+        await SolicitudRetiro.destroy({
+          where: { cliente_id: rutFormateado },
+          transaction: t
+        });
+
+        // 3. Eliminar residuos de cotizaciones
+        const cotizaciones = await Cotizacion.findAll({
+          where: { cliente_id: rutFormateado },
+          attributes: ['numero_cotizacion'],
+          transaction: t
+        });
+
+        if (cotizaciones.length > 0) {
+          const numerosCotizacion = cotizaciones.map(c => c.numero_cotizacion);
+          await CotizacionResiduo.destroy({
+            where: {
+              cotizacion_id: {
+                [Op.in]: numerosCotizacion
+              }
+            },
+            transaction: t
+          });
+        }
+
+        // 4. Eliminar cotizaciones
+        await Cotizacion.destroy({
+          where: { cliente_id: rutFormateado },
+          transaction: t
+        });
+
+        // 5. Eliminar certificados
+        await Certificado.destroy({
+          where: { cliente_id: rutFormateado },
+          transaction: t
+        });
+
+        // 6. Eliminar el cliente primero (ya que depende del usuario)
+        await Cliente.destroy({
+          where: { rut: rutFormateado },
+          transaction: t
+        });
+
+        // 7. Finalmente eliminar el usuario
+        await Usuario.destroy({
+          where: {
+            id: usuario.id,
+            rol: 'cliente'
+          },
+          transaction: t
+        });
+
+        // Confirmar la transacción
+        await t.commit();
+
+        res.json({
+          success: true,
+          message: 'Cliente eliminado exitosamente'
+        });
+
+      } catch (error) {
+        // Si hay error, hacer rollback
+        await t.rollback();
+        console.error('Error en la transacción:', error);
+        throw error;
+      }
 
     } catch (error) {
       console.error('Error al eliminar cliente:', error);
       res.status(500).json({
         success: false,
-        message: 'Error al eliminar el cliente'
+        message: 'Error al eliminar el cliente. Por favor, inténtelo de nuevo.'
       });
     }
   },

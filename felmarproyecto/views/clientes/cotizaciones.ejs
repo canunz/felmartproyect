@@ -847,21 +847,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stats-card fade-in-up stagger-4">
-                    <div class="card-content">
-                        <div class="card-icon primary">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="card-info">
-                            <h6>Total Cotizado</h6>
-                            <h2 class="primary" id="totalMonto">-</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
         
         <!-- Quick Actions -->
@@ -978,13 +964,14 @@
         async function cargarCotizaciones() {
             try {
                 mostrarLoading(true);
-                // Aquí deberías hacer la petición real al backend para obtener las cotizaciones del usuario
-                // Por ejemplo:
-                // const response = await fetch('/api/clientes/cotizaciones');
-                // const data = await response.json();
-                // cotizaciones = data.cotizaciones || [];
-                // Por ahora, dejamos el array vacío para que tu compañera implemente la lógica real
-                cotizaciones = [];
+                const response = await fetch('/cotizaciones/api/cliente/cotizaciones');
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar las cotizaciones');
+                }
+                
+                cotizaciones = data.cotizaciones || [];
                 renderizarCotizaciones();
                 actualizarEstadisticas();
             } catch (error) {
@@ -995,347 +982,211 @@
             }
         }
         
-        // --- Renderiza la tabla de cotizaciones en el HTML ---
+        // --- Función para renderizar las cotizaciones en la tabla ---
         function renderizarCotizaciones() {
             const tbody = document.getElementById('cotizacionesTableBody');
             const table = document.getElementById('cotizacionesTable');
             const emptyState = document.getElementById('emptyState');
-            if (!cotizaciones || cotizaciones.length === 0) {
+            
+            if (!cotizaciones.length) {
                 table.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
+            
             table.style.display = 'table';
             emptyState.style.display = 'none';
-            // Genera las filas de la tabla con los datos de cotizaciones
+            
             tbody.innerHTML = cotizaciones.map(cotizacion => {
-                const fecha = new Date(cotizacion.fechaCotizacion || cotizacion.createdAt);
-                const fechaFormateada = fecha.toLocaleDateString('es-CL');
-                // Determina el tipo de residuo desde los detalles
+                const fecha = new Date(cotizacion.fecha).toLocaleDateString('es-CL');
                 let tipoResiduo = 'No especificado';
-                if (cotizacion.detalles && cotizacion.detalles.residuos && cotizacion.detalles.residuos.length > 0) {
-                    tipoResiduo = cotizacion.detalles.residuos[0].descripcion || 'Residuo';
-                    if (cotizacion.detalles.residuos.length > 1) {
-                        tipoResiduo += ` (+${cotizacion.detalles.residuos.length - 1} más)`;
-                    }
+                
+                if (cotizacion.residuos && cotizacion.residuos.length > 0) {
+                    tipoResiduo = cotizacion.residuos.map(r => r.precioResiduo.descripcion).join(', ');
                 }
-                // Calcula la vigencia
-                const vigenciaDias = calcularVigencia(cotizacion);
-                const vigenciaHTML = generarVigenciaHTML(vigenciaDias, cotizacion.estado);
-                // Genera los botones de acción según el estado
-                const acciones = generarAcciones(cotizacion);
+                
                 return `
                     <tr>
-                        <td>
-                            <strong style="color: var(--primary-color);">
-                                ${cotizacion.numeroCotizacion || `COT-${cotizacion.id}`}
-                            </strong>
-                        </td>
-                        <td>${fechaFormateada}</td>
+                        <td>${cotizacion.numeroCotizacion}</td>
+                        <td>${fecha}</td>
                         <td>
                             <span class="status-badge ${cotizacion.estado}">
-                                ${cotizacion.estado.charAt(0).toUpperCase() + cotizacion.estado.slice(1)}
+                                ${cotizacion.estado}
                             </span>
                         </td>
                         <td>${tipoResiduo}</td>
-                        <td>
-                            <strong>${formatearMoneda(cotizacion.total || 0)}</strong>
+                        <td>$${parseInt(cotizacion.total).toLocaleString('es-CL')}</td>
+                        <td>${fecha}</td>
+                        <td class="text-center">
+                            <button class="btn-action btn-view" onclick="verDetalle('${cotizacion.numeroCotizacion}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${cotizacion.estado === 'pendiente' ? `
+                                <button class="btn-action btn-accept" onclick="aceptarCotizacion('${cotizacion.numeroCotizacion}')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            ` : ''}
+                            <button class="btn-action btn-download" onclick="descargarPDF('${cotizacion.numeroCotizacion}')">
+                                <i class="fas fa-download"></i>
+                            </button>
                         </td>
-                        <td>${vigenciaHTML}</td>
-                        <td class="text-center">${acciones}</td>
                     </tr>
                 `;
             }).join('');
         }
-        
-        // --- Genera los botones de acción para cada cotización ---
-        function generarAcciones(cotizacion) {
-            const acciones = [];
-            // Botón para ver detalles
-            acciones.push(`
-                <button class="btn btn-action btn-view" onclick="verDetalles(${cotizacion.id})" title="Ver detalles">
-                    <i class="fas fa-eye"></i>
-                </button>
-            `);
-            // Botón para aceptar cotización (solo si está aprobada o pendiente y vigente)
-            if (cotizacion.estado === 'aprobada' || cotizacion.estado === 'pendiente') {
-                const vigencia = calcularVigencia(cotizacion);
-                if (vigencia > 0) {
-                    acciones.push(`
-                        <button class="btn btn-action btn-accept" onclick="aceptarCotizacion(${cotizacion.id})" title="Aceptar cotización">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    `);
-                }
-            }
-            // Botón para descargar PDF (si corresponde)
-            if (cotizacion.estado === 'aprobada' || cotizacion.estado === 'pendiente' || cotizacion.estado === 'aceptada') {
-                acciones.push(`
-                    <button class="btn btn-action btn-download" onclick="descargarPDF(${cotizacion.id})" title="Descargar PDF">
-                        <i class="fas fa-download"></i>
-                    </button>
-                `);
-            }
-            return acciones.join(' ');
-        }
-        
-        // --- Calcula la vigencia de la cotización en días ---
-        function calcularVigencia(cotizacion) {
-            if (!cotizacion.fechaCotizacion && !cotizacion.createdAt) return 0;
-            const fechaCotizacion = new Date(cotizacion.fechaCotizacion || cotizacion.createdAt);
-            const diasVigencia = 30; // 30 días de vigencia
-            const fechaVencimiento = new Date(fechaCotizacion.getTime() + (diasVigencia * 24 * 60 * 60 * 1000));
-            const hoy = new Date();
-            const diffTime = fechaVencimiento - hoy;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
-        }
-        
-        // --- Genera el HTML para mostrar la vigencia visualmente ---
-        function generarVigenciaHTML(diasVigencia, estado) {
-            if (estado === 'aceptada' || estado === 'rechazada') {
-                return '<span class="text-muted">N/A</span>';
-            }
-            if (diasVigencia > 7) {
-                return `<span class="text-success"><i class="fas fa-clock me-1"></i>${diasVigencia} días</span>`;
-            } else if (diasVigencia > 0) {
-                return `<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>${diasVigencia} días</span>`;
-            } else {
-                return '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Vencida</span>';
-            }
-        }
-        
-        // --- Actualiza las estadísticas de las tarjetas resumen ---
+
+        // --- Función para actualizar las estadísticas ---
         function actualizarEstadisticas() {
-            const stats = cotizaciones.reduce((acc, cot) => {
-                acc.total++;
-                acc.totalMonto += parseFloat(cot.total || 0);
-                switch (cot.estado) {
-                    case 'pendiente': acc.pendientes++; break;
-                    case 'aprobada': acc.aprobadas++; break;
-                    case 'aceptada': acc.aceptadas++; break;
-                }
-                return acc;
-            }, {
-                total: 0,
-                pendientes: 0,
-                aprobadas: 0,
-                aceptadas: 0,
-                totalMonto: 0
-            });
-            document.getElementById('pendientesCount').textContent = stats.pendientes;
-            document.getElementById('aprobadasCount').textContent = stats.aprobadas;
-            document.getElementById('aceptadasCount').textContent = stats.aceptadas;
-            document.getElementById('totalMonto').textContent = formatearMoneda(stats.totalMonto);
+            const pendientes = cotizaciones.filter(c => c.estado === 'pendiente').length;
+            const aprobadas = cotizaciones.filter(c => c.estado === 'aprobada').length;
+            const aceptadas = cotizaciones.filter(c => c.estado === 'aceptada').length;
+            
+            document.getElementById('pendientesCount').textContent = pendientes;
+            document.getElementById('aprobadasCount').textContent = aprobadas;
+            document.getElementById('aceptadasCount').textContent = aceptadas;
         }
-        
-        // --- Muestra los detalles de una cotización en un modal ---
-        async function verDetalles(id) {
+
+        // --- Funciones de utilidad ---
+        function mostrarLoading(show) {
+            document.getElementById('loadingState').style.display = show ? 'block' : 'none';
+            document.getElementById('cotizacionesTable').style.display = show ? 'none' : 'table';
+        }
+
+        function mostrarEstadoVacio() {
+            document.getElementById('cotizacionesTable').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        // --- Funciones de acción ---
+        async function verDetalle(numeroCotizacion) {
             try {
-                const cotizacion = cotizaciones.find(c => c.id === id);
-                if (cotizacion) {
-                    mostrarModalDetalles(cotizacion);
-                } else {
-                    alert('No se encontró la cotización');
+                const response = await fetch(`/cotizaciones/api/${numeroCotizacion}`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al cargar los detalles');
                 }
-            } catch (error) {
-                console.error('❌ Error al cargar detalles:', error);
-                alert('Error de conexión al cargar detalles');
-            }
-        }
-        
-        // --- Renderiza el modal de detalles de cotización ---
-        function mostrarModalDetalles(cotizacion) {
-            const modalContent = document.getElementById('modalContent');
-            const fecha = new Date(cotizacion.fechaCotizacion || cotizacion.createdAt);
-            const fechaFormateada = fecha.toLocaleDateString('es-CL', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-            });
-            let serviciosHTML = '';
-            if (cotizacion.detalles && cotizacion.detalles.residuos && cotizacion.detalles.residuos.length > 0) {
-                serviciosHTML = `
-                    <div class="mb-4">
-                        <h6 class="mb-3" style="color: var(--primary-color); font-weight: 700;">
-                            <i class="fas fa-list me-2"></i>Servicios Cotizados
-                        </h6>
-                        <div class="services-table">
-                            <table class="table mb-0">
+                
+                const cotizacion = data.cotizacion;
+                const residuos = data.residuos;
+                
+                // Aquí puedes implementar la lógica para mostrar el modal con los detalles
+                const modal = new bootstrap.Modal(document.getElementById('detalleModal'));
+                modal.show();
+                
+                // Implementa la lógica para llenar el contenido del modal
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-row">
+                                    <div class="detail-label">Número de Cotización</div>
+                                    <div class="detail-value">${cotizacion.numeroCotizacion}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Fecha</div>
+                                    <div class="detail-value">${new Date(cotizacion.fecha).toLocaleDateString('es-CL')}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Estado</div>
+                                    <div class="detail-value">
+                                        <span class="status-badge ${cotizacion.estado}">${cotizacion.estado}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="detail-row">
+                                    <div class="detail-label">Cliente</div>
+                                    <div class="detail-value">${cotizacion.nombre}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">RUT</div>
+                                    <div class="detail-value">${cotizacion.rut}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Correo</div>
+                                    <div class="detail-value">${cotizacion.correo}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="services-table mt-4">
+                            <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Descripción del Servicio</th>
-                                        <th style="width: 120px;">Cantidad</th>
-                                        <th style="width: 140px;">Precio Unitario</th>
-                                        <th style="width: 140px;">Subtotal</th>
+                                        <th>Residuo</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${cotizacion.detalles.residuos.map((residuo, index) => `
-                                        <tr ${index % 2 === 0 ? 'style="background-color: #f8f9fa;"' : ''}>
-                                            <td><strong>${residuo.descripcion || 'Residuo'}</strong></td>
-                                            <td style="text-align: center;"><span class="badge bg-secondary">${residuo.cantidad || 'N/A'}</span></td>
-                                            <td style="text-align: right;">${formatearMoneda(residuo.precioUnitario || 0)}</td>
-                                            <td style="text-align: right;"><strong style="color: var(--primary-color);">${formatearMoneda(residuo.subtotal || 0)}</strong></td>
+                                    ${residuos.map(r => `
+                                        <tr>
+                                            <td>${r.descripcion}</td>
+                                            <td>${r.cantidad} ${r.unidad}</td>
+                                            <td>$${parseInt(r.precioUnitario).toLocaleString('es-CL')}</td>
+                                            <td>$${parseInt(r.subtotal).toLocaleString('es-CL')}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                `;
-            }
-            // Renderiza el contenido del modal
-            modalContent.innerHTML = `
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3">
-                        <div class="detail-row">
-                            <div class="detail-label">Número de Cotización</div>
-                            <div class="detail-value">${cotizacion.numeroCotizacion || `COT-${cotizacion.id}`}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="detail-row">
-                            <div class="detail-label">Fecha de Emisión</div>
-                            <div class="detail-value">${fechaFormateada}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="detail-row">
-                            <div class="detail-label">Estado</div>
-                            <div class="detail-value">
-                                <span class="status-badge ${cotizacion.estado}">
-                                    ${cotizacion.estado.charAt(0).toUpperCase() + cotizacion.estado.slice(1)}
-                                </span>
+                        
+                        <div class="summary-section">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>$${parseInt(cotizacion.subtotal).toLocaleString('es-CL')}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>IVA (19%)</span>
+                                <span>$${parseInt(cotizacion.iva).toLocaleString('es-CL')}</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span>$${parseInt(cotizacion.total).toLocaleString('es-CL')}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="detail-row">
-                            <div class="detail-label">Vigencia</div>
-                            <div class="detail-value">${generarVigenciaHTML(calcularVigencia(cotizacion), cotizacion.estado)}</div>
-                        </div>
-                    </div>
-                </div>
-                ${serviciosHTML}
-                <div class="summary-section">
-                    <h6 class="mb-3" style="color: var(--primary-color); font-weight: 700;">
-                        <i class="fas fa-calculator me-2"></i>Resumen Financiero
-                    </h6>
-                    <div class="summary-row">
-                        <span>Subtotal (Neto):</span>
-                        <strong>${formatearMoneda(cotizacion.subtotal || 0)}</strong>
-                    </div>
-                    <div class="summary-row">
-                        <span>IVA (19%):</span>
-                        <strong>${formatearMoneda(cotizacion.iva || 0)}</strong>
-                    </div>
-                    <div class="summary-row total">
-                        <span>TOTAL FINAL:</span>
-                        <strong>${formatearMoneda(cotizacion.total || 0)}</strong>
-                    </div>
-                </div>
-                ${cotizacion.observaciones ? `
-                    <div class="detail-row mb-4">
-                        <div class="detail-label">
-                            <i class="fas fa-comment me-1"></i>Observaciones
-                        </div>
-                        <div class="detail-value" style="font-style: italic; color: #666; line-height: 1.5;">
-                            ${cotizacion.observaciones}
-                        </div>
-                    </div>
-                ` : ''}
-                <div class="alert alert-light border" style="border-left: 4px solid var(--info-color) !important;">
-                    <h6 class="alert-heading" style="color: var(--info-color);">
-                        <i class="fas fa-info-circle me-2"></i>Términos y Condiciones
-                    </h6>
-                    <ul class="mb-0" style="font-size: 0.9rem; line-height: 1.6;">
-                        <li>Esta cotización tiene una <strong>validez de 30 días</strong> desde su emisión.</li>
-                        <li>Los precios incluyen IVA y están expresados en <strong>pesos chilenos</strong>.</li>
-                        <li>El servicio se realizará según disponibilidad de agenda.</li>
-                        <li>Los residuos deben estar debidamente <strong>clasificados y embalados</strong>.</li>
-                    </ul>
-                </div>
-                <div class="d-flex gap-2 justify-content-end mt-4">
-                    ${cotizacion.estado === 'aprobada' && calcularVigencia(cotizacion) > 0 ? `
-                        <button class="btn btn-success" onclick="aceptarCotizacion(${cotizacion.id}); bootstrap.Modal.getInstance(document.getElementById('detalleModal')).hide();">
-                            <i class="fas fa-check me-2"></i>Aceptar Cotización
-                        </button>
-                    ` : ''}
-                    ${['aprobada', 'pendiente', 'aceptada'].includes(cotizacion.estado) ? `
-                        <button class="btn btn-primary" onclick="descargarPDF(${cotizacion.id})" style="background: var(--primary-color); border-color: var(--primary-color);">
-                            <i class="fas fa-download me-2"></i>Descargar PDF
-                        </button>
-                    ` : ''}
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Cerrar
-                    </button>
-                </div>
-            `;
-            // Muestra el modal
-            const modal = new bootstrap.Modal(document.getElementById('detalleModal'));
-            modal.show();
+                `;
+            } catch (error) {
+                console.error('Error al cargar detalles:', error);
+                alert('Error al cargar los detalles de la cotización');
+            }
         }
-        
-        // --- Acepta una cotización (simulado, debe implementarse real) ---
-        async function aceptarCotizacion(id) {
+
+        async function aceptarCotizacion(numeroCotizacion) {
             if (!confirm('¿Estás seguro de que deseas aceptar esta cotización?')) {
                 return;
             }
+            
             try {
-                // Aquí deberías hacer la petición real al backend para aceptar la cotización
-                // Por ahora solo simula el cambio de estado en el array local
-                const cotizacion = cotizaciones.find(c => c.id === id);
-                if (cotizacion) {
-                    cotizacion.estado = 'aceptada';
-                    alert('Cotización aceptada correctamente');
-                    renderizarCotizaciones();
-                    actualizarEstadisticas();
+                const response = await fetch(`/cotizaciones/aceptar/${numeroCotizacion}`, {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error al aceptar la cotización');
                 }
+                
+                await cargarCotizaciones();
+                alert('Cotización aceptada exitosamente');
             } catch (error) {
-                console.error('❌ Error al aceptar cotización:', error);
-                alert('Error de conexión al aceptar cotización');
+                console.error('Error al aceptar cotización:', error);
+                alert('Error al aceptar la cotización');
             }
         }
-        
-        // --- Descarga el PDF de la cotización (ver código comentado en la función) ---
-        async function descargarPDF(id) {
-            // ... (el código de generación de PDF ya está comentado y explicado en detalle arriba) ...
-        }
-        
-        // --- Muestra el estado de carga ---
-        function mostrarLoading(show) {
-            const loadingState = document.getElementById('loadingState');
-            const table = document.getElementById('cotizacionesTable');
-            const emptyState = document.getElementById('emptyState');
-            if (show) {
-                loadingState.style.display = 'block';
-                table.style.display = 'none';
-                emptyState.style.display = 'none';
-            } else {
-                loadingState.style.display = 'none';
+
+        async function descargarPDF(numeroCotizacion) {
+            try {
+                window.location.href = `/cotizaciones/${numeroCotizacion}/descargar-pdf`;
+            } catch (error) {
+                console.error('Error al descargar PDF:', error);
+                alert('Error al descargar el PDF');
             }
         }
-        
-        // --- Muestra el estado vacío si no hay cotizaciones ---
-        function mostrarEstadoVacio() {
-            const table = document.getElementById('cotizacionesTable');
-            const emptyState = document.getElementById('emptyState');
-            table.style.display = 'none';
-            emptyState.style.display = 'block';
-        }
-        
-        // --- Formatea un número como moneda chilena ---
-        function formatearMoneda(amount) {
-            if (isNaN(amount) || amount === null || amount === undefined) {
-                return '$0';
-            }
-            // Asegura que el número sea entero y no muestre decimales
-            return new Intl.NumberFormat('es-CL', {
-                style: 'currency',
-                currency: 'CLP',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(Math.round(amount));
-        }
+
+// ... existing code ...
     </script>
 </body>
 </html>

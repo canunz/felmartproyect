@@ -16,7 +16,9 @@ router.post('/rechazar/:id', auth.isAuthenticated, cotizacionController.rechazar
 // ========== NUEVAS RUTAS API ==========
 // API para el frontend de gestión
 router.get('/api/listar', auth.isAuthenticated, cotizacionController.listarAPI);
+router.get('/api/cliente/cotizaciones', auth.isAuthenticated, cotizacionController.listarCotizacionesCliente);
 router.get('/api/:id', auth.isAuthenticated, cotizacionController.obtenerAPI);
+router.put('/api/:id', auth.isAuthenticated, cotizacionController.actualizar);
 router.put('/api/:id/estado', auth.isAuthenticated, cotizacionController.actualizarEstadoAPI);
 router.delete('/api/:id', auth.isAuthenticated, cotizacionController.eliminarAPI);
 

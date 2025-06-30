@@ -76,84 +76,86 @@ const cotizacionController = {
         });
       }
 
-      // Parsear detalles y residuos
-      let detallesObj;
-      try {
-        detallesObj = typeof detalles === 'string' ? JSON.parse(detalles) : detalles;
-      } catch (e) {
-        return res.status(400).json({ success: false, message: 'Error en los datos de residuos' });
-      }
-      const residuos = detallesObj.residuos || [];
-
-      // Recalcular totales y residuos (incluyendo UF)
-      let totalResiduos = 0;
-      let detallesResiduos = [];
-      for (let r of residuos) {
-        let valorUF = null;
-        let precioUnitarioCLP = r.precioUnitario;
-        if (r.moneda === 'UF') {
-          valorUF = await require('../services/cmfBancosService').obtenerValorUF();
-          precioUnitarioCLP = valorUF * r.precioUnitario;
-        }
-        const subtotalResiduo = precioUnitarioCLP * r.cantidad;
-        totalResiduos += subtotalResiduo;
-        detallesResiduos.push({
-          ...r,
-          precioUnitario: precioUnitarioCLP,
-          subtotal: subtotalResiduo,
-          valorUF: r.moneda === 'UF' ? valorUF : null
-        });
-      }
-      // Recalcular totales finales
-      const costoOperativo = detallesObj.costoOperativo || 0;
-      const descuento = detallesObj.descuento || 0;
-      const descuentoDinero = (totalResiduos + costoOperativo) * (descuento / 100);
-      const subtotalFinal = totalResiduos + costoOperativo - descuentoDinero;
-      const ivaFinal = subtotalFinal * 0.19;
-      const totalFinal = subtotalFinal + ivaFinal;
-
-      // Actualizar cotización
-      await cotizacion.update({
-        estado,
-        detalles: JSON.stringify({ ...detallesObj, residuos: detallesResiduos }),
-        subtotal: subtotalFinal,
-        iva: ivaFinal,
-        total: totalFinal,
-        observaciones
-      });
-
-      // Actualizar residuos asociados (CotizacionResiduo)
-      const CotizacionResiduo = require('../models/CotizacionResiduo');
-      await CotizacionResiduo.destroy({ where: { cotizacion_id: cotizacion.numeroCotizacion } });
-      for (let detalle of detallesResiduos) {
-        await CotizacionResiduo.create({
-          cotizacion_id: cotizacion.numeroCotizacion,
-          precio_residuo_id: detalle.residuoId || detalle.id,
-          descripcion: detalle.descripcion,
-          precio_unitario: detalle.precioUnitario,
-          cantidad: detalle.cantidad,
-          subtotal: detalle.subtotal
-        });
-      }
-
-      // Enviar correo si se solicita
-      let correoEnviado = false;
-      if (enviarCorreo) {
-        try {
-          const emailCliente = detallesObj.datosContacto?.correo;
-          if (emailCliente) {
-            correoEnviado = await enviarCotizacionPorCorreo(cotizacion, emailCliente, detallesObj);
+      // Si se envían detalles, recalcula todo igual que en actualizar
+      if (detalles) {
+        let detallesObj = detalles;
+        const residuos = detallesObj.residuos || [];
+        let totalResiduos = 0;
+        let detallesResiduos = [];
+        for (let r of residuos) {
+          let valorUF = null;
+          let precioUnitarioCLP = r.precioUnitario;
+          if (r.moneda === 'UF') {
+            valorUF = await require('../services/cmfBancosService').obtenerValorUF();
+            precioUnitarioCLP = valorUF * r.precioUnitario;
           }
-        } catch (error) {
-          console.error('Error al enviar correo:', error);
+          const subtotalResiduo = precioUnitarioCLP * r.cantidad;
+          totalResiduos += subtotalResiduo;
+          detallesResiduos.push({
+            ...r,
+            precioUnitario: Math.round(r.precioUnitario * 100) / 100,
+            subtotal: Math.round(subtotalResiduo * 100) / 100,
+            valorUF: r.moneda === 'UF' ? valorUF : null
+          });
         }
-      }
+        // Recalcular totales finales
+        const costoOperativo = detallesObj.costoOperativo || 0;
+        const descuento = detallesObj.descuento || 0;
+        const descuentoDinero = (totalResiduos + costoOperativo) * (descuento / 100);
+        const subtotalFinal = totalResiduos + costoOperativo - descuentoDinero;
+        const ivaFinal = subtotalFinal * 0.19;
+        const totalFinal = subtotalFinal + ivaFinal;
 
-      res.json({
-        success: true,
-        message: 'Cotización actualizada correctamente',
-        correoEnviado
-      });
+        await cotizacion.update({
+          estado: 'aceptada',
+          detalles: JSON.stringify({
+            residuos: detallesResiduos,
+            costoOperativo: Math.round(detallesObj.costoOperativo * 100) / 100,
+            descuento: Math.round(detallesObj.descuento * 100) / 100
+          }),
+          subtotal: Math.round(subtotalFinal * 100) / 100,
+          iva: Math.round(ivaFinal * 100) / 100,
+          total: Math.round(totalFinal * 100) / 100,
+          observaciones
+        });
+
+        // Actualizar residuos asociados (CotizacionResiduo)
+        const CotizacionResiduo = require('../models/CotizacionResiduo');
+        await CotizacionResiduo.destroy({ where: { cotizacion_id: cotizacion.numeroCotizacion } });
+        for (let detalle of detallesResiduos) {
+          await CotizacionResiduo.create({
+            cotizacion_id: cotizacion.numeroCotizacion,
+            precio_residuo_id: detalle.precio_residuo_id,
+            descripcion: detalle.descripcion,
+            precio_unitario: detalle.precioUnitario,
+            cantidad: detalle.cantidad,
+            subtotal: detalle.subtotal
+          });
+        }
+
+        // Enviar correo si se solicita
+        let correoEnviado = false;
+        if (enviarCorreo) {
+          try {
+            const emailCliente = detallesObj.datosContacto?.correo;
+            if (emailCliente) {
+              correoEnviado = await enviarCotizacionPorCorreo(cotizacion, emailCliente, detallesObj);
+            }
+          } catch (error) {
+            console.error('Error al enviar correo:', error);
+          }
+        }
+
+        return res.json({
+          success: true,
+          message: 'Cotización actualizada correctamente',
+          correoEnviado
+        });
+      } else {
+        // Solo actualizar estado y observaciones
+        await cotizacion.update({ estado, observaciones });
+        return res.json({ success: true, message: 'Estado actualizado correctamente' });
+      }
     } catch (error) {
       console.error('Error al actualizar cotización:', error);
       res.status(500).json({
@@ -240,52 +242,56 @@ const cotizacionController = {
   // API: Obtener cotización específica (JSON)
   obtenerAPI: async (req, res) => {
     try {
-      const { id } = req.params;
-      const cotizacion = await Cotizacion.findByPk(id, {
-        include: [
-          { model: require('../models/Region'), as: 'region', attributes: ['id', 'nombre'] },
-          { model: require('../models/Comuna'), as: 'comuna', attributes: ['id', 'nombre'] },
-        ]
-      });
-      if (!cotizacion) {
-        return res.json({
-          success: false,
-          message: 'Cotización no encontrada'
+        const numeroCotizacion = req.params.id;
+        
+        const cotizacion = await Cotizacion.findOne({
+            where: { numeroCotizacion: numeroCotizacion },
+            include: [{
+                model: CotizacionResiduo,
+                as: 'residuos',
+                include: [{
+                    model: PrecioResiduo,
+                    as: 'precioResiduo'
+                }]
+            }]
         });
-      }
-      // Traer residuos asociados desde CotizacionResiduo
-      const CotizacionResiduo = require('../models/CotizacionResiduo');
-      const PrecioResiduo = require('../models/PrecioResiduo');
-      const residuos = await CotizacionResiduo.findAll({
-        where: { cotizacion_id: cotizacion.numeroCotizacion },
-        attributes: ['descripcion', 'cantidad', 'precio_unitario', 'subtotal', 'precio_residuo_id']
-      });
-      // Para cada residuo, buscar la unidad manualmente
-      const residuosConUnidad = [];
-      for (const residuo of residuos) {
-        let unidad = '';
-        if (residuo.precio_residuo_id) {
-          const precio = await PrecioResiduo.findByPk(residuo.precio_residuo_id, { attributes: ['unidad'] });
-          unidad = precio ? precio.unidad : '';
+
+        if (!cotizacion) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cotización no encontrada'
+            });
         }
-        residuosConUnidad.push({
-          ...residuo.toJSON(),
-          unidad
+
+        // Obtener detalles
+        const detalles = JSON.parse(cotizacion.detalles || '{}');
+
+        // Formatear residuos
+        const residuosFormateados = cotizacion.residuos.map(r => ({
+            residuoId: r.precio_residuo_id,
+            descripcion: r.precioResiduo.descripcion,
+            cantidad: r.cantidad,
+            precioUnitario: r.precio_unitario,
+            moneda: r.moneda || 'CLP',
+            unidad: r.precioResiduo.unidad,
+            subtotal: r.subtotal
+        }));
+
+        res.json({
+            success: true,
+            cotizacion: {
+                ...cotizacion.toJSON(),
+                costoOperativo: detalles.costoOperativo || 0,
+                descuento: detalles.descuento || 0
+            },
+            residuos: residuosFormateados
         });
-      }
-      res.json({
-        success: true,
-        cotizacion,
-        region: cotizacion.region ? cotizacion.region.nombre : null,
-        comuna: cotizacion.comuna ? cotizacion.comuna.nombre : null,
-        residuos: residuosConUnidad
-      });
     } catch (error) {
-      console.error('Error al obtener cotización API:', error);
-      res.json({
-        success: false,
-        message: 'Error al cargar la cotización: ' + error.message
-      });
+        console.error('Error al obtener cotización:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener la cotización: ' + error.message
+        });
     }
   },
 
@@ -381,60 +387,115 @@ const cotizacionController = {
   
   // Crear cotización
   crear: async (req, res) => {
+    const transaction = await sequelize.transaction();
     try {
-      const {
-        numeroCotizacion,
-        subtotal,
-        iva,
-        total,
-        validezCotizacion,
-        observaciones,
-        residuoIds,
-        cantidades,
-        preciosUnitarios,
-        subtotales,
-        descripciones
-      } = req.body;
-      // Validar campos
-      if (!numeroCotizacion || !subtotal || !iva || !total || !validezCotizacion) {
-        req.flash('error', 'Todos los campos marcados con * son obligatorios');
-        return res.redirect(`/cotizaciones/crear`);
-      }
-      // Validar que haya al menos un residuo
-      if (!residuoIds || !Array.isArray(residuoIds) || residuoIds.length === 0) {
-        req.flash('error', 'Debe agregar al menos un residuo');
-        return res.redirect(`/cotizaciones/crear`);
-      }
-      // Crear cotización
-      const nuevaCotizacion = await Cotizacion.create({
-        numeroCotizacion,
-        fechaCotizacion: new Date(),
-        subtotal,
-        iva,
-        total,
-        validezCotizacion,
-        observaciones,
-        estado: 'pendiente'
-      });
-      // Crear detalles de cotización y almacenarlos en formato JSON
-      const detalles = [];
-      for (let i = 0; i < residuoIds.length; i++) {
-        detalles.push({
-          residuoId: residuoIds[i],
-          cantidad: cantidades[i],
-          precioUnitario: preciosUnitarios[i],
-          subtotal: subtotales[i],
-          descripcion: descripciones[i] || null
+        const {
+            nombre, rut, correo, telefono, direccion,
+            nombreEmpresa, rutEmpresa, observaciones, cliente_id,
+            residuos, subtotal, iva, total
+        } = req.body;
+
+        // Validar que haya al menos un residuo
+        if (!residuos || !Array.isArray(residuos) || residuos.length === 0) {
+            await transaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'Debe agregar al menos un residuo'
+            });
+        }
+
+        // Obtener datos del cliente
+        const cliente = await Cliente.findOne({
+            where: { rut: cliente_id },
+            include: [{
+                model: Comuna,
+                as: 'Comuna',
+                include: [{
+                    model: Region,
+                    as: 'Region'
+                }]
+            }]
         });
-      }
-      nuevaCotizacion.detallesJson = JSON.stringify({ residuos: detalles });
-      await nuevaCotizacion.save();
-      req.flash('success', 'Cotización creada correctamente');
-      res.redirect(`/cotizaciones/detalles/${nuevaCotizacion.id}`);
+
+        if (!cliente) {
+            await transaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'Cliente no encontrado'
+            });
+        }
+
+        // Generar número de cotización
+        const fecha = new Date();
+        const año = fecha.getFullYear().toString().substr(-2);
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        
+        const ultimaCotizacion = await Cotizacion.findOne({
+            where: {
+                numeroCotizacion: {
+                    [Op.like]: `COT-${año}${mes}%`
+                }
+            },
+            order: [['numeroCotizacion', 'DESC']]
+        });
+
+        let numeroCotizacion;
+        if (ultimaCotizacion) {
+            const ultimoNumero = parseInt(ultimaCotizacion.numeroCotizacion.split('-')[2]);
+            numeroCotizacion = `COT-${año}${mes}-${(ultimoNumero + 1).toString().padStart(3, '0')}`;
+        } else {
+            numeroCotizacion = `COT-${año}${mes}-001`;
+        }
+
+        // Crear la cotización
+        const cotizacion = await Cotizacion.create({
+            numeroCotizacion,
+            fecha: new Date(),
+            nombre,
+            rut,
+            correo,
+            telefono,
+            direccion,
+            region_id: cliente.Comuna.Region.id,
+            comuna_id: cliente.comuna_id,
+            nombreEmpresa,
+            rutEmpresa,
+            subtotal,
+            iva,
+            total,
+            observaciones,
+            estado: 'pendiente',
+            cliente_id
+        }, { transaction });
+
+        // Crear registros en CotizacionResiduo
+        await Promise.all(residuos.map(residuo => 
+            CotizacionResiduo.create({
+                cotizacion_id: numeroCotizacion,
+                precio_residuo_id: residuo.precio_residuo_id,
+                descripcion: residuo.descripcion,
+                precio_unitario: residuo.precio_unitario,
+                cantidad: residuo.cantidad,
+                subtotal: residuo.subtotal
+            }, { transaction })
+        ));
+
+        await transaction.commit();
+
+        res.json({
+            success: true,
+            message: 'Cotización creada exitosamente',
+            cotizacion: {
+                numeroCotizacion
+            }
+        });
     } catch (error) {
-      console.error('Error al crear cotización:', error);
-      req.flash('error', 'Error al crear cotización');
-      res.redirect(`/cotizaciones/crear`);
+        await transaction.rollback();
+        console.error('Error al crear cotización:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al crear la cotización: ' + error.message
+        });
     }
   },
   
@@ -959,12 +1020,7 @@ const cotizacionController = {
 
       // Si se envían detalles, recalcula todo igual que en actualizar
       if (detalles) {
-        let detallesObj;
-        try {
-          detallesObj = typeof detalles === 'string' ? JSON.parse(detalles) : detalles;
-        } catch (e) {
-          return res.status(400).json({ success: false, message: 'Error en los datos de residuos' });
-        }
+        let detallesObj = detalles;
         const residuos = detallesObj.residuos || [];
         let totalResiduos = 0;
         let detallesResiduos = [];
@@ -979,8 +1035,8 @@ const cotizacionController = {
           totalResiduos += subtotalResiduo;
           detallesResiduos.push({
             ...r,
-            precioUnitario: precioUnitarioCLP,
-            subtotal: subtotalResiduo,
+            precioUnitario: Math.round(r.precioUnitario * 100) / 100,
+            subtotal: Math.round(subtotalResiduo * 100) / 100,
             valorUF: r.moneda === 'UF' ? valorUF : null
           });
         }
@@ -994,10 +1050,14 @@ const cotizacionController = {
 
         await cotizacion.update({
           estado,
-          detalles: JSON.stringify({ ...detallesObj, residuos: detallesResiduos }),
-          subtotal: subtotalFinal,
-          iva: ivaFinal,
-          total: totalFinal,
+          detalles: JSON.stringify({
+            residuos: detallesResiduos,
+            costoOperativo: Math.round(detallesObj.costoOperativo * 100) / 100,
+            descuento: Math.round(detallesObj.descuento * 100) / 100
+          }),
+          subtotal: Math.round(subtotalFinal * 100) / 100,
+          iva: Math.round(ivaFinal * 100) / 100,
+          total: Math.round(totalFinal * 100) / 100,
           observaciones
         });
 
@@ -1007,7 +1067,7 @@ const cotizacionController = {
         for (let detalle of detallesResiduos) {
           await CotizacionResiduo.create({
             cotizacion_id: cotizacion.numeroCotizacion,
-            precio_residuo_id: detalle.residuoId || detalle.id,
+            precio_residuo_id: detalle.precio_residuo_id,
             descripcion: detalle.descripcion,
             precio_unitario: detalle.precioUnitario,
             cantidad: detalle.cantidad,
@@ -1080,6 +1140,54 @@ const cotizacionController = {
       res.json({ success: true, residuos: precios });
     } catch (error) {
       res.json({ success: false, message: 'Error al cargar precios de residuos' });
+    }
+  },
+
+  // API: Listar cotizaciones del cliente actual (JSON)
+  listarCotizacionesCliente: async (req, res) => {
+    try {
+      console.log('Session usuario:', req.session.usuario);
+      
+      // Primero obtenemos el cliente asociado al usuario
+      const cliente = await Cliente.findOne({
+        where: { usuario_id: req.session.usuario?.id }
+      });
+      
+      console.log('Cliente encontrado:', cliente);
+      
+      if (!cliente) {
+        return res.status(401).json({
+          success: false,
+          message: 'Cliente no encontrado'
+        });
+      }
+
+      const cotizaciones = await Cotizacion.findAll({
+        where: { cliente_id: cliente.rut },
+        order: [['fecha', 'DESC']],
+        include: [{
+          model: CotizacionResiduo,
+          as: 'residuos',
+          include: [{
+            model: PrecioResiduo,
+            as: 'precioResiduo'
+          }]
+        }]
+      });
+
+      console.log('Cotizaciones encontradas:', cotizaciones.length);
+      console.log('Primera cotización:', cotizaciones[0]);
+
+      res.json({
+        success: true,
+        cotizaciones
+      });
+    } catch (error) {
+      console.error('Error al listar cotizaciones del cliente:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al cargar las cotizaciones: ' + error.message
+      });
     }
   },
 };

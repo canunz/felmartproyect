@@ -129,6 +129,27 @@
             .table thead th, .table tbody td { padding: 1rem; font-size: 0.8rem; }
             .notification-dropdown { width: 280px; right: -50px; }
         }
+        .visita-info {
+            font-size: 0.9rem;
+        }
+        .visita-detalles {
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .placeholder {
+            display: inline-block;
+            min-height: 1em;
+            vertical-align: middle;
+            cursor: wait;
+            background-color: currentColor;
+            opacity: .5;
+        }
+        .placeholder.col-6 {
+            width: 50%;
+        }
+        .placeholder.col-8 {
+            width: 66.66667%;
+        }
     </style>
 </head>
 <body>
@@ -277,16 +298,30 @@
                                 </td>
                                 <td>
                                     <% if (certificado.visita_retiro_id) { %>
-                                        <span class="badge bg-info">Visita <%= certificado.visita_retiro_id %></span>
+                                        <div class="visita-info" data-visita-id="<%= certificado.visita_retiro_id %>">
+                                            <span class="badge bg-info mb-1">Visita #<%= certificado.visita_retiro_id %></span>
+                                            <div class="visita-detalles small">
+                                                <div class="placeholder-glow">
+                                                    <span class="placeholder col-8"></span><br>
+                                                    <span class="placeholder col-6"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     <% } else { %>
                                         <span class="text-muted">-</span>
                                     <% } %>
                                 </td>
-                                <td><%= certificado.fechaEmision ? new Date(certificado.fechaEmision).toLocaleDateString('es-ES') : '-' %></td>
+                                <td>
+                                    <% if (certificado.fecha_emision) { %>
+                                        <%= new Date(certificado.fecha_emision).toLocaleDateString('es-ES') %>
+                                    <% } else { %>
+                                        <span class="text-muted">-</span>
+                                    <% } %>
+                                </td>
                                 <td><%= certificado.observaciones || '-' %></td>
                                 <td>
-                                    <% if (certificado.rutaPdf) { %>
-                                        <a href="/admin/certificados/descargar/<%= certificado.id %>" class="btn btn-sm btn-outline-success" title="Descargar PDF">
+                                    <% if (certificado.ruta_pdf) { %>
+                                        <a href="/uploads/certificados/<%= certificado.ruta_pdf.split('/').pop() %>" class="btn btn-sm btn-outline-success" title="Descargar PDF" target="_blank">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     <% } else { %>
@@ -357,9 +392,17 @@
               </div>
               <div class="mb-3">
                 <label for="visita_retiro_id" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
-                  <i class="fas fa-calendar-check"></i> ID Visita (opcional)
+                  <i class="fas fa-calendar-check"></i> Visita
                 </label>
-                <input type="text" class="form-control" id="visita_retiro_id" name="visita_retiro_id">
+                <select class="form-control" id="visita_retiro_id" name="visita_retiro_id" disabled>
+                  <option value="">Selecciona una visita</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="fechaEmision" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-calendar"></i> Fecha de Emisión
+                </label>
+                <input type="date" class="form-control" id="fechaEmision" name="fechaEmision" required>
               </div>
               <div class="mb-3">
                 <label for="observaciones" class="form-label" style="font-weight: 600; color: #00616e; margin-bottom: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
@@ -518,6 +561,124 @@
                         this.submit();
                     }
                 });
+            });
+
+            // Manejar cambio de cliente para cargar visitas
+            document.getElementById('cliente_id').addEventListener('change', async function() {
+                const clienteId = this.value;
+                const visitaSelect = document.getElementById('visita_retiro_id');
+                
+                visitaSelect.disabled = !clienteId;
+                visitaSelect.innerHTML = '<option value="">Selecciona una visita</option>';
+                
+                if (clienteId) {
+                    try {
+                        const response = await fetch(`/api/visitas-por-cliente/${clienteId}`);
+                        if (!response.ok) {
+                            throw new Error('Error al obtener visitas');
+                        }
+                        const data = await response.json();
+                        
+                        if (data.success && data.data.length > 0) {
+                            data.data.forEach(visita => {
+                                const fecha = new Date(visita.fecha).toLocaleDateString('es-ES');
+                                const option = document.createElement('option');
+                                option.value = visita.id;
+                                option.textContent = `Visita ${visita.id} - ${fecha} - ${visita.tipo_visita || 'Sin tipo'}`;
+                                visitaSelect.appendChild(option);
+                            });
+                            visitaSelect.disabled = false;
+                        } else {
+                            visitaSelect.innerHTML = '<option value="">No hay visitas disponibles</option>';
+                            visitaSelect.disabled = true;
+                        }
+                    } catch (error) {
+                        console.error('Error al cargar visitas:', error);
+                        mostrarToast('Error al cargar las visitas', 'error');
+                        visitaSelect.innerHTML = '<option value="">Error al cargar visitas</option>';
+                        visitaSelect.disabled = true;
+                    }
+                }
+            });
+
+            // Establecer fecha actual por defecto en el campo de fecha de emisión
+            const fechaEmisionInput = document.getElementById('fechaEmision');
+            if (fechaEmisionInput) {
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                fechaEmisionInput.value = `${año}-${mes}-${dia}`;
+            }
+
+            // Formatear todas las fechas en la tabla
+            document.querySelectorAll('td').forEach(td => {
+                const text = td.textContent.trim();
+                if (text.includes('-') && text.includes('T')) {
+                    try {
+                        const fecha = new Date(text);
+                        if (!isNaN(fecha)) {
+                            td.textContent = fecha.toLocaleDateString('es-ES');
+                        }
+                    } catch (e) {
+                        console.error('Error al formatear fecha:', e);
+                    }
+                }
+            });
+
+            // Validar formulario antes de enviar
+            document.getElementById('formCrearCertificado').addEventListener('submit', function(e) {
+                const cliente = document.getElementById('cliente_id').value;
+                const fecha = document.getElementById('fechaEmision').value;
+                const archivo = document.getElementById('archivoPdf').files[0];
+
+                if (!cliente || !fecha || !archivo) {
+                    e.preventDefault();
+                    mostrarToast('Por favor completa todos los campos obligatorios', 'error');
+                }
+            });
+
+            // Función para cargar detalles de visita
+            async function cargarDetallesVisita(visitaId, contenedor) {
+                try {
+                    const response = await fetch(`/api/visitas/${visitaId}`);
+                    if (!response.ok) throw new Error('Error al cargar detalles de visita');
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        const visita = data.data;
+                        const fecha = new Date(visita.fecha).toLocaleDateString('es-ES');
+                        const hora = visita.hora || 'No especificada';
+                        const estado = visita.estado ? visita.estado.charAt(0).toUpperCase() + visita.estado.slice(1) : 'No especificado';
+                        const tipo = visita.tipo_visita ? visita.tipo_visita.charAt(0).toUpperCase() + visita.tipo_visita.slice(1) : 'No especificado';
+                        
+                        contenedor.innerHTML = `
+                            <span class="badge bg-info mb-1">Visita #${visita.id}</span>
+                            <div class="visita-detalles small">
+                                <div><i class="fas fa-calendar-day"></i> ${fecha} ${hora}</div>
+                                <div><i class="fas fa-info-circle"></i> ${tipo}</div>
+                                <div><i class="fas fa-check-circle"></i> ${estado}</div>
+                            </div>
+                        `;
+                    } else {
+                        contenedor.innerHTML = `
+                            <span class="badge bg-warning">Visita no encontrada</span>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error al cargar detalles de visita:', error);
+                    contenedor.innerHTML = `
+                        <span class="badge bg-danger">Error al cargar detalles</span>
+                    `;
+                }
+            }
+
+            // Cargar detalles de todas las visitas
+            document.querySelectorAll('.visita-info').forEach(contenedor => {
+                const visitaId = contenedor.dataset.visitaId;
+                if (visitaId) {
+                    cargarDetallesVisita(visitaId, contenedor);
+                }
             });
         });
 

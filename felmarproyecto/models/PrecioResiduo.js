@@ -65,7 +65,9 @@ PrecioResiduo.obtenerValorUF = async () => {
     const response = await axios.get('https://mindicador.cl/api/uf');
     return response.data.serie[0].valor;
   } catch (error) {
-    return 35000;
+    const axios = require('axios');
+    const response = await axios.get('https://mindicador.cl/api/uf');
+    return response.data.serie[0].valor;
   }
 };
 

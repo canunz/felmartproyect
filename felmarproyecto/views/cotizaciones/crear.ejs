@@ -245,35 +245,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Validar formulario antes de enviar
-    document.getElementById('cotizacionForm').addEventListener('submit', function(e) {
+    document.getElementById('cotizacionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Validar que haya al menos un residuo
-        if (document.querySelectorAll('#detallesTable tbody tr').length === 0) {
-            alert('Debe agregar al menos un residuo a la cotización');
-            return;
-        }
-        
-        // Validar que todos los campos requeridos estén llenos
-        const requiredInputs = this.querySelectorAll('[required]');
-        let valid = true;
-        requiredInputs.forEach(input => {
-            if (!input.value) {
-                valid = false;
-                input.classList.add('is-invalid');
-            } else {
-                input.classList.remove('is-invalid');
+        try {
+            const formData = new FormData(this);
+            const response = await fetch('/cotizaciones/crear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-        
-        if (!valid) {
-            alert('Por favor, complete todos los campos requeridos');
-            return;
+
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Cotización guardada exitosamente');
+                window.location.href = '/cotizaciones';
+            } else {
+                alert('Error al guardar la cotización: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al guardar la cotización. Por favor, intente nuevamente.');
         }
-        
-        // Enviar formulario
-        this.submit();
     });
+
+    // Inicializar cálculos
+    calcularTotales();
 });
 </script>
 

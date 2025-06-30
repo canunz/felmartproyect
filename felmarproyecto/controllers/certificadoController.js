@@ -172,6 +172,10 @@ const {
           req.flash('error', 'Debes adjuntar un archivo PDF.');
           return res.redirect('/admin/certificados');
         }
+        if (!fechaEmision) {
+          req.flash('error', 'La fecha de emisión es obligatoria.');
+          return res.redirect('/admin/certificados');
+        }
         
         // Buscar usuario cliente
         const Usuario = require('../models/Usuario');
@@ -191,33 +195,39 @@ const {
         
         // Validar PDF
         if (req.file.mimetype !== 'application/pdf') {
+          fs.unlinkSync(req.file.path); // Eliminar archivo si no es PDF
           req.flash('error', 'El archivo debe ser un PDF.');
           return res.redirect('/admin/certificados');
         }
         
-        const rutaPdf = `/uploads/certificados/${req.file.filename}`;
-        let fechaEmisionFinal = fechaEmision;
-        if (fechaEmisionFinal) {
-          const parsed = new Date(fechaEmisionFinal + 'T12:00:00');
-          if (!isNaN(parsed.getTime())) {
-            fechaEmisionFinal = parsed;
-          } else {
-            fechaEmisionFinal = null;
-          }
-        } else {
-          fechaEmisionFinal = null;
+        // Asegurar que el directorio existe
+        const uploadDir = path.join(__dirname, '..', 'public', 'uploads', 'certificados');
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
         }
+        
+        // Mover el archivo al directorio correcto
+        const fileName = `certificado-${Date.now()}-${Math.round(Math.random() * 1E9)}.pdf`;
+        const finalPath = path.join(uploadDir, fileName);
+        fs.renameSync(req.file.path, finalPath);
+        
+        const rutaPdf = `/uploads/certificados/${fileName}`;
+        
+        // Formatear fecha de emisión
+        const fechaEmisionFinal = new Date(fechaEmision);
+        fechaEmisionFinal.setHours(12, 0, 0, 0); // Establecer hora a mediodía
         
         // VALIDACIÓN DE FOREIGN KEY
         if (visita_retiro_id) {
-          const visitaExiste = await VisitaRetiro.findOne({ where: { solicitudRetiroId: visita_retiro_id } });
+          const visitaExiste = await VisitaRetiro.findByPk(visita_retiro_id);
           if (!visitaExiste) {
+            fs.unlinkSync(finalPath); // Eliminar archivo si hay error
             req.flash('error', 'No se puede crear el certificado: la visita seleccionada no existe o no es válida.');
             return res.redirect('/admin/certificados');
           }
         }
         
-        await Certificado.create({ 
+        const certificado = await Certificado.create({ 
           cliente_id: cliente.rut, 
           visita_retiro_id: visita_retiro_id || null, 
           observaciones, 
@@ -247,6 +257,14 @@ const {
         res.redirect('/admin/certificados');
       } catch (error) {
         console.error('Error al crear certificado:', error);
+        // Si hay un archivo subido, eliminarlo
+        if (req.file && req.file.path) {
+          try {
+            fs.unlinkSync(req.file.path);
+          } catch (e) {
+            console.error('Error al eliminar archivo temporal:', e);
+          }
+        }
         req.flash('error', 'Error al crear certificado. Por favor revisa los datos e intenta nuevamente.');
         res.redirect('/admin/certificados');
       }

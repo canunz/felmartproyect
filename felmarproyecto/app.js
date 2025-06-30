@@ -73,9 +73,12 @@ app.use(helmet({
 }));
 
 // CORS y parsers
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -95,8 +98,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000  // 1 día
+    secure: false, // Permitir HTTP en desarrollo
+    maxAge: 24 * 60 * 60 * 1000,  // 1 día
+    sameSite: 'lax'
   }
 }));
 

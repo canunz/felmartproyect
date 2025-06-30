@@ -402,6 +402,79 @@ router.put('/solicitudes/:id', auth.isAuthenticatedApi, async (req, res) => {
     }
 });
 
+// Ruta para obtener visitas por cliente
+router.get('/visitas-por-cliente/:clienteId', async (req, res) => {
+    try {
+        // Primero obtenemos el cliente por su usuario_id
+        const cliente = await Cliente.findOne({
+            where: { usuario_id: req.params.clienteId }
+        });
+
+        if (!cliente) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cliente no encontrado'
+            });
+        }
+
+        // Ahora buscamos las visitas usando el RUT del cliente
+        const visitas = await VisitaRetiro.findAll({
+            where: { cliente_id: cliente.rut },
+            order: [['fecha', 'DESC']]
+        });
+        
+        res.json({
+            success: true,
+            data: visitas
+        });
+    } catch (error) {
+        console.error('Error al obtener visitas:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener visitas'
+        });
+    }
+});
+
+// Ruta para obtener detalles de una visita específica
+router.get('/visitas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const visita = await VisitaRetiro.findByPk(id, {
+            include: [{
+                model: Cliente,
+                as: 'cliente',
+                attributes: ['rut', 'nombre_empresa']
+            }]
+        });
+
+        if (!visita) {
+            return res.status(404).json({
+                success: false,
+                message: 'Visita no encontrada'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: {
+                id: visita.id,
+                fecha: visita.fecha,
+                hora: visita.hora,
+                estado: visita.estado,
+                tipo_visita: visita.tipo_visita,
+                cliente: visita.cliente
+            }
+        });
+    } catch (error) {
+        console.error('Error al obtener detalles de visita:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener detalles de visita'
+        });
+    }
+});
+
 // Importar rutas de la API
 const regionRoutes = require('./api/regionRoutes');
 const cmfBancosRoutes = require('./api/cmfBancos.routes');

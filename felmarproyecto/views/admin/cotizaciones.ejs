@@ -416,49 +416,54 @@
                                     <h6><i class="fas fa-user me-2"></i>Información del Cliente</h6>
                                     <div class="p-3 bg-light rounded">
                                         <div class="mb-2">
-                                            <label class="form-label">Nombre</label>
-                                            <input type="text" class="form-control" id="clienteNombre" name="nombre" required>
+                                            <label class="form-label">Seleccionar Cliente</label>
+                                            <select class="form-select" id="selectCliente" required>
+                                                <option value="">Seleccione un cliente</option>
+                                            </select>
                                         </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">RUT</label>
-                                            <input type="text" class="form-control" id="clienteRut" name="rut" required>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Correo</label>
-                                            <input type="email" class="form-control" id="clienteCorreo" name="correo" required>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Teléfono</label>
-                                            <input type="text" class="form-control" id="clienteTelefono" name="telefono" required>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Empresa</label>
-                                            <input type="text" class="form-control" id="clienteEmpresa" name="nombreEmpresa">
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">RUT Empresa</label>
-                                            <input type="text" class="form-control" id="nuevo_rutEmpresa">
+                                        <!-- Campos ocultos que se llenarán al seleccionar cliente -->
+                                        <input type="hidden" id="clienteNombre" name="nombre">
+                                        <input type="hidden" id="clienteRut" name="rut">
+                                        <input type="hidden" id="clienteCorreo" name="correo">
+                                        <input type="hidden" id="clienteTelefono" name="telefono">
+                                        <input type="hidden" id="clienteEmpresa" name="nombreEmpresa">
+                                        <input type="hidden" id="nuevo_rutEmpresa">
+                                        <input type="hidden" id="clienteDireccion" name="direccion">
+                                        <input type="hidden" id="clienteRegion" name="region_id">
+                                        <input type="hidden" id="clienteComuna" name="comuna_id">
+                                        
+                                        <!-- Mostrar información del cliente seleccionado -->
+                                        <div id="infoClienteSeleccionado" class="mt-3" style="display: none;">
+                                            <div class="mb-2">
+                                                <strong>Nombre:</strong> <span id="showClienteNombre"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>RUT:</strong> <span id="showClienteRut"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Correo:</strong> <span id="showClienteCorreo"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Teléfono:</strong> <span id="showClienteTelefono"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Empresa:</strong> <span id="showClienteEmpresa"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>RUT Empresa:</strong> <span id="showClienteRutEmpresa"></span>
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Dirección:</strong> <span id="showClienteDireccion"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <h6><i class="fas fa-map-marker-alt me-2"></i>Dirección de Retiro</h6>
+                                    <h6><i class="fas fa-info-circle me-2"></i>Información Adicional</h6>
                                     <div class="p-3 bg-light rounded">
-                                        <div class="mb-2">
-                                            <label class="form-label">Dirección</label>
-                                            <input type="text" class="form-control" id="clienteDireccion" name="direccion" required>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Región</label>
-                                            <select class="form-select" id="clienteRegion" name="region_id" required>
-                                                <option value="">Seleccione una región</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-2">
-                                            <label class="form-label">Comuna</label>
-                                            <select class="form-select" id="clienteComuna" name="comuna_id" required disabled>
-                                                <option value="">Seleccione una comuna</option>
-                                            </select>
+                                        <div class="mb-3">
+                                            <label class="form-label">Observaciones</label>
+                                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -512,12 +517,6 @@
                                 </div>
                             </div>
                             <div class="mt-4 row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label class="form-label">Observaciones</label>
-                                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
-                                    </div>
-                                </div>
                                 <div class="col-md-4">
                                     <div class="p-3 bg-light rounded">
                                         <p class="mb-1"><strong>Subtotal Residuos:</strong> $<span id="subtotalResiduosNuevo">0</span></p>
@@ -983,6 +982,16 @@ async function mostrarModalModificar(cotizacion, region = null, comuna = null, r
                                 </div>
                             </div>
                             <div class="row mt-3">
+                                <!-- Estado de la Cotización -->
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label fw-bold">Estado de la Cotización</label>
+                                    <select class="form-select" id="estadoCotizacion" name="estado">
+                                        <option value="pendiente" ${cotizacion.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                        <option value="aceptada" ${cotizacion.estado === 'aceptada' ? 'selected' : ''}>Aceptada</option>
+                                        <option value="rechazada" ${cotizacion.estado === 'rechazada' ? 'selected' : ''}>Rechazada</option>
+                                        <option value="vencida" ${cotizacion.estado === 'vencida' ? 'selected' : ''}>Vencida</option>
+                                    </select>
+                                </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">Costo Operativo ($)</label>
                                     <input type="number" class="form-control" id="costoOperativo" value="${costoOperativo}" min="0" step="100">
@@ -1233,11 +1242,20 @@ function actualizarTablaResiduos() {
         const precioUnitario = parseFloat(residuo.precio) || 0;
         const unidad = residuo.unidad || '';
         const moneda = residuo.moneda || 'CLP';
-        const subtotal = moneda === 'UF' ? (precioUnitario * valorUF_actual * cantidad) : (precioUnitario * cantidad);
+        
+        let subtotal;
+        if (moneda === 'UF') {
+            const subtotalUF = precioUnitario * cantidad;
+            subtotal = subtotalUF * valorUF_actual;
+        } else {
+            subtotal = precioUnitario * cantidad;
+        }
+
         residuosEditables[index].precioUnitario = precioUnitario;
         residuosEditables[index].unidad = unidad;
         residuosEditables[index].moneda = moneda;
         residuosEditables[index].subtotal = subtotal;
+        
         // Render fila
         const fila = `
             <tr data-index="${index}">
@@ -1275,29 +1293,33 @@ function actualizarResiduo(index, campo, valor) {
 function recalcularTotalesModificar() {
     let subtotalResiduos = 0;
     residuosEditables.forEach((residuo, idx) => {
-        let precioUnitario = parseFloat(residuo.precioUnitario) || 0;
-        let cantidad = parseFloat(residuo.cantidad) || 0;
-        let valorUF = null;
+        let subtotal;
         if (residuo.moneda === 'UF') {
-            valorUF = valorUF_actual;
-            precioUnitario = valorUF * (parseFloat(residuo.precio) || precioUnitario);
+            // Solo para residuos en UF: (precio UF * cantidad) * valor_UF
+            const subtotalUF = residuo.precioUnitario * residuo.cantidad;
+            subtotal = subtotalUF * valorUF_actual;
+        } else {
+            // Para residuos en CLP: precio * cantidad
+            subtotal = residuo.precioUnitario * residuo.cantidad;
         }
-        const subtotal = precioUnitario * cantidad;
-        residuosEditables[idx].precioUnitario = precioUnitario;
+        
         residuosEditables[idx].subtotal = subtotal;
-        residuosEditables[idx].valorUF = residuo.moneda === 'UF' ? valorUF : null;
+        
         // Actualizar el DOM del subtotal
         const subtotalElement = document.getElementById(`subtotalModificar_${idx}`);
         if (subtotalElement) {
             subtotalElement.textContent = parseInt(subtotal).toLocaleString('es-CL');
         }
+        
         subtotalResiduos += subtotal;
     });
+
     const costoOperativo = parseFloat(document.getElementById('costoOperativo')?.value) || 0;
     const descuento = parseFloat(document.getElementById('descuento')?.value) || 0;
     const subtotalFinal = subtotalResiduos + costoOperativo - descuento;
     const iva = subtotalFinal * 0.19;
     const total = subtotalFinal + iva;
+
     // Actualizar elementos del DOM
     const elementos = {
         'subtotalResiduosModificar': subtotalResiduos,
@@ -1352,12 +1374,12 @@ async function guardarModificaciones(id) {
         // Datos a enviar
         const datosActualizados = {
             estado: estado,
-            detalles: JSON.stringify({
+            detalles: {
                 residuos: residuosParaEnviar,
                 costoOperativo: costoOperativo,
                 descuento: descuento,
                 ...cotizacionActual.detalles
-            }),
+            },
             observaciones: observaciones,
             enviarCorreo: enviarCorreo
         };
@@ -1606,13 +1628,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function abrirModalNuevaCotizacion() {
+async function abrirModalNuevaCotizacion() {
     residuosNuevos = [];
-    renderTablaResiduosNuevo();
-    recalcularTotalesNuevo();
+    await renderTablaResiduosNuevo();
+    await recalcularTotalesNuevo();
     document.getElementById('formNuevaCotizacion').reset();
-    cargarRegionesNuevo();
-    cargarResiduosDisponiblesNuevo();
+    await cargarRegionesNuevo();
+    await cargarResiduosDisponiblesNuevo();
     const comunaSelect = document.getElementById('clienteComuna');
     if (comunaSelect) {
         comunaSelect.innerHTML = '<option value="">Seleccione una comuna</option>';
@@ -1623,41 +1645,78 @@ function abrirModalNuevaCotizacion() {
     modal.show();
 }
 
-function renderTablaResiduosNuevo() {
-    const cuerpo = document.getElementById('cuerpoResiduosNuevo');
-    cuerpo.innerHTML = '';
-    residuosNuevos.forEach((r, i) => {
-        // Mostrar el subtotal en CLP solo para el usuario
-        let subtotalCLP = r.moneda === 'UF' && valorUF_actual ? r.precioUnitario * valorUF_actual * r.cantidad : r.precioUnitario * r.cantidad;
-        cuerpo.innerHTML += `
-            <tr>
-                <td><strong>${r.descripcion || '-'}</strong></td>
-                <td>${r.unidad || '-'}</td>
-                <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? r.cantidad.toLocaleString('es-CL') : '-'}</td>
-                <td>${formatearPrecioNuevo(r.precioUnitario, r.moneda)}</td>
-                <td>${r.moneda || '-'}</td>
-                <td><strong>${formatearMonedaNuevo(subtotalCLP)}</strong></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})"><i class="fas fa-trash"></i></button></td>
-            </tr>
-        `;
-    });
+async function renderTablaResiduosNuevo() {
+    try {
+        const cuerpo = document.getElementById('cuerpoResiduosNuevo');
+        cuerpo.innerHTML = '';
+        
+        if (residuosNuevos.length === 0) {
+            cuerpo.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No hay residuos agregados</td></tr>`;
+            return;
+        }
+
+        // Obtener el valor UF si hay residuos en UF
+        if (residuosNuevos.some(r => r.moneda === 'UF') && !valorUF_actual) {
+            valorUF_actual = await obtenerValorUF();
+            if (!valorUF_actual) {
+                mostrarToast('No se pudo obtener el valor de la UF para mostrar los subtotales', 'error');
+                return;
+            }
+            // Mostrar el valor UF en la interfaz
+            const valorUFInfo = document.getElementById('valorUFInfo');
+            if (valorUFInfo) {
+                valorUFInfo.style.display = 'block';
+                valorUFInfo.innerHTML = `<i class='fas fa-info-circle'></i> Valor UF usado: <b>$${parseInt(valorUF_actual).toLocaleString('es-CL')}</b> (actualizado)`;
+            }
+        }
+
+        // Renderizar cada residuo
+        for (const [i, r] of residuosNuevos.entries()) {
+            // Calcular subtotal
+            let subtotalCLP = r.moneda === 'UF' && valorUF_actual ? 
+                r.precioUnitario * valorUF_actual * r.cantidad : 
+                r.precioUnitario * r.cantidad;
+            
+            let subtotalDisplay = r.moneda === 'UF' ? 
+                `${formatearNumeroConComa(r.precioUnitario * r.cantidad)} UF` : 
+                formatearMonedaNuevo(subtotalCLP);
+            
+            cuerpo.innerHTML += `
+                <tr>
+                    <td><strong>${r.descripcion || '-'}</strong></td>
+                    <td>${r.unidad || '-'}</td>
+                    <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? formatearNumeroConComa(r.cantidad) : '-'}</td>
+                    <td>${formatearPrecioNuevo(r.precioUnitario, r.moneda)}</td>
+                    <td>${r.moneda || '-'}</td>
+                    <td><strong>${subtotalDisplay}</strong></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `;
+        }
+    } catch (error) {
+        mostrarToast('Error al renderizar la tabla: ' + error.message, 'error');
+    }
 }
 
-function recalcularTotalesNuevo() {
-    // El subtotal, iva y total solo se calculan para mostrar al usuario
+async function recalcularTotalesNuevo() {
+    // El subtotal es simplemente la suma de los subtotales de cada residuo
     let subtotal = 0;
     residuosNuevos.forEach(r => {
-        if (r.moneda === 'UF' && valorUF_actual) {
-            subtotal += r.precioUnitario * valorUF_actual * r.cantidad;
-        } else {
-            subtotal += r.precioUnitario * r.cantidad;
-        }
+        // El subtotal ya está calculado en CLP (precio_unitario * cantidad)
+        subtotal += r.precioUnitario * r.cantidad;
     });
+
     const iva = subtotal * 0.19;
     const total = subtotal + iva;
-    document.getElementById('subtotalResiduosNuevo').textContent = parseInt(subtotal).toLocaleString('es-CL');
+
+    // Actualizar los elementos en el DOM
     document.getElementById('ivaNuevo').textContent = parseInt(iva).toLocaleString('es-CL');
     document.getElementById('totalNuevo').textContent = parseInt(total).toLocaleString('es-CL');
+
+    // Actualizar los campos ocultos para el envío del formulario
+    document.getElementById('inputSubtotal').value = subtotal;
+    document.getElementById('inputIva').value = iva;
+    document.getElementById('inputTotal').value = total;
 }
 
 // Cargar regiones y comunas dinámicamente
@@ -1716,67 +1775,76 @@ if (regionSelect) {
     });
 }
 
-// Guardar nueva cotización
 async function guardarNuevaCotizacion() {
-    // Validar campos obligatorios
-    const nombre = document.getElementById('clienteNombre').value.trim();
-    const rut = document.getElementById('clienteRut').value.trim();
-    const correo = document.getElementById('clienteCorreo').value.trim();
-    const telefono = document.getElementById('clienteTelefono').value.trim();
-    const direccion = document.getElementById('clienteDireccion').value.trim();
-    const region_id = document.getElementById('clienteRegion').value;
-    const comuna_id = document.getElementById('clienteComuna').value;
-    const nombreEmpresa = document.getElementById('clienteEmpresa').value.trim();
-    const rutEmpresa = document.getElementById('nuevo_rutEmpresa').value.trim();
-    const observaciones = document.getElementById('observaciones').value.trim();
-
-    if (!nombre || !rut || !correo || !telefono || !direccion || !region_id || !comuna_id) {
-        mostrarToast('Por favor complete todos los campos obligatorios', 'warning');
-        return;
-    }
-    if (residuosNuevos.length === 0) {
-        mostrarToast('Debe agregar al menos un residuo', 'warning');
-        return;
-    }
-
-    // Calcular totales
-    const subtotal = residuosNuevos.reduce((sum, r) => sum + (parseFloat(r.subtotal) || 0), 0);
-    const iva = subtotal * 0.19;
-    const total = subtotal + iva;
-
-    // Preparar datos
-    const datos = {
-        nombre,
-        rut,
-        correo,
-        telefono,
-        direccion,
-        region_id,
-        comuna_id,
-        nombreEmpresa,
-        rutEmpresa,
-        observaciones,
-        residuosCotizados: JSON.stringify(residuosNuevos),
-        total
-    };
-
     try {
-        const response = await fetch('/cotizaciones/api/crear', {
+        // Validar que haya residuos
+        if (residuosNuevos.length === 0) {
+            mostrarToast('Debe agregar al menos un residuo', 'warning');
+            return;
+        }
+
+        // Obtener datos del formulario
+        const formData = {
+            nombre: document.getElementById('clienteNombre').value,
+            rut: document.getElementById('clienteRut').value,
+            correo: document.getElementById('clienteCorreo').value,
+            telefono: document.getElementById('clienteTelefono').value,
+            direccion: document.getElementById('clienteDireccion').value,
+            region_id: document.getElementById('clienteRegion').value,
+            comuna_id: document.getElementById('clienteComuna').value,
+            nombreEmpresa: document.getElementById('clienteEmpresa').value,
+            rutEmpresa: document.getElementById('nuevo_rutEmpresa').value,
+            observaciones: document.getElementById('observaciones').value,
+            cliente_id: document.getElementById('clienteRut').value,
+            // Preparar los residuos según el modelo CotizacionResiduo
+            residuos: residuosNuevos.map(r => ({
+                precio_residuo_id: r.residuoId,
+                descripcion: r.descripcion,
+                precio_unitario: r.precioUnitario,
+                cantidad: r.cantidad,
+                subtotal: r.precioUnitario * r.cantidad,
+                moneda_original: r.moneda,
+                valor_uf_usado: r.valorUF
+            })),
+            // Totales
+            subtotal: parseFloat(document.getElementById('inputSubtotal').value),
+            iva: parseFloat(document.getElementById('inputIva').value),
+            total: parseFloat(document.getElementById('inputTotal').value)
+        };
+
+        // Enviar al servidor usando la ruta correcta
+        const response = await fetch('/cotizaciones/crear', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify(datos)
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData),
+            credentials: 'same-origin' // Importante para enviar las cookies de sesión
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al guardar la cotización');
+        }
+
         const data = await response.json();
         if (data.success) {
-            bootstrap.Modal.getInstance(document.getElementById('nuevaCotizacionModal')).hide();
+            mostrarToast('Cotización guardada exitosamente', 'success');
+            // Cerrar modal y recargar datos
+            const modal = bootstrap.Modal.getInstance(document.getElementById('nuevaCotizacionModal'));
+            modal.hide();
+            // Limpiar el formulario
+            residuosNuevos = [];
+            valorUF_actual = null;
+            document.getElementById('formNuevaCotizacion').reset();
+            // Recargar la tabla de cotizaciones
             await cargarCotizaciones();
-            mostrarToast('Cotización creada correctamente', 'success');
         } else {
-            mostrarToast('Error al crear cotización: ' + (data.message || 'Error desconocido'), 'error');
+            throw new Error(data.message || 'Error al guardar la cotización');
         }
     } catch (error) {
-        mostrarToast('Error de conexión al crear la cotización: ' + error.message, 'error');
+        console.error('Error:', error);
+        mostrarToast('Error al guardar la cotización: ' + error.message, 'error');
     }
 }
 
@@ -1900,11 +1968,20 @@ function actualizarTablaResiduos() {
         const precioUnitario = parseFloat(residuo.precio) || 0;
         const unidad = residuo.unidad || '';
         const moneda = residuo.moneda || 'CLP';
-        const subtotal = moneda === 'UF' ? (precioUnitario * valorUF_actual * cantidad) : (precioUnitario * cantidad);
+        
+        let subtotal;
+        if (moneda === 'UF') {
+            const subtotalUF = precioUnitario * cantidad;
+            subtotal = subtotalUF * valorUF_actual;
+        } else {
+            subtotal = precioUnitario * cantidad;
+        }
+
         residuosEditables[index].precioUnitario = precioUnitario;
         residuosEditables[index].unidad = unidad;
         residuosEditables[index].moneda = moneda;
         residuosEditables[index].subtotal = subtotal;
+        
         // Render fila
         const fila = `
             <tr data-index="${index}">
@@ -1994,43 +2071,56 @@ function renderTablaResiduosNuevo() {
         return;
     }
     residuosNuevos.forEach((r, i) => {
-        // Mostrar el subtotal en CLP solo para el usuario
-        let subtotalCLP = r.moneda === 'UF' && valorUF_actual ? r.precioUnitario * valorUF_actual * r.cantidad : r.precioUnitario * r.cantidad;
+        // Para residuos en UF, mostrar el precio unitario en UF pero el subtotal en CLP
+        let precioMostrar = r.moneda === 'UF' ? r.precioUnitario / r.valorUF : r.precioUnitario;
+        let subtotalMostrar = r.precioUnitario * r.cantidad;
+
         cuerpo.innerHTML += `
             <tr>
                 <td><strong>${r.descripcion || '-'}</strong></td>
                 <td>${r.unidad || '-'}</td>
-                <td>${typeof r.cantidad === 'number' && !isNaN(r.cantidad) ? r.cantidad.toLocaleString('es-CL') : '-'}</td>
-                <td>${formatearPrecioNuevo(r.precioUnitario, r.moneda)}</td>
+                <td>${typeof r.cantidad === 'number' ? r.cantidad.toLocaleString('es-CL') : '-'}</td>
+                <td>${r.moneda === 'UF' ? 
+                    `${precioMostrar.toLocaleString('es-CL', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} UF` : 
+                    formatearMonedaNuevo(precioMostrar)}</td>
                 <td>${r.moneda || '-'}</td>
-                <td><strong>${formatearMonedaNuevo(subtotalCLP)}</strong></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})"><i class="fas fa-trash"></i></button></td>
+                <td><strong>${formatearMonedaNuevo(subtotalMostrar)}</strong></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarResiduoNuevo(${i})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             </tr>
         `;
     });
 }
 
 function recalcularTotalesNuevo() {
-    // El subtotal, iva y total solo se calculan para mostrar al usuario
+    // El subtotal es simplemente la suma de los subtotales de cada residuo
     let subtotal = 0;
     residuosNuevos.forEach(r => {
-        if (r.moneda === 'UF' && valorUF_actual) {
-            subtotal += r.precioUnitario * valorUF_actual * r.cantidad;
-        } else {
-            subtotal += r.precioUnitario * r.cantidad;
-        }
+        // El subtotal ya está calculado en CLP (precio_unitario * cantidad)
+        subtotal += r.precioUnitario * r.cantidad;
     });
+
     const iva = subtotal * 0.19;
     const total = subtotal + iva;
-    document.getElementById('subtotalResiduosNuevo').textContent = parseInt(subtotal).toLocaleString('es-CL');
+
+    // Actualizar los elementos en el DOM
+
     document.getElementById('ivaNuevo').textContent = parseInt(iva).toLocaleString('es-CL');
     document.getElementById('totalNuevo').textContent = parseInt(total).toLocaleString('es-CL');
+
+    // Actualizar los campos ocultos para el envío del formulario
+    document.getElementById('inputSubtotal').value = subtotal;
+    document.getElementById('inputIva').value = iva;
+    document.getElementById('inputTotal').value = total;
 }
 
-function eliminarResiduoNuevo(i) {
+async function eliminarResiduoNuevo(i) {
     residuosNuevos.splice(i, 1);
-    renderTablaResiduosNuevo();
-    recalcularTotalesNuevo();
+    await renderTablaResiduosNuevo();
+    await recalcularTotalesNuevo();
 }
 
 function limpiarFormularioResiduoNuevo() {
@@ -2042,13 +2132,28 @@ function limpiarFormularioResiduoNuevo() {
     document.getElementById('nuevo_cantidad').disabled = true;
 }
 
-document.getElementById('nuevo_residuoId').addEventListener('change', function() {
+document.getElementById('nuevo_residuoId').addEventListener('change', async function() {
     const option = this.options[this.selectedIndex];
     if (option.value) {
-        const precio = parseFloat(option.dataset.precio);
+        // Convertir el precio a número, reemplazando la coma por punto si existe
+        let precio = option.dataset.precio.toString().replace(',', '.');
+        precio = parseFloat(precio);
         const moneda = option.dataset.moneda;
+        
+        // Si es UF, obtener el valor actual si no lo tenemos
+        if (moneda === 'UF' && !valorUF_actual) {
+            valorUF_actual = await obtenerValorUF();
+            if (!valorUF_actual) {
+                mostrarToast('No se pudo obtener el valor de la UF', 'error');
+                document.getElementById('nuevo_cantidad').disabled = true;
+                return;
+            }
+        }
+
         document.getElementById('nuevo_unidad').value = option.dataset.unidad || '';
-        document.getElementById('nuevo_precioUnitario').value = (moneda === 'UF' && !isNaN(precio)) ? `${precio} UF` : (isNaN(precio) ? '' : formatearPrecioNuevo(precio, moneda));
+        document.getElementById('nuevo_precioUnitario').value = (moneda === 'UF' && !isNaN(precio)) ? 
+            `${formatearNumeroConComa(precio)} UF` : 
+            (isNaN(precio) ? '' : formatearPrecioNuevo(precio, moneda));
         document.getElementById('nuevo_moneda').value = moneda || '';
         document.getElementById('nuevo_cantidad').disabled = false;
     } else {
@@ -2056,29 +2161,77 @@ document.getElementById('nuevo_residuoId').addEventListener('change', function()
     }
 });
 
-document.getElementById('btnAgregarResiduoNuevo').addEventListener('click', function() {
-    const select = document.getElementById('nuevo_residuoId');
-    const option = select.options[select.selectedIndex];
-    const cantidad = parseFloat(document.getElementById('nuevo_cantidad').value);
-    const precioUnitario = parseFloat(option.dataset.precio);
-    const moneda = option.dataset.moneda;
-    if (!option.value || !cantidad || cantidad <= 0 || isNaN(precioUnitario) || !moneda) {
-        mostrarToast('Seleccione un residuo válido, cantidad y precio válidos', 'warning');
-        return;
+// Función para obtener el valor de la UF desde la API
+async function obtenerValorUF() {
+    try {
+        const response = await fetch('/api/cmf-bancos/uf/valor');
+        const data = await response.json();
+        if (data.success && data.data && data.data.valor) {
+            valorUF_actual = parseFloat(data.data.valor);
+            return valorUF_actual;
+        } else {
+            // Si no se obtiene el valor de la API principal, intentar con la API de respaldo
+            const responseFallback = await fetch('https://mindicador.cl/api/uf');
+            const dataFallback = await responseFallback.json();
+            if (dataFallback && dataFallback.serie && dataFallback.serie[0]) {
+                valorUF_actual = parseFloat(dataFallback.serie[0].valor);
+                return valorUF_actual;
+            } else {
+                throw new Error('No se pudo obtener el valor de la UF de ninguna fuente');
+            }
+        }
+    } catch (error) {
+        console.error('Error al obtener valor UF:', error);
+        mostrarToast('Error al obtener valor UF: ' + error.message, 'error');
+        return null;
     }
-    // NO calcular subtotal ni convertir a CLP aquí, solo mostrarlo en la tabla
-    residuosNuevos.push({
-        residuoId: option.value,
-        descripcion: option.dataset.descripcion,
-        unidad: option.dataset.unidad,
-        cantidad: cantidad,
-        precioUnitario: precioUnitario, // Puede ser UF o CLP
-        moneda: moneda // 'UF' o 'CLP'
-        // NO incluir subtotal aquí
-    });
-    renderTablaResiduosNuevo();
-    recalcularTotalesNuevo();
-    limpiarFormularioResiduoNuevo();
+}
+
+document.getElementById('btnAgregarResiduoNuevo').addEventListener('click', async function() {
+    try {
+        const select = document.getElementById('nuevo_residuoId');
+        const option = select.options[select.selectedIndex];
+        const cantidad = parseFloat(document.getElementById('nuevo_cantidad').value);
+        // Convertir el precio a número, reemplazando la coma por punto si existe
+        let precioUnitario = option.dataset.precio.toString().replace(',', '.');
+        precioUnitario = parseFloat(precioUnitario);
+        const moneda = option.dataset.moneda;
+
+        if (!option.value || !cantidad || cantidad <= 0 || isNaN(precioUnitario) || !moneda) {
+            mostrarToast('Seleccione un residuo válido, cantidad y precio válidos', 'warning');
+            return;
+        }
+
+        // Si es UF, obtener el valor actual
+        if (moneda === 'UF') {
+            if (!valorUF_actual) {
+                valorUF_actual = await obtenerValorUF();
+            }
+            if (!valorUF_actual) {
+                mostrarToast('No se pudo obtener el valor de la UF', 'error');
+                return;
+            }
+            // Convertir el precio a CLP para guardarlo
+            precioUnitario = precioUnitario * valorUF_actual;
+        }
+
+        residuosNuevos.push({
+            residuoId: option.value,
+            descripcion: option.dataset.descripcion,
+            unidad: option.dataset.unidad,
+            cantidad: cantidad,
+            precioUnitario: precioUnitario,
+            moneda: moneda,
+            valorUF: moneda === 'UF' ? valorUF_actual : null
+        });
+
+        await renderTablaResiduosNuevo();
+        await recalcularTotalesNuevo();
+        limpiarFormularioResiduoNuevo();
+    } catch (error) {
+        console.error('Error al agregar residuo:', error);
+        mostrarToast('Error al agregar residuo: ' + error.message, 'error');
+    }
 });
 
 function abrirModalNuevaCotizacion() {
@@ -2095,6 +2248,31 @@ function abrirModalNuevaCotizacion() {
     modal.show();
 }
 // --- FIN NUEVA LÓGICA PARA AGREGAR RESIDUOS EN NUEVA COTIZACIÓN ---
+
+// Función para formatear números con coma decimal
+function formatearNumeroConComa(numero) {
+    if (typeof numero !== 'number' || isNaN(numero)) return '-';
+    return numero.toString().replace('.', ',');
+}
+
+// Función para formatear precio en UF
+function formatearPrecioUF(precio) {
+    if (typeof precio !== 'number' || isNaN(precio)) return '-';
+    return formatearNumeroConComa(precio) + ' UF';
+}
+
+// Función para formatear precios según la moneda
+function formatearPrecioNuevo(precio, moneda) {
+    if (typeof precio !== 'number' || isNaN(precio)) return '-';
+    if (moneda === 'UF') {
+        return formatearPrecioUF(precio);
+    }
+    return new Intl.NumberFormat('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+        minimumFractionDigits: 0
+    }).format(precio);
+}
 
 // Función global para formatear moneda en edición
 function formatearMonedaEditar(valor) {
@@ -2114,7 +2292,111 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
         });
     }
+
+    // Cargar clientes al abrir el modal
+    document.getElementById('nuevaCotizacionModal').addEventListener('show.bs.modal', async function() {
+        await cargarClientes();
+    });
+
+    // Manejar selección de cliente
+    document.getElementById('selectCliente').addEventListener('change', function() {
+        const clienteId = this.value;
+        if (clienteId) {
+            cargarDatosCliente(clienteId);
+        } else {
+            limpiarDatosCliente();
+        }
+    });
 });
-</script>
+
+// Función para cargar la lista de clientes
+async function cargarClientes() {
+    try {
+        const response = await fetch('/api/clientes', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            const selectCliente = document.getElementById('selectCliente');
+            selectCliente.innerHTML = '<option value="">Seleccione un cliente</option>';
+            
+            data.clientes.forEach(cliente => {
+                const option = document.createElement('option');
+                option.value = cliente.rut;
+                option.textContent = `${cliente.nombre_empresa} (${cliente.rut})`;
+                selectCliente.appendChild(option);
+            });
+        } else {
+            mostrarToast('Error al cargar los clientes: ' + (data.message || 'Error desconocido'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al cargar los clientes: ' + error.message, 'error');
+    }
+}
+
+// Función para cargar los datos del cliente seleccionado
+async function cargarDatosCliente(clienteId) {
+    try {
+        const response = await fetch(`/api/clientes/${clienteId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            const cliente = data.cliente;
+            const usuario = cliente.Usuario;
+
+            // Llenar campos ocultos
+            document.getElementById('clienteNombre').value = usuario.nombre;
+            document.getElementById('clienteRut').value = cliente.rut;
+            document.getElementById('clienteCorreo').value = usuario.email;
+            document.getElementById('clienteTelefono').value = cliente.telefono;
+            document.getElementById('clienteEmpresa').value = cliente.nombre_empresa;
+            document.getElementById('nuevo_rutEmpresa').value = cliente.rut;
+            document.getElementById('clienteDireccion').value = cliente.direccion;
+            document.getElementById('clienteRegion').value = cliente.region_id;
+            document.getElementById('clienteComuna').value = cliente.comuna_id;
+
+            // Mostrar información en el div de visualización
+            document.getElementById('showClienteNombre').textContent = usuario.nombre;
+            document.getElementById('showClienteRut').textContent = cliente.rut;
+            document.getElementById('showClienteCorreo').textContent = usuario.email;
+            document.getElementById('showClienteTelefono').textContent = cliente.telefono;
+            document.getElementById('showClienteEmpresa').textContent = cliente.nombre_empresa;
+            document.getElementById('showClienteRutEmpresa').textContent = cliente.rut;
+            document.getElementById('showClienteDireccion').textContent = cliente.direccion;
+
+            // Mostrar el div de información
+            document.getElementById('infoClienteSeleccionado').style.display = 'block';
+        } else {
+            mostrarToast('Error al cargar los datos del cliente: ' + (data.message || 'Error desconocido'), 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error de conexión al cargar los datos del cliente: ' + error.message, 'error');
+    }
+}
+
+// Función para limpiar los datos del cliente
+function limpiarDatosCliente() {
+    // Limpiar campos ocultos
+    document.getElementById('clienteNombre').value = '';
+    document.getElementById('clienteRut').value = '';
+    document.getElementById('clienteCorreo').value = '';
+    document.getElementById('clienteTelefono').value = '';
+    document.getElementById('clienteEmpresa').value = '';
+    document.getElementById('nuevo_rutEmpresa').value = '';
+    document.getElementById('clienteDireccion').value = '';
+    document.getElementById('clienteRegion').value = '';
+    document.getElementById('clienteComuna').value = '';
+
+    // Ocultar div de información
+    document.getElementById('infoClienteSeleccionado').style.display = 'none';
+}
+    </script>
 </body>
 </html>
