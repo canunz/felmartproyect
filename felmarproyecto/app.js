@@ -67,9 +67,13 @@ app.use(helmet({
         "https://cdnjs.cloudflare.com",
         "data:"
       ],
-      "img-src": ["'self'", "data:"]
+      "img-src": ["'self'", "data:"],
+      "media-src": ["'self'", "blob:"],
+      "object-src": ["'self'"]
     }
-  }
+  },
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginEmbedderPolicy: false
 }));
 
 // CORS y parsers
@@ -81,6 +85,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Archivos estáticos
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuración de Vistas y Layouts EJS (ORDEN CRÍTICO)

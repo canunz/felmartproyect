@@ -700,10 +700,10 @@
                         
                         <div class="certificate-actions">
                             ${cert.rutaPdf ? 
-                                `<a href="/clientes/certificados/descargar/${cert.id}" class="btn-download">
+                                `<button onclick="descargarPDF(${cert.id})" class="btn-download">
                                     <i class="fas fa-download"></i>
                                     Descargar PDF
-                                </a>` :
+                                </button>` :
                                 `<button class="btn-disabled" disabled>
                                     <i class="fas fa-clock"></i>
                                     PDF no disponible
@@ -750,7 +750,7 @@
             `;
             
             document.getElementById('detalleCertificadoContent').innerHTML = content;
-            document.getElementById('btnDescargarModal').onclick = () => window.location.href = `/clientes/certificados/descargar/${certificado.id}`;
+            document.getElementById('btnDescargarModal').onclick = () => descargarPDF(certificado.id);
             document.getElementById('btnDescargarModal').style.display = certificado.rutaPdf ? 'block' : 'none';
             
             const modal = new bootstrap.Modal(document.getElementById('modalDetalleCertificado'));
@@ -768,6 +768,32 @@
                     }
                 });
             });
+        }
+
+        // Función para descargar PDF
+        async function descargarPDF(id) {
+            try {
+                const response = await fetch(`/clientes/certificados/descargar/${id}`);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error al descargar el archivo');
+                }
+
+                // Si es un PDF, descargarlo
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `certificado-${id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'Error al descargar el certificado');
+            }
         }
 
         // Inicializar página

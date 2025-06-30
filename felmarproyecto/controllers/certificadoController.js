@@ -117,25 +117,43 @@ const {
       try {
         const { id } = req.params;
         const { usuario } = req.session;
+        
+        console.log('Intentando descargar certificado:', id);
+        
         const certificado = await Certificado.findByPk(id);
         if (!certificado) {
-          req.flash('error', 'Certificado no encontrado');
-          return res.redirect('/admin/certificados');
+          console.log('Certificado no encontrado:', id);
+          return res.status(404).json({ error: 'Certificado no encontrado' });
         }
+
+        // Verificar permisos
         if (usuario.rol === 'cliente' && certificado.cliente_id !== req.session.clienteId) {
-          req.flash('error', 'No tienes permiso para descargar este certificado');
-          return res.redirect('/admin/certificados');
+          console.log('Usuario no autorizado:', usuario.rol, certificado.cliente_id, req.session.clienteId);
+          return res.status(403).json({ error: 'No tienes permiso para descargar este certificado' });
         }
-        const rutaArchivo = path.join(__dirname, '..', 'public', certificado.ruta_pdf);
+
+        // Construir la ruta completa del archivo
+        const fileName = certificado.ruta_pdf.split('/').pop();
+        const rutaArchivo = path.join(__dirname, '..', 'public', 'uploads', 'certificados', fileName);
+        
+        console.log('Ruta del archivo:', rutaArchivo);
+        
         if (!fs.existsSync(rutaArchivo)) {
-          req.flash('error', 'Archivo PDF no encontrado');
-          return res.redirect('/admin/certificados');
+          console.log('Archivo no encontrado en:', rutaArchivo);
+          return res.status(404).json({ error: 'Archivo PDF no encontrado' });
         }
-        res.download(rutaArchivo, `certificado-${certificado.id}.pdf`);
+
+        // Enviar el archivo
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="certificado-${certificado.id}.pdf"`);
+        
+        fs.createReadStream(rutaArchivo).pipe(res);
+
       } catch (error) {
         console.error('Error al descargar PDF:', error);
-        req.flash('error', 'Error al descargar PDF');
-        res.redirect('/admin/certificados');
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Error al descargar el archivo' });
+        }
       }
     },
     
@@ -231,7 +249,7 @@ const {
           cliente_id: cliente.rut, 
           visita_retiro_id: visita_retiro_id || null, 
           observaciones, 
-          ruta_pdf: rutaPdf, 
+          ruta_pdf: fileName, // Guardar solo el nombre del archivo
           fecha_emision: fechaEmisionFinal 
         });
         
@@ -587,8 +605,9 @@ const {
                 titulo: `Certificado #${cert.id}`,
                 fecha: moment(cert.fecha_emision).format('DD/MM/YYYY'),
                 descripcion: cert.observaciones || 'Sin observaciones',
-                ruta_pdf: cert.ruta_pdf,
-                visita_retiro_id: cert.visita_retiro_id
+                rutaPdf: cert.ruta_pdf ? cert.ruta_pdf : null,
+                visita_retiro_id: cert.visita_retiro_id,
+                estado: cert.estado || 'emitido'
             })));
 
         } catch (error) {
