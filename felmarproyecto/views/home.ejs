@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="/css/styles.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/img/logo.png">
 </head>
 <body>
   <div class="container-fluid p-0">
@@ -158,60 +160,13 @@
     </section>
 
     <!-- Industrias -->
-    <section class="industries-section py-5" id="industries">
-      <div class="container py-4">
-        <h2 class="section-title text-center">Industrias que Atendemos</h2>
-        <div class="title-separator"></div>
-        
-        <div class="row mt-5 justify-content-center">
-          <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-            <div class="industry-card">
-              <div class="industry-icon-wrapper">
-                <i class="fas fa-fish industry-icon"></i>
-              </div>
-              <h3 class="industry-name">Salmonera</h3>
-              <div class="industry-hover-content">
-                <p>Gestión especializada de residuos para la industria acuícola y salmonera.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-            <div class="industry-card">
-              <div class="industry-icon-wrapper">
-                <i class="fas fa-ship industry-icon"></i>
-              </div>
-              <h3 class="industry-name">Naviera</h3>
-              <div class="industry-hover-content">
-                <p>Soluciones de manejo de residuos para el sector marítimo y portuario.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-            <div class="industry-card">
-              <div class="industry-icon-wrapper">
-                <i class="fas fa-tractor industry-icon"></i>
-              </div>
-              <h3 class="industry-name">Agrícola</h3>
-              <div class="industry-hover-content">
-                <p>Tratamiento de residuos agrícolas y agropecuarios con enfoque sustentable.</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
-            <div class="industry-card">
-              <div class="industry-icon-wrapper">
-                <i class="fas fa-tree industry-icon"></i>
-              </div>
-              <h3 class="industry-name">Forestal</h3>
-              <div class="industry-hover-content">
-                <p>Gestión integral de residuos para el sector forestal y maderero.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+    <section class="industries-section" id="industries" style="padding:0;margin:0;position:relative;">
+      <div style="width:100vw;max-width:100vw;padding:0;margin:0;position:relative;">
+        <video autoplay loop muted playsinline id="video-industries" style="width:100vw;height:420px;object-fit:cover;display:block;background:#000;margin:0;border-radius:0;max-width:100vw;">
+          <source src="/img/residuos_video (720p).mp4" type="video/mp4">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+        <div id="video-overlay" style="position:absolute;top:0;left:0;width:100vw;height:420px;background:rgba(30,40,40,0.45);pointer-events:none;max-width:100vw;"></div>
       </div>
     </section>
 
@@ -231,7 +186,7 @@
     </section>
 
     <!-- Contacto -->
-    <section class="contact-section py-5" id="contact">
+    <section class="contact-section" id="contact" style="margin-top:0 !important; padding-top:0 !important;">
       <div class="container">
         <div class="row justify-content-center mb-5">
           <!-- Formulario de contacto -->
@@ -314,7 +269,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-4 mb-4 mb-md-0">
-            <img src="/img/logo-white.png" alt="Felmart Logo" class="img-fluid mb-4" style="max-height: 80px;">
+            <img src="/img/logo.png" alt="Felmart Logo" class="img-fluid mb-4" style="max-height: 80px;">
             <p>Gestión y manejo profesional de residuos peligrosos y no peligrosos, comprometidos con el medio ambiente y la sostenibilidad.</p>
           </div>
           <div class="col-md-4 mb-4 mb-md-0">
@@ -322,17 +277,9 @@
             <ul class="list-unstyled">
               <li class="mb-2"><a href="#" class="text-white text-decoration-none">Inicio</a></li>
               <li class="mb-2"><a href="#services" class="text-white text-decoration-none">Servicios</a></li>
-              <li class="mb-2"><a href="#about" class="text-white text-decoration-none">Sobre Nosotros</a></li>
+              <li class="mb-2"><a href="/sobre-nosotros" class="text-white text-decoration-none">Sobre Nosotros</a></li>
               <li class="mb-2"><a href="#contact" class="text-white text-decoration-none">Contacto</a></li>
             </ul>
-          </div>
-          <div class="col-md-4">
-            <h5 class="mb-4">Síguenos</h5>
-            <div class="d-flex">
-              <a href="#" class="text-white me-3 fs-4"><i class="fab fa-facebook"></i></a>
-              <a href="#" class="text-white me-3 fs-4"><i class="fab fa-instagram"></i></a>
-              <a href="#" class="text-white me-3 fs-4"><i class="fab fa-linkedin"></i></a>
-            </div>
           </div>
         </div>
         <hr class="my-4 bg-light">
@@ -417,5 +364,54 @@
       }
     });
   </script>
+
+  <style>
+  @media (max-width: 768px) {
+    #video-industries, #video-overlay {
+      height: 220px !important;
+      min-height: 140px;
+      max-width: 100vw;
+    }
+    .carousel-overlay, .contact-banner, .contact-section, .contact-info-row {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+      box-sizing: border-box;
+    }
+    .contact-banner-title, .contact-banner-subtitle, .lead {
+      font-size: 1.1rem !important;
+      word-break: break-word;
+    }
+    .contact-banner-title {
+      font-size: 1.5rem !important;
+    }
+    .contact-section {
+      padding-top: 0 !important;
+    }
+    .contact-section > .container {
+      margin-top: 0 !important;
+    }
+    .contact-banner {
+      margin-bottom: 64px !important;
+    }
+  }
+  @media (max-width: 480px) {
+    #video-industries, #video-overlay {
+      height: 120px !important;
+      min-height: 80px;
+    }
+    .contact-banner-title {
+      font-size: 1.1rem !important;
+    }
+    .contact-section > .container {
+      margin-top: 0 !important;
+    }
+    .contact-banner {
+      margin-bottom: 48px !important;
+    }
+  }
+  .contact-banner {
+    margin-bottom: 72px;
+  }
+  </style>
 </body>
 </html>
